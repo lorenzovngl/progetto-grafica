@@ -27,8 +27,8 @@ LIBS = -lGL -lGLU -lglut -lSDL2 -lSDL2_image -lm
 endif
 endif
 
-OBJ = out/Buoy.o out/Camera.o out/Controller.o out/main.o out/Mesh.o out/Ship.o out/texture.o out/glm.o out/Enviroment.o 
-LINKOBJ = out/Buoy.o out/Camera.o out/Controller.o out/main.o out/Mesh.o out/Ship.o out/texture.o out/glm.o out/Enviroment.o 
+OBJ = out/Buoy.o out/Camera.o out/Controller.o out/main.o out/Mesh.o out/Ship.o out/texture.o out/glm.o out/Enviroment.o out/Utils.o 
+LINKOBJ = out/Buoy.o out/Camera.o out/Controller.o out/main.o out/Mesh.o out/Ship.o out/texture.o out/glm.o out/Enviroment.o out/Utils.o 
 
 RM = rm -f
 
@@ -69,4 +69,7 @@ out/glm.o: src/glm.cpp
 
 out/Enviroment.o: src/Enviroment.cpp
 	$(CPP) -c -Wno-deprecated $(FRMPATH) src/Enviroment.cpp -o out/Enviroment.o
+
+out/Utils.o: src/Utils.cpp
+	$(CPP) -c -Wno-deprecated $(FRMPATH) src/Utils.cpp -o out/Utils.o
 

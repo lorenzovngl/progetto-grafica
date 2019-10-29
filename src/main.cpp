@@ -62,17 +62,20 @@ void rendering(SDL_Window *window) {
     // colore sfondo = bianco
     glClearColor(1, 1, 1, 1);
 
+    // settiamo matrice di vista
+    glTranslatef(0, 0, -eyeDist);
+    glRotatef(viewBeta, 1, 0, 0);
+    glRotatef(viewAlpha, 0, 1, 0);
+
 
     // settiamo la matrice di proiezione
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(80, //fovy,
-                   ((float) scrW) / scrH,//aspect Y/X,
-                   0.25,//zNear,
-                   100  //zFar
+    gluPerspective( 70, //fovy,
+                    ((float)scrW) / scrH,//aspect Y/X,
+                    0.2,//distanza del NEAR CLIPPING PLANE in coordinate vista
+                    1000  //distanza del FAR CLIPPING PLANE in coordinate vista
     );
-
-    camera->set(ship, eyeDist, viewBeta, viewAlpha);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -87,10 +90,7 @@ void rendering(SDL_Window *window) {
     glLightfv(GL_LIGHT0, GL_POSITION, tmpv);
 
 
-    // settiamo matrice di vista
-    glTranslatef(0, 0, -eyeDist);
-    glRotatef(viewBeta, 1, 0, 0);
-    glRotatef(viewAlpha, 0, 1, 0);
+    camera->set(ship, eyeDist, viewBeta, viewAlpha);
 
 
     //drawAxis(); // disegna assi frame MONDO
@@ -105,7 +105,7 @@ void rendering(SDL_Window *window) {
 
     enviroment->render(); // disegna il suolo
 
-    ship.Render(); // disegna la barca
+    ship.render(); // disegna la barca
 
     SDL_Surface *texture;
     SDL_RWops *rwop;

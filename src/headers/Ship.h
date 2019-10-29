@@ -7,7 +7,7 @@ class Ship {
 public:
     // Metodi
     void Init(); // inizializza variabili
-    void Render() const; // disegna a schermo
+    void render() const; // disegna a schermo
     void DoStep(); // computa un passo del motore fisico
     Ship() { Init(); } // costruttore
 

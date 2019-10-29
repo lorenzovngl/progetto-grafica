@@ -19,9 +19,10 @@
 
 #include "headers/Camera.h"
 #include "headers/Ship.h"
+#include "headers/Utils.h"
 
 Camera::Camera(){
-    m_type = CAMERA_BACK_SHIP;
+    m_type = CAMERA_PILOT;
 }
 
 int Camera::getType(){
@@ -46,8 +47,8 @@ void Camera::set(Ship ship, float eyeDist, float viewBeta, float viewAlpha) {
 // controllo la posizione della camera a seconda dell'opzione selezionata
     switch (m_type) {
         case CAMERA_BACK_SHIP:
-            camd = 2.5;
-            camh = 1.0;
+            camd = 4.0;
+            camh = 1.5;
             ex = px + camd*sinf;
             ey = py + camh;
             ez = pz + camd*cosf;
@@ -57,11 +58,18 @@ void Camera::set(Ship ship, float eyeDist, float viewBeta, float viewAlpha) {
             gluLookAt(ex,ey,ez,cx,cy,cz,0.0,1.0,0.0);
             break;
         case CAMERA_PILOT:
+            glTranslatef(0.0, 0.0, 0.5);
             camd = 0.2;
-            camh = 0.55;
-            ex = px + camd*sinf;
+            camh = 0.40;
+            angle = ship.facing;
+            cosff = cos(angle*M_PI/180.0);
+            sinff = sin(angle*M_PI/180.0);
+            ex = px + camd*sinff;
             ey = py + camh;
-            ez = pz + camd*cosf;
+            ez = pz + camd*cosff;
+            /*ex = px + camd*sinf;
+            ey = py + camh;
+            ez = pz + camd*cosf - 0.50;*/
             cx = px - camd*sinf;
             cy = py + camh;
             cz = pz - camd*cosf;

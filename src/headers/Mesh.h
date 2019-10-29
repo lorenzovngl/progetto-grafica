@@ -55,7 +55,7 @@ public:
     }
 
     // metodi
-    void Render(); // manda a schermo la mesh
+    void render(); // manda a schermo la mesh
 
     void Texturize();
 

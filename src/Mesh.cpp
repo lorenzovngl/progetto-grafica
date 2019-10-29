@@ -105,7 +105,7 @@ void init_model()
     glEnable(GL_DEPTH_TEST);
 }
 
-void Mesh::Render() {
+void Mesh::render() {
     if (model_file == NULL){
         init_model();
     }

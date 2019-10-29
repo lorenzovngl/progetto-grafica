@@ -19,6 +19,7 @@
 
 #include "headers/Mesh.h"
 #include "headers/Ship.h"
+#include "headers/Utils.h"
 
 // var globale di tipo meshF
 Mesh carlinga((char *) "assets/ship/fishing_ship.obj"); // chiama il costruttore
@@ -76,9 +77,6 @@ void Ship::DoStep() {
     pz += vz;
 }
 
-//void drawCube(); // questa e' definita altrove (quick hack)
-void drawAxis(); // anche questa
-
 void Ship::Init() {
     // inizializzo lo stato della macchina
     px = pz = facing = 0; // posizione e orientamento
@@ -135,26 +133,24 @@ void Ship::DrawHeadlight(float x, float y, float z, int lightN) const {
 }
 
 // disegna a schermo
-void Ship::Render() const {
+void Ship::render() const {
     // sono nello spazio mondo
 
-    //drawAxis(); // disegno assi spazio mondo
+    Utils::drawAxis(); // disegno assi spazio mondo
     glPushMatrix();
 
     glTranslatef(px, py, pz);
     glRotatef(facing, 0, 1, 0);
 
     // sono nello spazio MACCHINA
-    //drawAxis(); // disegno assi spazio macchina
+    Utils::drawAxis(); // disegno assi spazio macchina
 
 //  DrawHeadlight(-0.3,0,-1, 0); // accendi faro sinistro
 //  DrawHeadlight(+0.3,0,-1, 1); // accendi faro destro
 
-    // drawCarlinga(); // disegna la carliga con pochi parallelepidedi
-
     // disegna la carliga con una mesh
-    glPushMatrix();
-    glScalef(-0.05, 0.05, -0.05); // patch: riscaliamo la mesh di 1/10
+    //glPushMatrix();
+    glScalef(0.05, 0.05, 0.05); // patch: riscaliamo la mesh di 1/10
     glColor3f(1, 1, 1); // colore bianco
 
     // Meccanismi di oscillazione
@@ -181,7 +177,7 @@ void Ship::Render() const {
     }
     glRotatef(tiltAngle, 0, 0, 1);*/
 
-    //carlinga.Render();
+    //carlinga.render();
     //carlinga.Texturize();
     //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -192,7 +188,8 @@ void Ship::Render() const {
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 //		     glEnable(GL_TEXTURE_2D);
 
-    carlinga.Render();
+    glRotatef(-90, 0, 1, 0);
+    carlinga.render();
     glColor3f(.4, .4, .4);
 
     glPopMatrix();

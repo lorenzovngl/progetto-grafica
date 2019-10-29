@@ -34,5 +34,5 @@ float Buoy::getCoordZ() {
 }
 
 void Buoy::render() {
-    m_mesh->Render();
+    m_mesh->render();
 }

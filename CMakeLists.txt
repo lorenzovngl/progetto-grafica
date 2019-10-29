@@ -13,6 +13,7 @@ add_executable(ProgettoGrafica
         src/headers/point3.h
         src/headers/Ship.h
         src/headers/texture.h
+        src/headers/Utils.h
         src/Buoy.cpp
         src/Camera.cpp
         src/Controller.cpp
@@ -22,4 +23,5 @@ add_executable(ProgettoGrafica
         src/Mesh.cpp
         src/Ship.cpp
         src/texture.cpp
+        src/Utils.cpp
         )
