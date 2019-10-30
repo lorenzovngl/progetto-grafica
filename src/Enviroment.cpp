@@ -32,11 +32,14 @@ void Enviroment::drawSea() {
     const float H = 0;   // altezza
     const int K = 10; //disegna K x K quads
 
-    glEnable(GL_TEXTURE_2D);
-    //Texture *texture = new Texture(TEXTURE_SEA, (char*) "assets/sea.jpg");
-    Texture *texture = new Texture(TEXTURE_SEA, (char*) "assets/ship/deck_wooden_floor.tga");
+
+    glActiveTexture(GL_TEXTURE0);
+    Texture *texture = new Texture(TEXTURE_SEA);
     texture->loadTexture();
     glBindTexture(GL_TEXTURE_2D, texture->getBind());
+    glEnable(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 
     // disegna KxK quads
     glBegin(GL_QUADS);
@@ -65,7 +68,8 @@ void Enviroment::drawSea() {
 }
 
 void Enviroment::drawSky() {
-    Texture *texture = new Texture(TEXTURE_SKY, (char*) "assets/sky_text.jpg");
+    glActiveTexture(GL_TEXTURE1);
+    Texture *texture = new Texture(TEXTURE_SKY);
     texture->loadTexture();
     glBindTexture(GL_TEXTURE_2D, texture->getBind());
     glEnable(GL_TEXTURE_2D);

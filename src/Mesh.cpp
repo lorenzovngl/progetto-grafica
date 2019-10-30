@@ -105,21 +105,61 @@ void Mesh::initModel()
     glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
     glEnable(GL_DEPTH_TEST);
 
+    glActiveTexture(GL_TEXTURE2);
+    m_texture[0] = new Texture(TEXTURE_DECK_WOODEN_FLOOR);
+    m_texture[0]->loadTexture();
+    glBindTexture(GL_TEXTURE_2D, m_texture[0]->getBind());
+    glActiveTexture(GL_TEXTURE3);
+    m_texture[1] = new Texture(TEXTURE_TOP_BODY_BLACK_METAL);
+    m_texture[1]->loadTexture();
+    glBindTexture(GL_TEXTURE_2D, m_texture[1]->getBind());
+}
+
+// funzione che prepara tutto per creare le coordinate texture (s,t) da (x,y,z)
+// Mappo l'intervallo [ minY , maxY ] nell'intervallo delle T [0..1]
+//     e l'intervallo [ minZ , maxZ ] nell'intervallo delle S [0..1]
+void Mesh::setupTexture(GLenum n_texture, Point3 min, Point3 max){
+    glActiveTexture(n_texture);
     glEnable(GL_TEXTURE_2D);
-    m_texture = new Texture(TEXTURE_SHIP, (char*) "assets/ship/deck_wooden_floor.tga");
-    m_texture->loadTexture();
-    glBindTexture(GL_TEXTURE_2D, m_texture->getBind());
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+    glEnable(GL_TEXTURE_GEN_S);
+    glEnable(GL_TEXTURE_GEN_T);
+    // ulilizzo le coordinate OGGETTO
+    // cioe' le coordnate originali, PRIMA della moltiplicazione per la ModelView
+    // in modo che la texture sia "attaccata" all'oggetto, e non "proiettata" su esso
+    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
+    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
+    float sz=1.0/(max.Z() - min.Z());
+    float ty=1.0/(max.Y() - min.Y());
+    float s[4]={0,0,sz,  - min.Z()*sz};
+    float t[4]={0,ty,0,  - min.Y()*ty};
+    glTexGenfv(GL_S, GL_OBJECT_PLANE, s);
+    glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
 }
 
 void Mesh::render() {
     if (model_file == NULL){
         initModel();
-    } else {
-        glEnable(GL_TEXTURE_2D);
     }
+    setupTexture(GL_TEXTURE2, bbmin, bbmax);
     // mandiamo tutti i triangoli a schermo
     glBegin(GL_TRIANGLES);
-    for (int i = 0; i < f.size(); i++) {
+    for (int i = 0; i < f.size()/5; i++) {
+        f[i].n.SendAsNormal(); // flat shading
+        //glTexCoord2f((f[i].v[0])->p.X(),(f[i].v[0])->p.Y());
+        (f[i].v[0])->p.SendAsVertex();
+        //glTexCoord2f((f[i].v[1])->p.X(),(f[i].v[1])->p.Y());
+        (f[i].v[1])->p.SendAsVertex();
+        //glTexCoord2f((f[i].v[2])->p.X(),(f[i].v[2])->p.Y());
+        (f[i].v[2])->p.SendAsVertex();
+    }
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    setupTexture(GL_TEXTURE3, bbmin, bbmax);
+    glBegin(GL_TRIANGLES);
+    //setupTexture(GL_TEXTURE3, bbmin, bbmax);
+    for (int i = f.size()/5; i < (f.size()/5)*2; i++) {
         f[i].n.SendAsNormal(); // flat shading
         (f[i].v[0])->p.SendAsVertex();
 

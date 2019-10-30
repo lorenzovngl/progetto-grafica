@@ -19,9 +19,24 @@
 
 #include "headers/Texture.h"
 
-Texture::Texture(int textbind, char *filename) {
+Texture::Texture(int textbind) {
     m_textbind = textbind;
-    m_filename = filename;
+    switch (textbind){
+        case TEXTURE_DECK_WOODEN_FLOOR:
+            m_filename = (char*) "assets/ship/deck_wooden_floor.tga";
+            break;
+        case TEXTURE_SEA:
+            m_filename = (char*) "assets/sea.jpg";
+            break;
+        case TEXTURE_SKY:
+            m_filename = (char*) "assets/sky.jpg";
+            break;
+        case TEXTURE_TOP_BODY_BLACK_METAL:
+            m_filename = (char*) "assets/ship/top_body_black_metal.tga";
+            break;
+        default:
+            break;
+    }
 }
 
 bool Texture::loadTexture(){

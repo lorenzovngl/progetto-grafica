@@ -47,7 +47,7 @@ class Mesh {
     std::vector <Edge> e;   // vettore di edge (per ora, non usato)
 
 private:
-    Texture *m_texture;
+    Texture *m_texture[3];
     void initModel();
 public:
 
@@ -59,16 +59,12 @@ public:
     }
 
     // metodi
+    void setupTexture(GLenum, Point3, Point3);
     void render(); // manda a schermo la mesh
-
     void Texturize();
-
     bool LoadFromObj(char *filename); //  carica la mesh da un file obj
-
     void ComputeNormalsPerFace();
-
     void ComputeNormalsPerVertex();
-
     void ComputeBoundingBox();
 
     // centro del axis aligned bounding box

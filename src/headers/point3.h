@@ -83,7 +83,6 @@ public:
   
   // mandare il punto come vertice di OpenGl
   void SendAsVertex() const{
-      glTexCoord2f(coord[0], coord[1]);
       glVertex3fv(coord);
   }
   
