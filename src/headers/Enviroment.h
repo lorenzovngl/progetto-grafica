@@ -6,7 +6,8 @@
 class Enviroment {
 private:
     Buoy *buoy[10];
-    void drawFloor();
+    void drawSea();
+    void drawSky();
 public:
     Enviroment();
     void render();

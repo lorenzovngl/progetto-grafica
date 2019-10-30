@@ -34,5 +34,48 @@ float Buoy::getCoordZ() {
 }
 
 void Buoy::render() {
+    glScalef(-0.005, 0.005, -0.005);
+    glColor3f(1, 0, 0);
+    glTranslatef(getCoordX(), 0, getCoordZ());
+    // Asta della boa
+    int base = 2;
+    int height = 100;
+    glBegin(GL_QUADS);
+    glColor3f(1, 0, 0);
+    // Parallelepipedo
+    glVertex3f(-(base/2),0,(base/2));
+    glVertex3f(-(base/2),height,(base/2));
+    glVertex3f((base/2), height,(base/2));
+    glVertex3f((base/2),0,(base/2));
+
+    glVertex3f(-(base/2),0,-(base/2));
+    glVertex3f(-(base/2),height,-(base/2));
+    glVertex3f((base/2), height,-(base/2));
+    glVertex3f((base/2),0,-(base/2));
+
+    glVertex3f((base/2),0,-(base/2));
+    glVertex3f((base/2),height,-(base/2));
+    glVertex3f((base/2), height,(base/2));
+    glVertex3f((base/2),0,(base/2));
+
+    glVertex3f(-(base/2),0,-(base/2));
+    glVertex3f(-(base/2),height,-(base/2));
+    glVertex3f(-(base/2), height,(base/2));
+    glVertex3f(-(base/2),0,(base/2));
+
+    glVertex3f((base/2),height,(base/2));
+    glVertex3f(-(base/2),height,(base/2));
+    glVertex3f(-(base/2), height,-(base/2));
+    glVertex3f((base/2),height,-(base/2));
+
+    glEnd();
+    glBegin(GL_TRIANGLES);
+    // Bandierina
+    int size = 40;
+    glVertex3f(0, height, 0);
+    glVertex3f(0, height-size, 0);
+    glVertex3f(0, height-size/2, 50);
+
+    // Boa
     m_mesh->render();
 }

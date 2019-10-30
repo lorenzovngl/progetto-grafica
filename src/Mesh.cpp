@@ -24,6 +24,7 @@
 #include "headers/Mesh.h"
 #include "headers/texture.h"
 #include "headers/glm.h"
+#include "headers/Texture.h"
 
 char*      model_file = NULL;		/* name of the obect file */
 GLuint     model_list = 0;		/* display list for object */
@@ -84,7 +85,7 @@ void lists(){
     }
 }
 
-void init_model()
+void Mesh::initModel()
 {
     model_file = (char*)"assets/ship/fishing_ship.obj";
     /* read in the model */
@@ -103,11 +104,18 @@ void init_model()
     glEnable(GL_LIGHT0);
     glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
     glEnable(GL_DEPTH_TEST);
+
+    glEnable(GL_TEXTURE_2D);
+    m_texture = new Texture(TEXTURE_SHIP, (char*) "assets/ship/deck_wooden_floor.tga");
+    m_texture->loadTexture();
+    glBindTexture(GL_TEXTURE_2D, m_texture->getBind());
 }
 
 void Mesh::render() {
     if (model_file == NULL){
-        init_model();
+        initModel();
+    } else {
+        glEnable(GL_TEXTURE_2D);
     }
     // mandiamo tutti i triangoli a schermo
     glBegin(GL_TRIANGLES);
@@ -120,6 +128,7 @@ void Mesh::render() {
         (f[i].v[2])->p.SendAsVertex();
     }
     glEnd();
+    glDisable(GL_TEXTURE_2D);
 }
 
 unsigned char* ppmRead(char* filename, int* width, int* height) {

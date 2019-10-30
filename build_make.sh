@@ -1,6 +1,6 @@
 #!/bin/bash
 
-files=("Buoy" "Camera" "Controller" "main" "Mesh" "Ship" "texture" "glm" "Enviroment" "Utils")
+files=("Buoy" "Camera" "Controller" "Enviroment" "main" "Mesh" "glm" "Ship" "Texture" "Utils")
 
 truncate -s 0 Makefile
 # Open file descriptor (fd) 3 for read/write on a text file.

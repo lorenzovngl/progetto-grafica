@@ -22,7 +22,7 @@
 #include "headers/Utils.h"
 
 Camera::Camera(){
-    m_type = CAMERA_PILOT;
+    m_type = CAMERA_MOUSE;
 }
 
 int Camera::getType(){
@@ -61,15 +61,9 @@ void Camera::set(Ship ship, float eyeDist, float viewBeta, float viewAlpha) {
             glTranslatef(0.0, 0.0, 0.5);
             camd = 0.2;
             camh = 0.40;
-            angle = ship.facing;
-            cosff = cos(angle*M_PI/180.0);
-            sinff = sin(angle*M_PI/180.0);
-            ex = px + camd*sinff;
+            ex = px + camd*sinf;
             ey = py + camh;
-            ez = pz + camd*cosff;
-            /*ex = px + camd*sinf;
-            ey = py + camh;
-            ez = pz + camd*cosf - 0.50;*/
+            ez = pz + camd*cosf;
             cx = px - camd*sinf;
             cy = py + camh;
             cz = pz - camd*cosf;

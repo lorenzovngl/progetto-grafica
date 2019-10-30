@@ -27,8 +27,8 @@ LIBS = -lGL -lGLU -lglut -lSDL2 -lSDL2_image -lm
 endif
 endif
 
-OBJ = out/Buoy.o out/Camera.o out/Controller.o out/main.o out/Mesh.o out/Ship.o out/texture.o out/glm.o out/Enviroment.o out/Utils.o 
-LINKOBJ = out/Buoy.o out/Camera.o out/Controller.o out/main.o out/Mesh.o out/Ship.o out/texture.o out/glm.o out/Enviroment.o out/Utils.o 
+OBJ = out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/main.o out/Mesh.o out/glm.o out/Ship.o out/Texture.o out/Utils.o 
+LINKOBJ = out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/main.o out/Mesh.o out/glm.o out/Ship.o out/Texture.o out/Utils.o 
 
 RM = rm -f
 
@@ -52,23 +52,23 @@ out/Camera.o: src/Camera.cpp
 out/Controller.o: src/Controller.cpp
 	$(CPP) -c -Wno-deprecated $(FRMPATH) src/Controller.cpp -o out/Controller.o
 
+out/Enviroment.o: src/Enviroment.cpp
+	$(CPP) -c -Wno-deprecated $(FRMPATH) src/Enviroment.cpp -o out/Enviroment.o
+
 out/main.o: src/main.cpp
 	$(CPP) -c -Wno-deprecated $(FRMPATH) src/main.cpp -o out/main.o
 
 out/Mesh.o: src/Mesh.cpp
 	$(CPP) -c -Wno-deprecated $(FRMPATH) src/Mesh.cpp -o out/Mesh.o
 
-out/Ship.o: src/Ship.cpp
-	$(CPP) -c -Wno-deprecated $(FRMPATH) src/Ship.cpp -o out/Ship.o
-
-out/texture.o: src/texture.cpp
-	$(CPP) -c -Wno-deprecated $(FRMPATH) src/texture.cpp -o out/texture.o
-
 out/glm.o: src/glm.cpp
 	$(CPP) -c -Wno-deprecated $(FRMPATH) src/glm.cpp -o out/glm.o
 
-out/Enviroment.o: src/Enviroment.cpp
-	$(CPP) -c -Wno-deprecated $(FRMPATH) src/Enviroment.cpp -o out/Enviroment.o
+out/Ship.o: src/Ship.cpp
+	$(CPP) -c -Wno-deprecated $(FRMPATH) src/Ship.cpp -o out/Ship.o
+
+out/Texture.o: src/Texture.cpp
+	$(CPP) -c -Wno-deprecated $(FRMPATH) src/Texture.cpp -o out/Texture.o
 
 out/Utils.o: src/Utils.cpp
 	$(CPP) -c -Wno-deprecated $(FRMPATH) src/Utils.cpp -o out/Utils.o

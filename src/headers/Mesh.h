@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "point3.h"
+#include "Texture.h"
 
 class Vertex {
 public:
@@ -45,6 +46,9 @@ class Mesh {
     std::vector <Face> f;   // vettore di facce
     std::vector <Edge> e;   // vettore di edge (per ora, non usato)
 
+private:
+    Texture *m_texture;
+    void initModel();
 public:
 
     // costruttore con caricamento

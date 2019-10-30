@@ -17,22 +17,26 @@
 
 #endif
 
+#include "headers/Utils.h"
 #include "headers/Enviroment.h"
+#include "headers/Texture.h"
 
-Enviroment::Enviroment(){
+Enviroment::Enviroment() {
     for (int i = 0; i < 10; i++) {
         buoy[i] = new Buoy(rand() % 1000, rand() % 1000);
     }
 }
 
-void Enviroment::drawFloor() {
-    const float S = 20; // size
+void Enviroment::drawSea() {
+    const float S = 100; // size
     const float H = 0;   // altezza
     const int K = 10; //disegna K x K quads
 
-    //glEnable(GL_TEXTURE_2D);
-    //SDL_Surface* surface = IMG_Load("assets/sea.jpg");
-    //SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+    glEnable(GL_TEXTURE_2D);
+    //Texture *texture = new Texture(TEXTURE_SEA, (char*) "assets/sea.jpg");
+    Texture *texture = new Texture(TEXTURE_SEA, (char*) "assets/ship/deck_wooden_floor.tga");
+    texture->loadTexture();
+    glBindTexture(GL_TEXTURE_2D, texture->getBind());
 
     // disegna KxK quads
     glBegin(GL_QUADS);
@@ -44,23 +48,47 @@ void Enviroment::drawFloor() {
             float x1 = -S + 2 * (x + 1) * S / K;
             float z0 = -S + 2 * (z + 0) * S / K;
             float z1 = -S + 2 * (z + 1) * S / K;
+            glTexCoord2f(x0, z0);
             glVertex3d(x0, H, z0);
+            glTexCoord2f(x1, z0);
             glVertex3d(x1, H, z0);
+            glTexCoord2f(x1, z1);
             glVertex3d(x1, H, z1);
+            glTexCoord2f(x0, z1);
             glVertex3d(x0, H, z1);
         }
     }
     glEnd();
+
+    glDisable(GL_TEXTURE_2D);
     //SDL_FreeSurface(surface);
 }
 
-void Enviroment::render(){
-    drawFloor();
-    for (int i = 0; i < 10; i++){
+void Enviroment::drawSky() {
+    Texture *texture = new Texture(TEXTURE_SKY, (char*) "assets/sky_text.jpg");
+    texture->loadTexture();
+    glBindTexture(GL_TEXTURE_2D, texture->getBind());
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_TEXTURE_GEN_S);
+    glEnable(GL_TEXTURE_GEN_T);
+    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP); // Env map
+    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+    glColor3f(0.5, 0.5, 1);
+    glDisable(GL_LIGHTING);
+
+    Utils::drawSphere(100.0, 20, 20);
+
+    glDisable(GL_TEXTURE_GEN_S);
+    glDisable(GL_TEXTURE_GEN_T);
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_LIGHTING);
+}
+
+void Enviroment::render() {
+    drawSea();
+    drawSky();
+    for (int i = 0; i < 10; i++) {
         glPushMatrix();
-        glScalef(-0.005, 0.005, -0.005);
-        glColor3f(1, 0, 0);
-        glTranslatef(buoy[i]->getCoordX(), 0, buoy[i]->getCoordZ());
         buoy[i]->render();
         glPopMatrix();
     }
