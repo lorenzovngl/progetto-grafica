@@ -22,6 +22,9 @@
 Texture::Texture(int textbind) {
     m_textbind = textbind;
     switch (textbind){
+        case TEXTURE_BOTTOM_BODY_DARK_RED_METAL:
+            m_filename = (char*) "assets/ship/bottom_body_dark_red_metal.tga";
+            break;
         case TEXTURE_DECK_WOODEN_FLOOR:
             m_filename = (char*) "assets/ship/deck_wooden_floor.tga";
             break;
@@ -33,6 +36,9 @@ Texture::Texture(int textbind) {
             break;
         case TEXTURE_TOP_BODY_BLACK_METAL:
             m_filename = (char*) "assets/ship/top_body_black_metal.tga";
+            break;
+        case TEXTURE_TOP_BODY_WHITE_METAL:
+            m_filename = (char*) "assets/ship/top_body_white_metal.tga";
             break;
         default:
             break;

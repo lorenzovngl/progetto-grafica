@@ -1,7 +1,3 @@
-// file mesh.cpp
-//
-// Implementazione dei metodi di Mesh
-
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
@@ -21,18 +17,10 @@
 #endif
 
 #include "../lib/GCGraLib2/GCGraLib2.h"
-#include "headers/Mesh.h"
 #include "headers/texture.h"
 #include "headers/glm.h"
 #include "headers/Texture.h"
-
-char*      model_file = NULL;		/* name of the obect file */
-GLuint     model_list = 0;		/* display list for object */
-GLMmodel*  model;		        /* glm model data structure */
-GLfloat    scale;		        /* original scale factor */
-GLfloat    smoothing_angle = 90.0;	/* smoothing angle */
-GLuint     material_mode = 3;		/* 0=none, 1=color, 2=material, 3=texture */
-GLboolean  facet_normal = GL_FALSE;	/* draw with facet normal? */
+#include "headers/Mesh.h"
 
 void Mesh::ComputeNormalsPerFace() {
     for (int i = 0; i < f.size(); i++) {
@@ -40,7 +28,7 @@ void Mesh::ComputeNormalsPerFace() {
     }
 }
 
-void lists(){
+void Mesh::lists(){
     GLfloat ambient[] = { 0.2, 0.2, 0.2, 1.0 };
     GLfloat diffuse[] = { 0.8, 0.8, 0.8, 1.0 };
     GLfloat specular[] = { 0.0, 0.0, 0.0, 1.0 };
@@ -104,71 +92,22 @@ void Mesh::initModel()
     glEnable(GL_LIGHT0);
     glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
     glEnable(GL_DEPTH_TEST);
-
-    glActiveTexture(GL_TEXTURE2);
-    m_texture[0] = new Texture(TEXTURE_DECK_WOODEN_FLOOR);
-    m_texture[0]->loadTexture();
-    glBindTexture(GL_TEXTURE_2D, m_texture[0]->getBind());
-    glActiveTexture(GL_TEXTURE3);
-    m_texture[1] = new Texture(TEXTURE_TOP_BODY_BLACK_METAL);
-    m_texture[1]->loadTexture();
-    glBindTexture(GL_TEXTURE_2D, m_texture[1]->getBind());
-}
-
-// funzione che prepara tutto per creare le coordinate texture (s,t) da (x,y,z)
-// Mappo l'intervallo [ minY , maxY ] nell'intervallo delle T [0..1]
-//     e l'intervallo [ minZ , maxZ ] nell'intervallo delle S [0..1]
-void Mesh::setupTexture(GLenum n_texture, Point3 min, Point3 max){
-    glActiveTexture(n_texture);
-    glEnable(GL_TEXTURE_2D);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-    glEnable(GL_TEXTURE_GEN_S);
-    glEnable(GL_TEXTURE_GEN_T);
-    // ulilizzo le coordinate OGGETTO
-    // cioe' le coordnate originali, PRIMA della moltiplicazione per la ModelView
-    // in modo che la texture sia "attaccata" all'oggetto, e non "proiettata" su esso
-    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
-    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE , GL_OBJECT_LINEAR);
-    float sz=1.0/(max.Z() - min.Z());
-    float ty=1.0/(max.Y() - min.Y());
-    float s[4]={0,0,sz,  - min.Z()*sz};
-    float t[4]={0,ty,0,  - min.Y()*ty};
-    glTexGenfv(GL_S, GL_OBJECT_PLANE, s);
-    glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
 }
 
 void Mesh::render() {
     if (model_file == NULL){
         initModel();
     }
-    setupTexture(GL_TEXTURE2, bbmin, bbmax);
+
     // mandiamo tutti i triangoli a schermo
     glBegin(GL_TRIANGLES);
-    for (int i = 0; i < f.size()/5; i++) {
+    for (int i = 0; i < f.size(); i++) {
         f[i].n.SendAsNormal(); // flat shading
-        //glTexCoord2f((f[i].v[0])->p.X(),(f[i].v[0])->p.Y());
         (f[i].v[0])->p.SendAsVertex();
-        //glTexCoord2f((f[i].v[1])->p.X(),(f[i].v[1])->p.Y());
         (f[i].v[1])->p.SendAsVertex();
-        //glTexCoord2f((f[i].v[2])->p.X(),(f[i].v[2])->p.Y());
         (f[i].v[2])->p.SendAsVertex();
     }
     glEnd();
-    glDisable(GL_TEXTURE_2D);
-    setupTexture(GL_TEXTURE3, bbmin, bbmax);
-    glBegin(GL_TRIANGLES);
-    //setupTexture(GL_TEXTURE3, bbmin, bbmax);
-    for (int i = f.size()/5; i < (f.size()/5)*2; i++) {
-        f[i].n.SendAsNormal(); // flat shading
-        (f[i].v[0])->p.SendAsVertex();
-
-        (f[i].v[1])->p.SendAsVertex();
-
-        (f[i].v[2])->p.SendAsVertex();
-    }
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
 }
 
 unsigned char* ppmRead(char* filename, int* width, int* height) {

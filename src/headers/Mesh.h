@@ -1,9 +1,10 @@
-// classe Vertex: 
-// i vertici della mesh
+#ifndef PROGETTOGRAFICA_MESH_H
+#define PROGETTOGRAFICA_MESH_H
 
 #include <vector>
 #include "point3.h"
 #include "Texture.h"
+#include "glm.h"
 
 class Vertex {
 public:
@@ -42,12 +43,20 @@ public:
 };
 
 class Mesh {
+protected:
     std::vector <Vertex> v; // vettore di vertici
     std::vector <Face> f;   // vettore di facce
     std::vector <Edge> e;   // vettore di edge (per ora, non usato)
 
+    char*      model_file = NULL;		/* name of the obect file */
+    GLuint     model_list = 0;		/* display list for object */
+    GLMmodel*  model;		        /* glm model data structure */
+    GLfloat    scale;		        /* original scale factor */
+    GLfloat    smoothing_angle = 90.0;	/* smoothing angle */
+    GLuint     material_mode = 3;		/* 0=none, 1=color, 2=material, 3=texture */
+    GLboolean  facet_normal = GL_FALSE;	/* draw with facet normal? */
+
 private:
-    Texture *m_texture[3];
     void initModel();
 public:
 
@@ -59,16 +68,18 @@ public:
     }
 
     // metodi
-    void setupTexture(GLenum, Point3, Point3);
     void render(); // manda a schermo la mesh
     void Texturize();
     bool LoadFromObj(char *filename); //  carica la mesh da un file obj
     void ComputeNormalsPerFace();
     void ComputeNormalsPerVertex();
     void ComputeBoundingBox();
+    void lists();
 
     // centro del axis aligned bounding box
     Point3 Center() { return (bbmin + bbmax) / 2.0; };
 
     Point3 bbmin, bbmax; // bounding box
 };
+
+#endif

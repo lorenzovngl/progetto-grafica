@@ -1,4 +1,7 @@
-/*    
+#ifndef PROGETTOGRAFICA_GLM_H
+#define PROGETTOGRAFICA_GLM_H
+
+/*
       glm.h
       Nate Robins, 1997, 2000
       nate@pobox.com, http://www.pobox.com/~nate
@@ -280,3 +283,5 @@ glmWeld(GLMmodel* model, GLfloat epsilon);
  */
 GLubyte* 
 glmReadPPM(char* filename, int* width, int* height);
+
+#endif

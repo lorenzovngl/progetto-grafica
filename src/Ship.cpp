@@ -20,9 +20,10 @@
 #include "headers/Mesh.h"
 #include "headers/Ship.h"
 #include "headers/Utils.h"
+#include "headers/ShipMesh.h"
 
 // var globale di tipo meshF
-Mesh carlinga((char *) "assets/ship/fishing_ship.obj"); // chiama il costruttore
+ShipMesh carlinga((char *) "assets/ship/fishing_ship.obj"); // chiama il costruttore
 
 // DoStep: facciamo un passo di fisica (a delta-t costante)
 //
