@@ -7,7 +7,7 @@ class ShipMesh : public Mesh {
 private:
     Texture *m_texture[10];
     void initModel();
-    void applyTexture(int, Point3*, float, float, float);
+    void drawTriangles(int, int, int);
 public:
     ShipMesh(char *filename):Mesh(filename) {
     }

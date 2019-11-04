@@ -103,7 +103,7 @@ void rendering(SDL_Window *window) {
     //drawAxis(); // disegna assi frame OGGETTO
     //drawCubeWire();
 
-    enviroment->render(); // disegna il suolo
+    //enviroment->render(); // disegna il suolo
 
     ship.render(); // disegna la barca
 

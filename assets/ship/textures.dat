@@ -1,1 +1,27 @@
-1 - 64000 -> 2
+# Mappa i poligoni del modello con le texture
+
+# A - B -> T
+# A = Primo triangolo dell'intervallo
+# B = Ultimo triangolo dell'intervallo
+# T = Indice della texture definito in /src/headers/Texture.h
+
+# Parte più bassa dello scafo
+15000 - 17000 -> 5
+
+# Pavimentazione in legno
+17001 - 17450 -> 2
+
+# Parte intermedia dello scafo
+17451 - 17650 -> 3
+
+# Parte più bassa dello scafo
+17651 - 17900 -> 3
+
+# Unknown
+# 17901 - 18699
+
+# Parte superiore dello scafo
+18700 - 20000 -> 4
+
+# Resto del modello
+20001 - 64000 -> 4

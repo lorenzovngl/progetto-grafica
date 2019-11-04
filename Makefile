@@ -2,7 +2,7 @@
 CPP  = g++
 CC   = gcc
 CFLAGS = -c -Wall
-BIN  = ship
+BIN  = ship-game
 
 # Library linking
 OS := $(shell uname)
