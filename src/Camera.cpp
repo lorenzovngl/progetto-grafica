@@ -59,6 +59,7 @@ void Camera::set(Ship ship, float eyeDist, float viewBeta, float viewAlpha) {
             break;
         case CAMERA_PILOT:
             glTranslatef(0.0, 0.0, 0.5);
+
             camd = 0.2;
             camh = 0.40;
             ex = px + camd*sinf;

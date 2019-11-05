@@ -105,7 +105,7 @@ void rendering(SDL_Window *window) {
 
     enviroment->render(ship.px, ship.py, ship.pz); // disegna il mare
 
-    ship.render(); // disegna la barca
+    ship.render();
 
     // attendiamo la fine della rasterizzazione di
     // tutte le primitive mandate

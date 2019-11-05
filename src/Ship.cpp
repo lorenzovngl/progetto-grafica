@@ -16,6 +16,7 @@
 #endif
 
 #include <vector> // la classe vector di SDL
+#include <SDL2/SDL_timer.h>
 
 #include "headers/Mesh.h"
 #include "headers/Ship.h"
@@ -133,8 +134,43 @@ void Ship::DrawHeadlight(float x, float y, float z, int lightN) const {
     glLightf(usedLight, GL_LINEAR_ATTENUATION, 1);
 }
 
+void Ship::enableTilt(){
+    // Meccanismi di oscillazione
+    float ms = (float) SDL_GetTicks()/1000;
+
+    float maxTiltAngle = 3;
+    ms = Utils::floatMod(ms, maxTiltAngle*2);
+    if (ms >= maxTiltAngle){
+        tilt_angle_x = Utils::floatMod(ms, maxTiltAngle) - maxTiltAngle / 2;
+    } else {
+        tilt_angle_x = maxTiltAngle / 2 - Utils::floatMod(ms, maxTiltAngle);
+    }
+    if (tilt_angle_x > 0){
+        tilt_angle_x = log(tilt_angle_x+1);
+    } else if (tilt_angle_x < 0){
+        tilt_angle_x = - log(abs(tilt_angle_x)+1);
+    }
+    glRotatef(tilt_angle_x, 1, 0, 0);
+
+    ms = (float) SDL_GetTicks()/1000;
+
+    maxTiltAngle = 2;
+    ms = Utils::floatMod(ms, maxTiltAngle*2);
+    if (ms >= maxTiltAngle){
+        tilt_angle_z = Utils::floatMod(ms, maxTiltAngle) - maxTiltAngle / 2;
+    } else {
+        tilt_angle_z = maxTiltAngle / 2 - Utils::floatMod(ms, maxTiltAngle);
+    }
+    if (tilt_angle_z > 0){
+        tilt_angle_z = log(tilt_angle_z+1);
+    } else if (tilt_angle_z < 0){
+        tilt_angle_z = - log(abs(tilt_angle_z)+1);
+    }
+    glRotatef(tilt_angle_z, 0, 0, 1);
+}
+
 // disegna a schermo
-void Ship::render() const {
+void Ship::render() {
     // sono nello spazio mondo
 
     Utils::drawAxis(); // disegno assi spazio mondo
@@ -154,30 +190,6 @@ void Ship::render() const {
     glScalef(0.05, 0.05, 0.05); // patch: riscaliamo la mesh di 1/10
     glColor3f(1, 1, 1); // colore bianco
 
-    // Meccanismi di oscillazione
-    /*using namespace std::chrono;
-    milliseconds ms = duration_cast< milliseconds >(
-            system_clock::now().time_since_epoch()
-    );
-
-    int maxTiltAngle = 3;
-    float tiltAngle = 0;
-    long timeUnits = ms.count() / 1000;
-    if ((timeUnits % (maxTiltAngle*2)) >= maxTiltAngle){
-        tiltAngle = (timeUnits % maxTiltAngle) - maxTiltAngle/2;
-    } else {
-        tiltAngle = maxTiltAngle/2 - (timeUnits % maxTiltAngle);
-    }
-    glRotatef(tiltAngle, 1, 0, 0);
-
-    maxTiltAngle = 2;
-    if ((timeUnits % (maxTiltAngle*2)) >= maxTiltAngle){
-        tiltAngle = (timeUnits % maxTiltAngle) - maxTiltAngle/2;
-    } else {
-        tiltAngle = maxTiltAngle/2 - (timeUnits % maxTiltAngle);
-    }
-    glRotatef(tiltAngle, 0, 0, 1);*/
-
     //carlinga.render();
     //carlinga.Texturize();
     //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -190,6 +202,7 @@ void Ship::render() const {
 //		     glEnable(GL_TEXTURE_2D);
 
     glRotatef(-90, 0, 1, 0);
+    enableTilt();
     carlinga.render();
     glColor3f(.4, .4, .4);
 

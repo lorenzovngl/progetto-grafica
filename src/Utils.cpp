@@ -73,3 +73,9 @@ void Utils::drawSphere(double r, int lats, int longs) {
         glEnd();
     }
 }
+
+float Utils::floatMod(float number, float divisor){
+    while (number >= divisor){
+        number -= divisor;
+    }
+}

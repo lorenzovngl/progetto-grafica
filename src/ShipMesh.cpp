@@ -22,6 +22,7 @@
 #include "headers/glm.h"
 #include "headers/Texture.h"
 #include "headers/ShipMesh.h"
+#include "headers/Utils.h"
 
 void ShipMesh::initModel() {
     model_file = (char *) "assets/ship/fishing_ship.obj";
@@ -77,8 +78,10 @@ void setupTexture(GLenum n_texture, Point3 min, Point3 max) {
     glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
     float sz = 1.0 / (max.Z() - min.Z());
     float ty = 1.0 / (max.Y() - min.Y());
-    float s[4] = {0, 0, sz, -min.Z() * sz};
-    float t[4] = {0, ty, 0, -min.Y() * ty};
+    //float s[4] = {0, 0, sz, -min.Z() * sz};
+    //float t[4] = {0, ty, 0, -min.Y() * ty};
+    float s[4] = {0.1, 0, 0, 0};
+    float t[4] = {0, 0, 0.1, 0};
     glTexGenfv(GL_S, GL_OBJECT_PLANE, s);
     glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
 }
