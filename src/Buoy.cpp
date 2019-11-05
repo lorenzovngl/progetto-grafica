@@ -35,7 +35,6 @@ float Buoy::getCoordZ() {
 
 void Buoy::render() {
     glScalef(-0.005, 0.005, -0.005);
-    glColor3f(1, 0, 0);
     glTranslatef(getCoordX(), 0, getCoordZ());
     // Asta della boa
     int base = 2;

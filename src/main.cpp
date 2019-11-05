@@ -103,22 +103,9 @@ void rendering(SDL_Window *window) {
     //drawAxis(); // disegna assi frame OGGETTO
     //drawCubeWire();
 
-    //enviroment->render(); // disegna il suolo
+    enviroment->render(ship.px, ship.py, ship.pz); // disegna il mare
 
     ship.render(); // disegna la barca
-
-    SDL_Surface *texture;
-    SDL_RWops *rwop;
-/*
-    rwop=SDL_RWFromFile("/home/lorenzo/Scrivania/grafica/ProgettoGrafica/assets/ship/bottom_body_dark_red_metal.tga", "rb");
-    texture=IMG_LoadTGA_RW(rwop);
-    if(!texture) {
-        printf("IMG_LoadTGA_RW: %s\n", IMG_GetError());
-    } else {
-        SDL_Surface * screen = SDL_GetWindowSurface(window);
-        SDL_BlitSurface(texture, src_rect, screen, dst_rect);
-        //SDL_UpdateWindowSurface(win);
-    }*/
 
     // attendiamo la fine della rasterizzazione di
     // tutte le primitive mandate
