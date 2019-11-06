@@ -6,6 +6,7 @@
 class Enviroment {
 private:
     Buoy *buoy[10];
+    Texture *m_texture[2];
     void drawNearSea(float, float, float);
     void drawFarSea(float, float, float);
     void drawSky();

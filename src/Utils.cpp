@@ -79,3 +79,13 @@ float Utils::floatMod(float number, float divisor){
         number -= divisor;
     }
 }
+
+void Utils::setCoordToPixel(){
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glTranslatef(-1,-1,0);
+    glScalef(2.0/512, 2.0/512, 1);
+}

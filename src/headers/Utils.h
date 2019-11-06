@@ -6,6 +6,7 @@ public:
     static void drawAxis();
     static void drawSphere(double, int, int);
     static float floatMod(float, float);
+    static void setCoordToPixel();
 };
 
 #endif

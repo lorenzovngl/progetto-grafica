@@ -43,22 +43,18 @@ void ShipMesh::initModel() {
     glActiveTexture(GL_TEXTURE2);
     m_texture[0] = new Texture(TEXTURE_DECK_WOODEN_FLOOR);
     m_texture[0]->loadTexture();
-    glBindTexture(GL_TEXTURE_2D, m_texture[0]->getBind());
 
     glActiveTexture(GL_TEXTURE3);
     m_texture[1] = new Texture(TEXTURE_TOP_BODY_BLACK_METAL);
     m_texture[1]->loadTexture();
-    glBindTexture(GL_TEXTURE_2D, m_texture[1]->getBind());
 
     glActiveTexture(GL_TEXTURE4);
     m_texture[2] = new Texture(TEXTURE_TOP_BODY_WHITE_METAL);
     m_texture[2]->loadTexture();
-    glBindTexture(GL_TEXTURE_2D, m_texture[2]->getBind());
 
     glActiveTexture(GL_TEXTURE5);
     m_texture[3] = new Texture(TEXTURE_BOTTOM_BODY_DARK_RED_METAL);
     m_texture[3]->loadTexture();
-    glBindTexture(GL_TEXTURE_2D, m_texture[3]->getBind());
 }
 
 // funzione che prepara tutto per creare le coordinate texture (s,t) da (x,y,z)

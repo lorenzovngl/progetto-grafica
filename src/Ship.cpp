@@ -40,6 +40,7 @@ void Ship::DoStep() {
     // da vel frame mondo a vel frame macchina
     float cosf = cos(facing * M_PI / 180.0);
     float sinf = sin(facing * M_PI / 180.0);
+
     vxm = +cosf * vx - sinf * vz;
     vym = vy;
     vzm = +sinf * vx + cosf * vz;
@@ -173,14 +174,14 @@ void Ship::enableTilt(){
 void Ship::render() {
     // sono nello spazio mondo
 
-    Utils::drawAxis(); // disegno assi spazio mondo
+    //Utils::drawAxis(); // disegno assi spazio mondo
     glPushMatrix();
 
     glTranslatef(px, py, pz);
     glRotatef(facing, 0, 1, 0);
 
     // sono nello spazio MACCHINA
-    Utils::drawAxis(); // disegno assi spazio macchina
+    //Utils::drawAxis(); // disegno assi spazio macchina
 
 //  DrawHeadlight(-0.3,0,-1, 0); // accendi faro sinistro
 //  DrawHeadlight(+0.3,0,-1, 1); // accendi faro destro
@@ -203,6 +204,9 @@ void Ship::render() {
 
     glRotatef(-90, 0, 1, 0);
     enableTilt();
+    // Controlla l'inclinazione della barca basandosi sull'angolo di virata e sulla velocità
+    glRotatef(-sterzo/3*((abs(vx)+abs(vz))*10), 1, 0, 0);
+
     carlinga.render();
     glColor3f(.4, .4, .4);
 

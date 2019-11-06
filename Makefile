@@ -10,25 +10,25 @@ ifeq ($(OS),Darwin)
 ## caso Mac OS
 $(info Mac OS detected)
 FRMPATH=-F /Library/Frameworks
-LIBS =  -framework OpenGL -framework SDL2 -lm
+LIBS =  -framework OpenGL -framework SDL2 -framework SDL2_ttf -lm
 $(info SDL2 libraries must be in: $(FRMPATH))
 else
 ifeq ($(OS),MINGW32_NT-6.1)
 ## caso Windows MinGW
 $(info Windows MinGW detected)
 FRMPATH = -IC:\MinGW\include
-LIBS = -LC:\MinGW\lib -lmingw32 -lSDL2main -lSDL2 -lopengl32 -lglu32 -lm
+LIBS = -LC:\MinGW\lib -lmingw32 -lSDL2main -lSDL2 -lopengl32 -lglu32 -lSDL2_ttf -lm
 else
 ##caso Linux
 $(info Linux detected)
 #framework presenti solo nel caso MAC OS
 FRMPATH =
-LIBS = -lGL -lGLU -lglut -lSDL2 -lSDL2_image -lm
+LIBS = -lGL -lGLU -lglut -lSDL2 -lSDL2_image -lSDL2_ttf -lm
 endif
 endif
 
-OBJ = out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/main.o out/Mesh.o out/glm.o out/Ship.o out/ShipMesh.o out/Texture.o out/Utils.o 
-LINKOBJ = out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/main.o out/Mesh.o out/glm.o out/Ship.o out/ShipMesh.o out/Texture.o out/Utils.o 
+OBJ = out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/glm.o out/GLText.o out/HUD.o out/main.o out/Mesh.o out/Ship.o out/ShipMesh.o out/Texture.o out/Utils.o 
+LINKOBJ = out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/glm.o out/GLText.o out/HUD.o out/main.o out/Mesh.o out/Ship.o out/ShipMesh.o out/Texture.o out/Utils.o 
 
 RM = rm -f
 
@@ -55,14 +55,20 @@ out/Controller.o: src/Controller.cpp
 out/Enviroment.o: src/Enviroment.cpp
 	$(CPP) -c -Wno-deprecated $(FRMPATH) src/Enviroment.cpp -o out/Enviroment.o
 
+out/glm.o: src/glm.cpp
+	$(CPP) -c -Wno-deprecated $(FRMPATH) src/glm.cpp -o out/glm.o
+
+out/GLText.o: src/GLText.cpp
+	$(CPP) -c -Wno-deprecated $(FRMPATH) src/GLText.cpp -o out/GLText.o
+
+out/HUD.o: src/HUD.cpp
+	$(CPP) -c -Wno-deprecated $(FRMPATH) src/HUD.cpp -o out/HUD.o
+
 out/main.o: src/main.cpp
 	$(CPP) -c -Wno-deprecated $(FRMPATH) src/main.cpp -o out/main.o
 
 out/Mesh.o: src/Mesh.cpp
 	$(CPP) -c -Wno-deprecated $(FRMPATH) src/Mesh.cpp -o out/Mesh.o
-
-out/glm.o: src/glm.cpp
-	$(CPP) -c -Wno-deprecated $(FRMPATH) src/glm.cpp -o out/glm.o
 
 out/Ship.o: src/Ship.cpp
 	$(CPP) -c -Wno-deprecated $(FRMPATH) src/Ship.cpp -o out/Ship.o

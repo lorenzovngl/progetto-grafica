@@ -19,6 +19,7 @@
 #include "headers/Ship.h"
 #include "headers/Enviroment.h"
 #include "headers/Camera.h"
+#include "headers/HUD.h"
 
 float viewAlpha = 20, viewBeta = 40; // angoli che definiscono la vista
 float eyeDist = 3.0; // distanza dell'occhio dall'origine
@@ -34,8 +35,9 @@ float fps = 0; // valore di fps dell'intervallo precedente
 int fpsNow = 0; // quanti fotogrammi ho disegnato fin'ora nell'intervallo attuale
 Uint32 timeLastInterval = 0; // quando e' cominciato l'ultimo intervallo
 
-Enviroment *enviroment = new Enviroment();
-Camera *camera = new Camera();
+Enviroment *enviroment;
+Camera *camera;
+HUD *hud;
 
 // setta le matrici di trasformazione in modo
 // che le coordinate in spazio oggetto siano le coord
@@ -107,6 +109,8 @@ void rendering(SDL_Window *window) {
 
     ship.render();
 
+    //hud->display();
+
     // attendiamo la fine della rasterizzazione di
     // tutte le primitive mandate
 
@@ -166,6 +170,10 @@ int main(int argc, char *argv[]) {
     glFrontFace(GL_CW); // consideriamo Front Facing le facce ClockWise
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+
+    enviroment = new Enviroment();
+    camera = new Camera();
+    hud = new HUD();
 
     bool done = 0;
     while (!done) {

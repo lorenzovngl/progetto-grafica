@@ -9,6 +9,8 @@ add_executable(ProgettoGrafica
         src/headers/Controller.h
         src/headers/Enviroment.h
         src/headers/glm.h
+        src/headers/GLText.h
+        src/headers/HUD.h
         src/headers/Mesh.h
         src/headers/point3.h
         src/headers/Ship.h
@@ -20,6 +22,8 @@ add_executable(ProgettoGrafica
         src/Controller.cpp
         src/Enviroment.cpp
         src/glm.cpp
+        src/GLText.cpp
+        src/HUD.cpp
         src/main.cpp
         src/Mesh.cpp
         src/Ship.cpp
