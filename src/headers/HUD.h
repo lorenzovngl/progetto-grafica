@@ -3,13 +3,15 @@
 
 #include <SDL2/SDL_ttf.h>
 
+#define TEXTURE_TEXT_TIME 20
+
 class HUD {
 private:
     TTF_Font *font;
     int game_time;
 public:
     HUD();
-    void display();
+    void display(SDL_Renderer*);
 };
 
 #endif

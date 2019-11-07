@@ -35,6 +35,7 @@ float fps = 0; // valore di fps dell'intervallo precedente
 int fpsNow = 0; // quanti fotogrammi ho disegnato fin'ora nell'intervallo attuale
 Uint32 timeLastInterval = 0; // quando e' cominciato l'ultimo intervallo
 
+SDL_Renderer *renderer;
 Enviroment *enviroment;
 Camera *camera;
 HUD *hud;
@@ -109,7 +110,7 @@ void rendering(SDL_Window *window) {
 
     ship.render();
 
-    //hud->display();
+    hud->display(renderer);
 
     // attendiamo la fine della rasterizzazione di
     // tutte le primitive mandate
@@ -130,7 +131,6 @@ void redraw(){
 
 int main(int argc, char *argv[]) {
     SDL_Window *window;
-    SDL_Renderer *renderer;
     SDL_GLContext mainContext;
     Uint32 windowID;
     SDL_Joystick *joystick;

@@ -4,6 +4,7 @@
 #include <math.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include "../lib/GCGraLib2/GCGraLib2.h"
 
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
@@ -28,15 +29,15 @@ HUD::HUD() {
         return;
     }
     //inizializzo anche la libreria ttf
-    font = TTF_OpenFont("assets/fonts/neuropol.ttf", 12);
-    // font = TTF_OpenFont ("/Library/Fonts/Arial.ttf", DEFAULT_PTSIZE);
+    font = TTF_OpenFont("assets/fonts/FreeSans.ttf", 20);
 
     if (font == NULL) {
         fprintf(stderr, "Couldn't load font\n");
     }
 }
 
-void HUD::display() {
+void HUD::display(SDL_Renderer *ren) {
+    glPushMatrix();
     glDisable(GL_DEPTH_TEST);
 
     //glClearColor(0,0,0,0);
@@ -46,23 +47,21 @@ void HUD::display() {
 
     glDisable(GL_LIGHTING);
 
-    /*glBegin(GL_QUADS); //creo un quad dove ci scrivero del testo
     glColor3f(1,1,1);
-
-    glVertex2i(0, 0);
-    glVertex2i(200, 0);
-    glVertex2i(200,  200);
-    glVertex2i(0,  200);
-    glEnd();*/
-
-    Utils::setCoordToPixel();
-    GLText *text = new GLText(20, font);
-    glActiveTexture(GL_TEXTURE20);
-    text->setText((char*) "Welcome", 0,0,255);
-    text->setPosition(100,100);
-    text->render();
-    free(text);
+    Utils::setCoordToPixel(); //per avere mapping 1-1 con i pixel schermo
+    char string[56];
+    int millis =  SDL_GetTicks();
+    int sec = millis/1000;
+    int min = sec/60;
+    sprintf(string, "%02d:%02d:%03d", min, sec-min*60, millis-sec*1000-min*60);
+    glRasterPos2f(0, 0);
+    glColor3f(1., 0., 0.);
+    glScalef(5, 2, 5);
+    for (int i = 0; i < strlen(string); i++) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, string[i]);
+    }
 
     glEnable(GL_LIGHTING);
     glEnable(GL_DEPTH_TEST);
+    glPopMatrix();
 }

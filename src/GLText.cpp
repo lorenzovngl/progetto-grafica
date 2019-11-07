@@ -21,8 +21,7 @@ SDL_Surface *intermediary;
 
 	/* Tell GL about our new texture */
 	glBindTexture(GL_TEXTURE_2D, font_id);
-	glTexImage2D(GL_TEXTURE_2D, 0, 4, *w, *h, 0, GL_RGBA,
-		GL_UNSIGNED_BYTE, intermediary->pixels);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, *w, *h, 0, GL_RGBA, GL_UNSIGNED_BYTE, intermediary->pixels);
 }
 
 GLText::GLText(int id, TTF_Font *font)
@@ -49,7 +48,7 @@ void GLText::setPosition(int x, int y)
 
 void GLText::render()
 {
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
