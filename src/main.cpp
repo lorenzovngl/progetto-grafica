@@ -112,7 +112,7 @@ void rendering(SDL_Window *window) {
 
     ship.render();
 
-    hud->display();
+    //hud->display();
 
     // attendiamo la fine della rasterizzazione di
     // tutte le primitive mandate

@@ -1,3 +1,6 @@
+#ifndef PROGETTOGRAFICA_POINT3_H
+#define PROGETTOGRAFICA_POINT3_H
+
 // classe Point3: un punto (o vettore) in 3 dimensioni
 // comprende le operazioni fra punti
 
@@ -100,3 +103,5 @@ typedef Point3 Vector3;
 inline void glTranslate(Vector3 v){
   glTranslatef(v.X(), v.Y(), v.Z() );
 }
+
+#endif

@@ -64,7 +64,7 @@ public:
     Mesh(char *filename) {
         LoadFromObj(filename);
         ComputeNormalsPerFace();
-        ComputeBoundingBox();
+        //ComputeBoundingBox();
     }
 
     // metodi
@@ -73,13 +73,15 @@ public:
     bool LoadFromObj(char *filename); //  carica la mesh da un file obj
     void ComputeNormalsPerFace();
     void ComputeNormalsPerVertex();
-    void ComputeBoundingBox();
+    void ComputeBoundingBox(float, float, float, float);
+    void displayBoundingBox();
     void lists();
 
     // centro del axis aligned bounding box
     Point3 Center() { return (bbmin + bbmax) / 2.0; };
 
-    Point3 bbmin, bbmax; // bounding box
+    Point3 bbmin, bbmax; // bounding box (coordinate locali)
+    Point3 *w_bbmin, *w_bbmax; // bounding box (coordinate globali)
 };
 
 #endif

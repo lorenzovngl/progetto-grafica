@@ -21,6 +21,7 @@
 #include "headers/glm.h"
 #include "headers/Texture.h"
 #include "headers/Mesh.h"
+#include "headers/Utils.h"
 
 void Mesh::ComputeNormalsPerFace() {
     for (int i = 0; i < f.size(); i++) {
@@ -108,6 +109,8 @@ void Mesh::render() {
         (f[i].v[2])->p.SendAsVertex();
     }
     glEnd();
+    displayBoundingBox();
+
 }
 
 unsigned char* ppmRead(char* filename, int* width, int* height) {
@@ -186,7 +189,7 @@ void Mesh::Texturize() {
     glDisable(GL_TEXTURE_2D);
 }
 
-void Mesh::ComputeBoundingBox() {
+void Mesh::ComputeBoundingBox(float px, float py, float pz, float facing) {
     if (!v.size()) return;
     bbmin = bbmax = v[0].p;
     for (int i = 0; i < v.size(); i++) {
@@ -195,6 +198,64 @@ void Mesh::ComputeBoundingBox() {
             if (bbmax.coord[k] < v[i].p.coord[k]) bbmax.coord[k] = v[i].p.coord[k];
         }
     }
+
+    // Coordinate globali
+    w_bbmin = new Point3(px, py, pz);
+    *w_bbmin = Utils::localToWorldCoords(bbmin, *w_bbmin, facing);
+    w_bbmax = new Point3(px, py, pz);
+    *w_bbmax = Utils::localToWorldCoords(bbmax, *w_bbmax, facing);
+    //printf("Local: %f. World: %f\n", carlinga.bbmin.Z(), point3->Z());
+}
+
+void Mesh::displayBoundingBox(){
+    glColor3f(1, 0, 0);
+    glBegin(GL_LINES);
+
+    // Quadrante Z-MIN
+
+    glVertex3f(bbmin.X(), bbmin.Y(), bbmin.Z());
+    glVertex3f(bbmin.X(), bbmax.Y(), bbmin.Z());
+
+    glVertex3f(bbmin.X(), bbmin.Y(), bbmin.Z());
+    glVertex3f(bbmax.X(), bbmin.Y(), bbmin.Z());
+
+    glVertex3f(bbmax.X(), bbmin.Y(), bbmin.Z());
+    glVertex3f(bbmax.X(), bbmax.Y(), bbmin.Z());
+
+    glVertex3f(bbmax.X(), bbmax.Y(), bbmin.Z());
+    glVertex3f(bbmin.X(), bbmax.Y(), bbmin.Z());
+
+    // Quadrante Z-MAX
+
+    glVertex3f(bbmin.X(), bbmin.Y(), bbmax.Z());
+    glVertex3f(bbmin.X(), bbmax.Y(), bbmax.Z());
+
+    glVertex3f(bbmin.X(), bbmin.Y(), bbmax.Z());
+    glVertex3f(bbmax.X(), bbmin.Y(), bbmax.Z());
+
+    glVertex3f(bbmax.X(), bbmin.Y(), bbmax.Z());
+    glVertex3f(bbmax.X(), bbmax.Y(), bbmax.Z());
+
+    glVertex3f(bbmax.X(), bbmax.Y(), bbmax.Z());
+    glVertex3f(bbmin.X(), bbmax.Y(), bbmax.Z());
+
+    // Quadrante X-MIN
+
+    glVertex3f(bbmax.X(), bbmin.Y(), bbmin.Z());
+    glVertex3f(bbmax.X(), bbmin.Y(), bbmax.Z());
+
+    glVertex3f(bbmax.X(), bbmax.Y(), bbmin.Z());
+    glVertex3f(bbmax.X(), bbmax.Y(), bbmax.Z());
+
+    // Quadrante X-MAX
+
+    glVertex3f(bbmin.X(), bbmin.Y(), bbmin.Z());
+    glVertex3f(bbmin.X(), bbmin.Y(), bbmax.Z());
+
+    glVertex3f(bbmin.X(), bbmax.Y(), bbmin.Z());
+    glVertex3f(bbmin.X(), bbmax.Y(), bbmax.Z());
+
+    glEnd();
 }
 
 bool Mesh::LoadFromObj(char *filename) {
