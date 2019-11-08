@@ -2,16 +2,18 @@
 #define PROGETTOGRAFICA_HUD_H
 
 #include <SDL2/SDL_ttf.h>
+#include "Game.h"
 
 #define TEXTURE_TEXT_TIME 20
 
 class HUD {
 private:
     TTF_Font *font;
-    int game_time;
+    Game *game;
 public:
-    HUD();
-    void display(SDL_Renderer*);
+    HUD(Game*);
+    void displayTime();
+    void display();
 };
 
 #endif

@@ -21,8 +21,10 @@
 #include "headers/HUD.h"
 #include "headers/GLText.h"
 #include "headers/Utils.h"
+#include "headers/Texture.h"
 
-HUD::HUD() {
+HUD::HUD(Game *p_game) {
+    game = p_game;
     if (TTF_Init() < 0) {
         fprintf(stderr, "Couldn't initialize TTF: %s\n", SDL_GetError());
         SDL_Quit();
@@ -36,7 +38,7 @@ HUD::HUD() {
     }
 }
 
-void HUD::display(SDL_Renderer *ren) {
+void HUD::displayTime() {
     glPushMatrix();
     glDisable(GL_DEPTH_TEST);
 
@@ -50,7 +52,7 @@ void HUD::display(SDL_Renderer *ren) {
     glColor3f(1,1,1);
     Utils::setCoordToPixel(); //per avere mapping 1-1 con i pixel schermo
     char string[56];
-    int millis =  SDL_GetTicks();
+    int millis = SDL_GetTicks();
     int sec = millis/1000;
     int min = sec/60;
     sprintf(string, "%02d:%02d:%03d", min, sec-min*60, millis-sec*1000-min*60);
@@ -64,4 +66,37 @@ void HUD::display(SDL_Renderer *ren) {
     glEnable(GL_LIGHTING);
     glEnable(GL_DEPTH_TEST);
     glPopMatrix();
+}
+
+void HUD::display(){
+    char string[56];
+
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_LIGHTING);
+
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+
+    Utils::setCoordToPixel();
+    glActiveTexture(GL_TEXTURE0);
+    GLText *text = new GLText(TEXTURE_TEXT_TIME,font);
+    int millis = game->getGameTime();
+    int sec = millis/1000;
+    int min = sec/60;
+    sprintf(string, "%02d:%02d:%03d", min, sec-min*60, millis-sec*1000-min*60);
+    text->setText(string, 255,255,255);
+    text->setPosition(50,50); //12 è Pixel dimension per il font
+    text->render();
+
+    Utils::setCoordToPixel();
+    glActiveTexture(GL_TEXTURE0);
+    text = new GLText(TEXTURE_TEXT_TIME,font);
+    sprintf(string, "%d/%d", game->getScore(), game->getScoreLimit());
+    text->setText(string, 255,255,255);
+    text->setPosition(250,50); //12 è Pixel dimension per il font
+    text->render();
+
+    glPopMatrix();
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
 }

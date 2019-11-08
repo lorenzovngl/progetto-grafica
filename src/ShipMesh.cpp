@@ -72,8 +72,8 @@ void setupTexture(GLenum n_texture, Point3 min, Point3 max) {
     // in modo che la texture sia "attaccata" all'oggetto, e non "proiettata" su esso
     glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
     glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-    float sz = 1.0 / (max.Z() - min.Z());
-    float ty = 1.0 / (max.Y() - min.Y());
+    //float sz = 1.0 / (max.Z() - min.Z());
+    //float ty = 1.0 / (max.Y() - min.Y());
     //float s[4] = {0, 0, sz, -min.Z() * sz};
     //float t[4] = {0, ty, 0, -min.Y() * ty};
     float s[4] = {0.1, 0, 0, 0};

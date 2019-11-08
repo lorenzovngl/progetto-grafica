@@ -16,6 +16,7 @@ public:
     Texture(int);
     bool loadTexture();
     int getBind();
+    static void printActiveTexture();
 };
 
 

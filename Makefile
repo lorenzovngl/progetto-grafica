@@ -27,8 +27,8 @@ LIBS = -lGL -lGLU -lglut -lSDL2 -lSDL2_image -lSDL2_ttf -lm
 endif
 endif
 
-OBJ = out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/glm.o out/GLText.o out/HUD.o out/main.o out/Mesh.o out/Ship.o out/ShipMesh.o out/Texture.o out/Utils.o 
-LINKOBJ = out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/glm.o out/GLText.o out/HUD.o out/main.o out/Mesh.o out/Ship.o out/ShipMesh.o out/Texture.o out/Utils.o 
+OBJ = out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/Game.o out/glm.o out/GLText.o out/HUD.o out/main.o out/Mesh.o out/Ship.o out/ShipMesh.o out/Texture.o out/Utils.o 
+LINKOBJ = out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/Game.o out/glm.o out/GLText.o out/HUD.o out/main.o out/Mesh.o out/Ship.o out/ShipMesh.o out/Texture.o out/Utils.o 
 
 RM = rm -f
 
@@ -54,6 +54,9 @@ out/Controller.o: src/Controller.cpp
 
 out/Enviroment.o: src/Enviroment.cpp
 	$(CPP) -c -Wno-deprecated $(FRMPATH) src/Enviroment.cpp -o out/Enviroment.o
+
+out/Game.o: src/Game.cpp
+	$(CPP) -c -Wno-deprecated $(FRMPATH) src/Game.cpp -o out/Game.o
 
 out/glm.o: src/glm.cpp
 	$(CPP) -c -Wno-deprecated $(FRMPATH) src/glm.cpp -o out/glm.o

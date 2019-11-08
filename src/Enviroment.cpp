@@ -41,7 +41,7 @@ void Enviroment::drawFarSea(float ship_x, float ship_y, float ship_z) {
     const int K = 100; //disegna K x K quads
     float scale_factor = 0.05;
 
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE6);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_TEXTURE_GEN_S);
     glEnable(GL_TEXTURE_GEN_T);
@@ -136,7 +136,7 @@ void Enviroment::drawNearSea(float ship_x, float ship_y, float ship_z) {
     //glTranslatef(ship_x, ship_y, ship_z);
     glScalef(scale_factor, scale_factor, scale_factor);         // Cambio la scala per disegnare il mare
 
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE6);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_TEXTURE_GEN_S);
     glEnable(GL_TEXTURE_GEN_T);

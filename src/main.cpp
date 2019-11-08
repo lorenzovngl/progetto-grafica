@@ -20,6 +20,7 @@
 #include "headers/Enviroment.h"
 #include "headers/Camera.h"
 #include "headers/HUD.h"
+#include "headers/Game.h"
 
 float viewAlpha = 20, viewBeta = 40; // angoli che definiscono la vista
 float eyeDist = 3.0; // distanza dell'occhio dall'origine
@@ -39,6 +40,7 @@ SDL_Renderer *renderer;
 Enviroment *enviroment;
 Camera *camera;
 HUD *hud;
+Game *game;
 
 // setta le matrici di trasformazione in modo
 // che le coordinate in spazio oggetto siano le coord
@@ -110,7 +112,7 @@ void rendering(SDL_Window *window) {
 
     ship.render();
 
-    hud->display(renderer);
+    hud->display();
 
     // attendiamo la fine della rasterizzazione di
     // tutte le primitive mandate
@@ -171,9 +173,10 @@ int main(int argc, char *argv[]) {
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
+    game = new Game();
     enviroment = new Enviroment();
     camera = new Camera();
-    hud = new HUD();
+    hud = new HUD(game);
 
     bool done = 0;
     while (!done) {

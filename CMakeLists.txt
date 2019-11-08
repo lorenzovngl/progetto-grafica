@@ -8,6 +8,7 @@ add_executable(ProgettoGrafica
         src/headers/Camera.h
         src/headers/Controller.h
         src/headers/Enviroment.h
+        src/headers/Game.h
         src/headers/glm.h
         src/headers/GLText.h
         src/headers/HUD.h
@@ -21,6 +22,7 @@ add_executable(ProgettoGrafica
         src/Camera.cpp
         src/Controller.cpp
         src/Enviroment.cpp
+        src/Game.cpp
         src/glm.cpp
         src/GLText.cpp
         src/HUD.cpp

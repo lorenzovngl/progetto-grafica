@@ -1,4 +1,5 @@
 #include "headers/GLText.h"
+#include "headers/Texture.h"
 
 void preRenderText(int font_id, TTF_Font* font, char* text,int foreground_r,int foreground_g,int foreground_b,int *w,int *h)
 {
@@ -73,8 +74,8 @@ void GLText::render()
 	
 	/* Clean up */
 	glDisable(GL_TEXTURE_2D);
+    glEnable(GL_LIGHTING);
 	glDisable(GL_BLEND);
-	glEnable(GL_LIGHTING);
 }
 
 GLText::~GLText()

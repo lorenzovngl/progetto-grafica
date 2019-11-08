@@ -91,3 +91,16 @@ bool Texture::loadTexture(){
 int Texture::getBind() {
     return m_textbind;
 }
+
+void Texture::printActiveTexture(){
+    GLint units[7] = {GL_TEXTURE0, GL_TEXTURE1, GL_TEXTURE2, GL_TEXTURE3, GL_TEXTURE4, GL_TEXTURE5, GL_TEXTURE6};
+    char *str_units[7] = {(char*) "GL_TEXTURE0", (char*) "GL_TEXTURE1", (char*) "GL_TEXTURE2", (char*) "GL_TEXTURE3",
+                          (char*) "GL_TEXTURE4", (char*) "GL_TEXTURE5", (char*) "GL_TEXTURE6"};
+    GLint param;
+    glGetIntegerv(GL_ACTIVE_TEXTURE, &param);
+    int i = 0;
+    while (param != units[i]){
+        i++;
+    }
+    printf("Active texture: %s\n", (char*) str_units[i]);
+}
