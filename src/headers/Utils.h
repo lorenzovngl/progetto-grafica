@@ -11,7 +11,6 @@ public:
     static void setCoordToPixel();
     // Converte le coordinate locali in quelle del mondo per il collision detection
     static Point3 localToWorldCoords(Point3 localCoords, Point3 center, float angle);
-    static bool isCollision(Point3 a_min, Point3 a_max, Point3 b_min, Point3 b_max);
 };
 
 #endif

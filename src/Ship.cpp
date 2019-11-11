@@ -26,6 +26,10 @@
 // var globale di tipo meshF
 ShipMesh carlinga((char *) "assets/ship/fishing_ship.obj"); // chiama il costruttore
 
+ShipMesh* Ship::getMesh(){
+    return &carlinga;
+}
+
 // DoStep: facciamo un passo di fisica (a delta-t costante)
 //
 // Indipendente dal rendering.
@@ -179,6 +183,8 @@ void Ship::render() {
 
     glTranslatef(px, py, pz);
     glRotatef(facing, 0, 1, 0);
+
+    Utils::drawAxis();
 
     // sono nello spazio MACCHINA
     //Utils::drawAxis(); // disegno assi spazio macchina

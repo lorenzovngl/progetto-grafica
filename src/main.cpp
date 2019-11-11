@@ -21,6 +21,7 @@
 #include "headers/Camera.h"
 #include "headers/HUD.h"
 #include "headers/Game.h"
+#include "headers/Utils.h"
 
 float viewAlpha = 20, viewBeta = 40; // angoli che definiscono la vista
 float eyeDist = 3.0; // distanza dell'occhio dall'origine
@@ -98,14 +99,13 @@ void rendering(SDL_Window *window) {
     camera->set(ship, eyeDist, viewBeta, viewAlpha);
 
 
-    //drawAxis(); // disegna assi frame MONDO
     static float tmpcol[4] = {1, 1, 1, 1};
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, tmpcol);
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 127);
 
     // settiamo matrice di modellazione
 
-    //drawAxis(); // disegna assi frame OGGETTO
+    Utils::drawAxis(); // disegna assi frame OGGETTO
     //drawCubeWire();
 
     enviroment->render(ship.px, ship.py, ship.pz); // disegna il mare
@@ -173,8 +173,8 @@ int main(int argc, char *argv[]) {
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
-    game = new Game();
     enviroment = new Enviroment();
+    game = new Game(&ship, enviroment);
     camera = new Camera();
     hud = new HUD(game);
 
@@ -306,6 +306,7 @@ int main(int argc, char *argv[]) {
             // al tempo reale...
             while (nstep * PHYS_SAMPLING_STEP < timeNow) {
                 ship.DoStep();
+                game->detectCollision();
                 nstep++;
                 doneSomething = true;
                 timeNow = SDL_GetTicks();

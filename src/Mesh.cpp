@@ -110,7 +110,6 @@ void Mesh::render() {
     }
     glEnd();
     displayBoundingBox();
-
 }
 
 unsigned char* ppmRead(char* filename, int* width, int* height) {
@@ -204,7 +203,12 @@ void Mesh::ComputeBoundingBox(float px, float py, float pz, float facing) {
     *w_bbmin = Utils::localToWorldCoords(bbmin, *w_bbmin, facing);
     w_bbmax = new Point3(px, py, pz);
     *w_bbmax = Utils::localToWorldCoords(bbmax, *w_bbmax, facing);
-    //printf("Local: %f. World: %f\n", carlinga.bbmin.Z(), point3->Z());
+
+    //displayWorldBoundingBox();
+
+    /*printf("Local: %f %f %f, World: %f %f %f\n",
+           bbmin.X(), bbmin.Y(), bbmin.Z(),
+           w_bbmin->X(), w_bbmin->Y(), w_bbmin->Z());*/
 }
 
 void Mesh::displayBoundingBox(){
@@ -256,6 +260,58 @@ void Mesh::displayBoundingBox(){
     glVertex3f(bbmin.X(), bbmax.Y(), bbmax.Z());
 
     glEnd();
+}
+
+void Mesh::displayWorldBoundingBox(){
+    glColor3f(1, 0, 0);
+    glBegin(GL_LINES);
+
+    // Quadrante Z-MIN
+
+    glVertex3f(w_bbmin->X(), w_bbmin->Y(), w_bbmin->Z());
+    glVertex3f(w_bbmin->X(), w_bbmax->Y(), w_bbmin->Z());
+
+    glVertex3f(w_bbmin->X(), w_bbmin->Y(), w_bbmin->Z());
+    glVertex3f(w_bbmax->X(), w_bbmin->Y(), w_bbmin->Z());
+
+    glVertex3f(w_bbmax->X(), w_bbmin->Y(), w_bbmin->Z());
+    glVertex3f(w_bbmax->X(), w_bbmax->Y(), w_bbmin->Z());
+
+    glVertex3f(w_bbmax->X(), w_bbmax->Y(), w_bbmin->Z());
+    glVertex3f(w_bbmin->X(), w_bbmax->Y(), w_bbmin->Z());
+
+    // Quadrante Z-MAX
+
+    glVertex3f(w_bbmin->X(), w_bbmin->Y(), w_bbmax->Z());
+    glVertex3f(w_bbmin->X(), w_bbmax->Y(), w_bbmax->Z());
+
+    glVertex3f(w_bbmin->X(), w_bbmin->Y(), w_bbmax->Z());
+    glVertex3f(w_bbmax->X(), w_bbmin->Y(), w_bbmax->Z());
+
+    glVertex3f(w_bbmax->X(), w_bbmin->Y(), w_bbmax->Z());
+    glVertex3f(w_bbmax->X(), w_bbmax->Y(), w_bbmax->Z());
+
+    glVertex3f(w_bbmax->X(), w_bbmax->Y(), w_bbmax->Z());
+    glVertex3f(w_bbmin->X(), w_bbmax->Y(), w_bbmax->Z());
+
+    // Quadrante X-MIN
+
+    glVertex3f(w_bbmax->X(), w_bbmin->Y(), w_bbmin->Z());
+    glVertex3f(w_bbmax->X(), w_bbmin->Y(), w_bbmax->Z());
+
+    glVertex3f(w_bbmax->X(), w_bbmax->Y(), w_bbmin->Z());
+    glVertex3f(w_bbmax->X(), w_bbmax->Y(), w_bbmax->Z());
+
+    // Quadrante X-MAX
+
+    glVertex3f(w_bbmin->X(), w_bbmin->Y(), w_bbmin->Z());
+    glVertex3f(w_bbmin->X(), w_bbmin->Y(), w_bbmax->Z());
+
+    glVertex3f(w_bbmin->X(), w_bbmax->Y(), w_bbmin->Z());
+    glVertex3f(w_bbmin->X(), w_bbmax->Y(), w_bbmax->Z());
+
+    glEnd();
+    glPopMatrix();
 }
 
 bool Mesh::LoadFromObj(char *filename) {

@@ -2,6 +2,7 @@
 #define PROGETTOGRAFICA_SHIP_H
 
 #include "Controller.h"
+#include "ShipMesh.h"
 
 class Ship {
 private:
@@ -12,6 +13,7 @@ public:
     void Init(); // inizializza variabili
     void render(); // disegna a schermo
     void DoStep(); // computa un passo del motore fisico
+    ShipMesh* getMesh();
     Ship() { Init(); } // costruttore
 
     Controller controller;

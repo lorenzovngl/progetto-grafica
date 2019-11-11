@@ -2,18 +2,22 @@
 #define PROGETTOGRAFICA_GAME_H
 
 #include "Ship.h"
+#include "Buoy.h"
+#include "Enviroment.h"
 
 class Game {
 private:
     int game_start_time;
     int score;
     int score_limit;
-    Ship ship;
+    Ship *ship;
+    Enviroment *enviroment;
 public:
-    Game();
+    Game(Ship*, Enviroment*);
     int getGameTime();
     int getScore();
     int getScoreLimit();
+    void detectCollision();
 };
 
 #endif

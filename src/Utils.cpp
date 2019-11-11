@@ -93,14 +93,11 @@ void Utils::setCoordToPixel(){
 Point3 Utils::localToWorldCoords(Point3 localCoords, Point3 center, float angle) {
     Point3 *worldCoords = new Point3();
     // Gestita solo rotazione rispetto all'asse X
-    worldCoords->coord[0] = localCoords.X()*cos(angle) - localCoords.Y()*sin(angle);
-    worldCoords->coord[2] = localCoords.Z()*sin(angle) + localCoords.Z()*cos(angle);
+    //worldCoords->coord[0] = localCoords.X()*cos(angle) - localCoords.Z()*sin(angle);
+    //worldCoords->coord[2] = localCoords.X()*sin(angle) + localCoords.Z()*cos(angle);
     *worldCoords = localCoords + center;
+    /*printf("Local: (%.2f, %.2f), world: (%.2f, %.2f)\n",
+           localCoords.X(), localCoords.Z(),
+           worldCoords->X(), worldCoords->Z());*/
     return *worldCoords;
-}
-
-bool Utils::isCollision(Point3 a_min, Point3 a_max, Point3 b_min, Point3 b_max) {
-   return (a_min.X() <= b_max.X() && a_max.X() >= b_min.X()) &&
-            (a_min.Y() <= b_max.Y() && a_max.Y() >= b_min.Y()) &&
-            (a_min.Z() <= b_max.Z() && a_max.Z() >= b_min.Z());
 }

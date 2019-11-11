@@ -75,6 +75,7 @@ public:
     void ComputeNormalsPerVertex();
     void ComputeBoundingBox(float, float, float, float);
     void displayBoundingBox();
+    void displayWorldBoundingBox();
     void lists();
 
     // centro del axis aligned bounding box

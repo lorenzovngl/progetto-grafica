@@ -26,6 +26,7 @@ Enviroment::Enviroment() {
     srand(time(NULL));
     for (int i = 0; i < 10; i++) {
         buoy[i] = new Buoy(rand() % 20000 - 10000, rand() % 20000 - 10000);
+        isActiveBuoy[i] = true;
     }
     glActiveTexture(GL_TEXTURE0);
     m_texture[0] = new Texture(TEXTURE_SEA);
@@ -33,6 +34,14 @@ Enviroment::Enviroment() {
     glActiveTexture(GL_TEXTURE1);
     m_texture[1] = new Texture(TEXTURE_SKY);
     m_texture[1]->loadTexture();
+}
+
+Buoy* Enviroment::getBuoy(int i) {
+    return buoy[i];
+}
+
+void Enviroment::disableBuoy(int i){
+    isActiveBuoy[i] = false;
 }
 
 void Enviroment::drawFarSea(float ship_x, float ship_y, float ship_z) {
@@ -219,7 +228,7 @@ void Enviroment::render(float ship_x, float ship_y, float ship_z) {
     drawNearSea(ship_x, ship_y, ship_z);
     drawFarSea(ship_x, ship_y, ship_z);
     drawSky();
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 1; i++) {
         glPushMatrix();
         buoy[i]->render();
         glPopMatrix();

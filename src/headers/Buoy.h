@@ -10,6 +10,7 @@ private:
     float m_coord_z;
 public:
     Buoy(float, float);
+    Mesh* getMesh();
     float getCoordX();
     float getCoordZ();
     void render();

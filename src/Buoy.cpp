@@ -25,6 +25,10 @@ Buoy::Buoy(float x, float z){
     m_coord_z = z;
 }
 
+Mesh* Buoy::getMesh(){
+    return m_mesh;
+}
+
 float Buoy::getCoordX() {
     return m_coord_x;
 }
@@ -34,7 +38,8 @@ float Buoy::getCoordZ() {
 }
 
 void Buoy::render() {
-    glScalef(-0.005, 0.005, -0.005);
+    float scaleFactor[3] = {0.005, 0.005, 0.005};
+    glScalef(scaleFactor[0], scaleFactor[1], scaleFactor[2]);
     glTranslatef(getCoordX(), 0, getCoordZ());
     // Asta della boa
     int base = 2;
@@ -77,4 +82,5 @@ void Buoy::render() {
 
     // Boa
     m_mesh->render();
+    m_mesh->ComputeBoundingBox(getCoordX()*scaleFactor[0], 0, getCoordZ()*scaleFactor[2], 0);
 }
