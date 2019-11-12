@@ -20,31 +20,40 @@
 
 void Utils::drawAxis(){
     const float K=0.10;
-    glColor3f(0,0,1);
+    glDisable(GL_LIGHTING);
     glBegin(GL_LINES);
+
+    glColor3f(0,0,1);   // Asse X
     glVertex3f( -1,0,0 );
     glVertex3f( +1,0,0 );
 
+    glColor3f(1,0,0);   // Asse Y
     glVertex3f( 0,-1,0 );
     glVertex3f( 0,+1,0 );
 
+    glColor3f(0,1,0);   // Asse Z
     glVertex3f( 0,0,-1 );
     glVertex3f( 0,0,+1 );
     glEnd();
 
     glBegin(GL_TRIANGLES);
-    glVertex3f( 0,+1  ,0 );
-    glVertex3f( K,+1-K,0 );
-    glVertex3f(-K,+1-K,0 );
 
+    glColor3f(0,0,1);   // Asse X
     glVertex3f( +1,   0, 0 );
     glVertex3f( +1-K,+K, 0 );
     glVertex3f( +1-K,-K, 0 );
 
+    glColor3f(1,0,0);   // Asse Y
+    glVertex3f( 0,+1  ,0 );
+    glVertex3f( K,+1-K,0 );
+    glVertex3f(-K,+1-K,0 );
+
+    glColor3f(0,1,0);   // Asse Z
     glVertex3f( 0, 0,+1 );
     glVertex3f( 0,+K,+1-K );
     glVertex3f( 0,-K,+1-K );
     glEnd();
+    glEnable(GL_LIGHTING);
 }
 
 void Utils::drawSphere(double r, int lats, int longs) {
@@ -90,12 +99,13 @@ void Utils::setCoordToPixel(){
     glScalef(2.0/512, 2.0/512, 1);
 }
 
-Point3 Utils::localToWorldCoords(Point3 localCoords, Point3 center, float angle) {
+Point3 Utils::localToWorldCoords(Point3 localCoords, Point3 center, float scale_factor, float angle) {
     Point3 *worldCoords = new Point3();
     // Gestita solo rotazione rispetto all'asse X
-    //worldCoords->coord[0] = localCoords.X()*cos(angle) - localCoords.Z()*sin(angle);
-    //worldCoords->coord[2] = localCoords.X()*sin(angle) + localCoords.Z()*cos(angle);
-    *worldCoords = localCoords + center;
+    worldCoords->coord[0] = localCoords.X()*cos(angle) - localCoords.Z()*sin(angle);
+    worldCoords->coord[1] = localCoords.Y();
+    worldCoords->coord[2] = localCoords.X()*sin(angle) + localCoords.Z()*cos(angle);
+    *worldCoords = *worldCoords * scale_factor + center;
     /*printf("Local: (%.2f, %.2f), world: (%.2f, %.2f)\n",
            localCoords.X(), localCoords.Z(),
            worldCoords->X(), worldCoords->Z());*/

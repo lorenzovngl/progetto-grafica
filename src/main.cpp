@@ -112,6 +112,8 @@ void rendering(SDL_Window *window) {
 
     ship.render();
 
+    game->detectCollision();
+
     //hud->display();
 
     // attendiamo la fine della rasterizzazione di
@@ -306,7 +308,6 @@ int main(int argc, char *argv[]) {
             // al tempo reale...
             while (nstep * PHYS_SAMPLING_STEP < timeNow) {
                 ship.DoStep();
-                game->detectCollision();
                 nstep++;
                 doneSomething = true;
                 timeNow = SDL_GetTicks();

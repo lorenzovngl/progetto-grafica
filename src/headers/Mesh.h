@@ -73,9 +73,9 @@ public:
     bool LoadFromObj(char *filename); //  carica la mesh da un file obj
     void ComputeNormalsPerFace();
     void ComputeNormalsPerVertex();
-    void ComputeBoundingBox(float, float, float, float);
+    void ComputeBoundingBox(float, float, float, float, float);
     void displayBoundingBox();
-    void displayWorldBoundingBox();
+    static void displayWorldBoundingBox(Point3*, Point3*);
     void lists();
 
     // centro del axis aligned bounding box

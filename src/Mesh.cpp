@@ -109,7 +109,7 @@ void Mesh::render() {
         (f[i].v[2])->p.SendAsVertex();
     }
     glEnd();
-    displayBoundingBox();
+    //displayBoundingBox();
 }
 
 unsigned char* ppmRead(char* filename, int* width, int* height) {
@@ -188,7 +188,7 @@ void Mesh::Texturize() {
     glDisable(GL_TEXTURE_2D);
 }
 
-void Mesh::ComputeBoundingBox(float px, float py, float pz, float facing) {
+void Mesh::ComputeBoundingBox(float px, float py, float pz, float scale_factor, float angle) {
     if (!v.size()) return;
     bbmin = bbmax = v[0].p;
     for (int i = 0; i < v.size(); i++) {
@@ -200,11 +200,9 @@ void Mesh::ComputeBoundingBox(float px, float py, float pz, float facing) {
 
     // Coordinate globali
     w_bbmin = new Point3(px, py, pz);
-    *w_bbmin = Utils::localToWorldCoords(bbmin, *w_bbmin, facing);
+    *w_bbmin = Utils::localToWorldCoords(bbmin, *w_bbmin, scale_factor, angle);
     w_bbmax = new Point3(px, py, pz);
-    *w_bbmax = Utils::localToWorldCoords(bbmax, *w_bbmax, facing);
-
-    //displayWorldBoundingBox();
+    *w_bbmax = Utils::localToWorldCoords(bbmax, *w_bbmax, scale_factor, angle);
 
     /*printf("Local: %f %f %f, World: %f %f %f\n",
            bbmin.X(), bbmin.Y(), bbmin.Z(),
@@ -262,7 +260,8 @@ void Mesh::displayBoundingBox(){
     glEnd();
 }
 
-void Mesh::displayWorldBoundingBox(){
+void Mesh::displayWorldBoundingBox(Point3 *w_bbmin, Point3 *w_bbmax){
+    glPushMatrix();
     glColor3f(1, 0, 0);
     glBegin(GL_LINES);
 

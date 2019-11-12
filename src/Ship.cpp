@@ -214,7 +214,7 @@ void Ship::render() {
     glRotatef(-sterzo/3*((abs(vx)+abs(vz))*10), 1, 0, 0);
 
     carlinga.render();
-    carlinga.ComputeBoundingBox(px, py, pz, facing);
+    carlinga.ComputeBoundingBox(px, py, pz, 0.05, -90 + facing);
     glColor3f(.4, .4, .4);
 
     glPopMatrix();

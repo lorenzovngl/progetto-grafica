@@ -37,15 +37,24 @@ public:
     return 
       sqrt(coord[0]*coord[0] + coord[1]*coord[1] + coord[2]*coord[2]);
   }
-  
-  // operatore "/" binario: divisione per uno scalare (un float)
-  Point3 operator / (float f)const{
-    return Point3( 
-      coord[0]/f,   
-      coord[1]/f,   
-      coord[2]/f   
-    );
-  }
+
+    // operatore "*" binario: divisione per uno scalare (un float)
+    Point3 operator / (float f)const{
+        return Point3(
+                coord[0]/f,
+                coord[1]/f,
+                coord[2]/f
+        );
+    }
+
+    // operatore "/" binario: divisione per uno scalare (un float)
+    Point3 operator * (float f)const{
+        return Point3(
+                coord[0]*f,
+                coord[1]*f,
+                coord[2]*f
+        );
+    }
   
   // operatore "-" unario: inversione del verso del vettore
   Point3 operator - ()const{
