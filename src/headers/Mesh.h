@@ -5,6 +5,7 @@
 #include "point3.h"
 #include "Texture.h"
 #include "glm.h"
+#include "BoundingBox.h"
 
 class Vertex {
 public:
@@ -82,7 +83,7 @@ public:
     Point3 Center() { return (bbmin + bbmax) / 2.0; };
 
     Point3 bbmin, bbmax; // bounding box (coordinate locali)
-    Point3 *w_bbmin, *w_bbmax; // bounding box (coordinate globali)
+    BoundingBox *w_bounding_box; // bounding box (coordinate globali)
 };
 
 #endif

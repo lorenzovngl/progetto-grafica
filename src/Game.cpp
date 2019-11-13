@@ -50,22 +50,13 @@ void Game::detectCollision(){
     Mesh* buoyMesh;
     for (int i = 0; i < 1; i++){
         buoyMesh = enviroment->getBuoy(i)->getMesh();
-        /*printf("Ship: %f %f, Buoy: %f %f\n",
-               shipMesh->w_bbmin->X(), shipMesh->w_bbmin->Z(),
-               buoyMesh->w_bbmin->X(), buoyMesh->w_bbmin->Z());*/
-        /*printf("Ship: %f %f, Buoy: %f %f\n",
-              shipMesh->bbmin.X(), shipMesh->bbmin.Z(),
-              buoyMesh->bbmin.X(), buoyMesh->bbmin.Z());*/
-        /*printf("Ship: %f %f, Buoy: %f %f\n",
-               ship->px, ship->pz,
-               enviroment->getBuoy(i)->getCoordX(), enviroment->getBuoy(i)->getCoordZ());*/
         printf("Center: %f %f, BB: %f %f, WBB: %f %f\n",
                ship->px, ship->pz,
                shipMesh->bbmin.X(), shipMesh->bbmin.Z(),
-               shipMesh->w_bbmin->X(), shipMesh->w_bbmin->Z());
-        Mesh::displayWorldBoundingBox(shipMesh->w_bbmin, shipMesh->w_bbmax);
-        if (isCollision(*shipMesh->w_bbmin, *shipMesh->w_bbmin, *buoyMesh->w_bbmin, *buoyMesh->w_bbmax)){
+               shipMesh->w_bounding_box->vertex[0]->X(), shipMesh->w_bounding_box->vertex[0]->Z());
+        shipMesh->w_bounding_box->display();
+        /*if (isCollision(*shipMesh->w_bbmin, *shipMesh->w_bbmin, *buoyMesh->w_bbmin, *buoyMesh->w_bbmax)){
             //printf("Collision with %d\n", i);
-        }
+        }*/
     }
 }

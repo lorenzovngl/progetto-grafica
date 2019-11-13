@@ -137,5 +137,5 @@ void ShipMesh::render() {
         }
     }
     fclose(file);
-    displayBoundingBox();
+    //displayBoundingBox();
 }

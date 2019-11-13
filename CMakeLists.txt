@@ -4,6 +4,7 @@ project(ProgettoGrafica)
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(ProgettoGrafica
+        src/headers/BoundingBox.h
         src/headers/Buoy.h
         src/headers/Camera.h
         src/headers/Controller.h
@@ -18,6 +19,7 @@ add_executable(ProgettoGrafica
         src/headers/ShipMesh.h
         src/headers/Texture.h
         src/headers/Utils.h
+        src/BoundingBox.cpp
         src/Buoy.cpp
         src/Camera.cpp
         src/Controller.cpp

@@ -199,10 +199,8 @@ void Mesh::ComputeBoundingBox(float px, float py, float pz, float scale_factor, 
     }
 
     // Coordinate globali
-    w_bbmin = new Point3(px, py, pz);
-    *w_bbmin = Utils::localToWorldCoords(bbmin, *w_bbmin, scale_factor, angle);
-    w_bbmax = new Point3(px, py, pz);
-    *w_bbmax = Utils::localToWorldCoords(bbmax, *w_bbmax, scale_factor, angle);
+    w_bounding_box = new BoundingBox(bbmin, bbmax);
+    w_bounding_box->localToWorldCoords(*(new Point3(px, py, pz)), scale_factor, angle);
 
     /*printf("Local: %f %f %f, World: %f %f %f\n",
            bbmin.X(), bbmin.Y(), bbmin.Z(),

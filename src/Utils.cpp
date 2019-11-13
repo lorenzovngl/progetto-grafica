@@ -99,15 +99,20 @@ void Utils::setCoordToPixel(){
     glScalef(2.0/512, 2.0/512, 1);
 }
 
-Point3 Utils::localToWorldCoords(Point3 localCoords, Point3 center, float scale_factor, float angle) {
-    Point3 *worldCoords = new Point3();
-    // Gestita solo rotazione rispetto all'asse X
-    worldCoords->coord[0] = localCoords.X()*cos(angle) - localCoords.Z()*sin(angle);
-    worldCoords->coord[1] = localCoords.Y();
-    worldCoords->coord[2] = localCoords.X()*sin(angle) + localCoords.Z()*cos(angle);
-    *worldCoords = *worldCoords * scale_factor + center;
-    /*printf("Local: (%.2f, %.2f), world: (%.2f, %.2f)\n",
-           localCoords.X(), localCoords.Z(),
-           worldCoords->X(), worldCoords->Z());*/
-    return *worldCoords;
+Point3 Utils::rotate_point(float cx, float cz, float angle, Point3 p){
+    float s = sin(angle);
+    float c = cos(angle);
+
+    // translate point back to origin:
+    p.coord[0] -= cx;
+    p.coord[2] -= cz;
+
+    // rotate point
+    float xnew = p.X() * c - p.Z() * s;
+    float ynew = p.X() * s + p.Z() * c;
+
+    // translate point back:
+    p.coord[0] = xnew + cx;
+    p.coord[2] = ynew + cz;
+    return p;
 }
