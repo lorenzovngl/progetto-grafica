@@ -105,7 +105,7 @@ void rendering(SDL_Window *window) {
 
     // settiamo matrice di modellazione
 
-    Utils::drawAxis(); // disegna assi frame OGGETTO
+    //Utils::drawAxis(); // disegna assi frame OGGETTO
     //drawCubeWire();
 
     enviroment->render(ship.px, ship.py, ship.pz); // disegna il mare
@@ -114,7 +114,7 @@ void rendering(SDL_Window *window) {
 
     game->detectCollision();
 
-    //hud->display();
+    hud->display();
 
     // attendiamo la fine della rasterizzazione di
     // tutte le primitive mandate

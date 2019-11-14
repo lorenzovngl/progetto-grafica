@@ -3,10 +3,11 @@
 
 #include "Buoy.h"
 
+#define BUOYS_COUNT 10
+
 class Enviroment {
 private:
-    Buoy *buoy[10];
-    bool isActiveBuoy[10];
+    Buoy *buoy[BUOYS_COUNT];
     Texture *m_texture[2];
     void drawNearSea(float, float, float);
     void drawFarSea(float, float, float);
@@ -14,7 +15,6 @@ private:
 public:
     Enviroment();
     Buoy* getBuoy(int);
-    void disableBuoy(int);
     void render(float, float, float);
 };
 

@@ -6,6 +6,7 @@
 class Buoy {
 private:
     Mesh *m_mesh;
+    bool active;
     float m_coord_x;
     float m_coord_z;
 public:
@@ -14,6 +15,8 @@ public:
     float getCoordX();
     float getCoordZ();
     void render();
+    bool isActive();
+    void disable();
 };
 
 #endif

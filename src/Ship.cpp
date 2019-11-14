@@ -184,7 +184,7 @@ void Ship::render() {
     glTranslatef(px, py, pz);
     glRotatef(facing, 0, 1, 0);
 
-    Utils::drawAxis();
+    //Utils::drawAxis();
 
     // sono nello spazio MACCHINA
     //Utils::drawAxis(); // disegno assi spazio macchina

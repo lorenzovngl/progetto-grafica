@@ -21,6 +21,7 @@
 
 Game::Game(Ship *ship, Enviroment *enviroment) {
     game_start_time = SDL_GetTicks();
+    game_end_time = 0;
     score = 0;
     score_limit = 10;
     this->ship = ship;
@@ -28,7 +29,11 @@ Game::Game(Ship *ship, Enviroment *enviroment) {
 }
 
 int Game::getGameTime() {
-    return SDL_GetTicks() - game_start_time;
+    if (game_end_time != 0){
+        return game_end_time;
+    } else {
+        return SDL_GetTicks() - game_start_time;
+    }
 }
 
 int Game::getScore() {
@@ -39,24 +44,34 @@ int Game::getScoreLimit(){
     return score_limit;
 }
 
-bool isCollision(Point3 a_min, Point3 a_max, Point3 b_min, Point3 b_max) {
-    return (a_min.X() <= b_max.X() && a_max.X() >= b_min.X()) &&
-           (a_min.Y() <= b_max.Y() && a_max.Y() >= b_min.Y()) &&
-           (a_min.Z() <= b_max.Z() && a_max.Z() >= b_min.Z());
-}
-
 void Game::detectCollision(){
     ShipMesh* shipMesh = ship->getMesh();
     Mesh* buoyMesh;
-    for (int i = 0; i < 1; i++){
+    for (int i = 0; i < BUOYS_COUNT && !isFinished(); i++){
         buoyMesh = enviroment->getBuoy(i)->getMesh();
-        printf("Center: %f %f, BB: %f %f, WBB: %f %f\n",
+        /*printf("Center: %f %f, BB: %f %f, WBB: %f %f\n",
                ship->px, ship->pz,
                shipMesh->bbmin.X(), shipMesh->bbmin.Z(),
-               shipMesh->w_bounding_box->vertex[0]->X(), shipMesh->w_bounding_box->vertex[0]->Z());
-        shipMesh->w_bounding_box->display();
-        /*if (isCollision(*shipMesh->w_bbmin, *shipMesh->w_bbmin, *buoyMesh->w_bbmin, *buoyMesh->w_bbmax)){
-            //printf("Collision with %d\n", i);
-        }*/
+               shipMesh->w_bounding_box->vertex[0]->X(), shipMesh->w_bounding_box->vertex[0]->Z());*/
+        //buoyMesh->w_bounding_box->display();
+        //shipMesh->w_bounding_box->display();
+        if (enviroment->getBuoy(i)->isActive() &&
+            BoundingBox::isCollision(shipMesh->w_bounding_box, buoyMesh->w_bounding_box)){
+            enviroment->getBuoy(i)->disable();
+            score++;
+        }
     }
+}
+
+bool Game::isFinished(){
+    bool isFinished = true;
+    for (int i = 0; i < BUOYS_COUNT; i++){
+        if (enviroment->getBuoy(i)->isActive()){
+            isFinished = false;
+        }
+    }
+    if (isFinished){
+        game_end_time = getGameTime();
+    }
+    return isFinished;
 }

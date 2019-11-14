@@ -22,6 +22,7 @@
 
 Buoy::Buoy(float x, float z){
     m_mesh = new Mesh((char *) "assets/sphere.obj");
+    this->active = true;
     m_coord_x = x;
     m_coord_z = z;
 }
@@ -38,10 +39,18 @@ float Buoy::getCoordZ() {
     return m_coord_z;
 }
 
+bool Buoy::isActive(){
+    return this->active;
+}
+
+void Buoy::disable(){
+    this->active = false;
+}
+
 void Buoy::render() {
     float scaleFactor = 0.005;
     glTranslatef(getCoordX(), 0, getCoordZ());
-    Utils::drawAxis();
+    //Utils::drawAxis();
     glScalef(scaleFactor, scaleFactor, scaleFactor);
     // Asta della boa
     int base = 2;

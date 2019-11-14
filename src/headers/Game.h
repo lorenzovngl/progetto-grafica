@@ -8,6 +8,7 @@
 class Game {
 private:
     int game_start_time;
+    int game_end_time;
     int score;
     int score_limit;
     Ship *ship;
@@ -18,6 +19,7 @@ public:
     int getScore();
     int getScoreLimit();
     void detectCollision();
+    bool isFinished();
 };
 
 #endif
