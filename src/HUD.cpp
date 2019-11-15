@@ -45,12 +45,12 @@ void HUD::displayTime() {
     //glClearColor(0,0,0,0);
     //glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-    Utils::setCoordToPixel(); //per avere mapping 1-1 con i pixel schermo
+    //Utils::setCoordToPixel(); //per avere mapping 1-1 con i pixel schermo
 
     glDisable(GL_LIGHTING);
 
     glColor3f(1,1,1);
-    Utils::setCoordToPixel(); //per avere mapping 1-1 con i pixel schermo
+    //Utils::setCoordToPixel(); //per avere mapping 1-1 con i pixel schermo
     char string[56];
     int millis = SDL_GetTicks();
     int sec = millis/1000;
@@ -68,7 +68,7 @@ void HUD::displayTime() {
     glPopMatrix();
 }
 
-void HUD::display(){
+void HUD::display(int v_width, int v_height){
     char string[56];
 
     glDisable(GL_DEPTH_TEST);
@@ -76,23 +76,22 @@ void HUD::display(){
 
     glClearColor(1.0, 1.0, 1.0, 1.0);
 
-    Utils::setCoordToPixel();
+    Utils::setCoordToPixel(v_width, v_height);
     glActiveTexture(GL_TEXTURE0);
     GLText *text = new GLText(TEXTURE_TEXT_TIME,font);
     int millis = game->getGameTime();
     int sec = millis/1000;
     int min = sec/60;
-    sprintf(string, "%02d:%02d:%03d", min, sec-min*60, millis-sec*1000-min*60);
+    sprintf(string, "Time: %02d:%02d:%03d", min, sec-min*60, millis-sec*1000-min*60);
     text->setText(string, 255,255,255);
     text->setPosition(50,50); //12 è Pixel dimension per il font
     text->render();
 
-    Utils::setCoordToPixel();
     glActiveTexture(GL_TEXTURE0);
     text = new GLText(TEXTURE_TEXT_TIME,font);
-    sprintf(string, "%d/%d", game->getScore(), game->getScoreLimit());
+    sprintf(string, "Catched: %d/%d", game->getScore(), game->getScoreLimit());
     text->setText(string, 255,255,255);
-    text->setPosition(250,50); //12 è Pixel dimension per il font
+    text->setPosition(v_width/1.8,50); //12 è Pixel dimension per il font
     text->render();
 
     glPopMatrix();

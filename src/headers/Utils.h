@@ -8,7 +8,7 @@ public:
     static void drawAxis();
     static void drawSphere(double, int, int);
     static float floatMod(float, float);
-    static void setCoordToPixel();
+    static void setCoordToPixel(int, int);
     static Point3 rotate_point(float cx, float cz, float angle, Point3 p);
 };
 

@@ -43,18 +43,6 @@ Camera *camera;
 HUD *hud;
 Game *game;
 
-// setta le matrici di trasformazione in modo
-// che le coordinate in spazio oggetto siano le coord
-// del pixel sullo schemo
-void SetCoordToPixel() {
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glTranslatef(-1, -1, 0);
-    glScalef(2.0 / scrW, 2.0 / scrH, 1);
-}
-
 /* Esegue il Rendering della scena */
 void rendering(SDL_Window *window) {
     // un frame in piu'!!!
@@ -114,7 +102,7 @@ void rendering(SDL_Window *window) {
 
     game->detectCollision();
 
-    hud->display();
+    hud->display(scrW, scrH);
 
     // attendiamo la fine della rasterizzazione di
     // tutte le primitive mandate

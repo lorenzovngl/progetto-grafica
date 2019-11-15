@@ -40,6 +40,9 @@ Texture::Texture(int textbind) {
         case TEXTURE_TOP_BODY_WHITE_METAL:
             m_filename = (char*) "assets/ship/top_body_white_metal.tga";
             break;
+        case TEXTURE_FLAG_ITALY:
+            m_filename = (char*) "assets/flags/italy.png";
+            break;
         default:
             break;
     }

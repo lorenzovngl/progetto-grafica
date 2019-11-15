@@ -89,14 +89,14 @@ float Utils::floatMod(float number, float divisor){
     }
 }
 
-void Utils::setCoordToPixel(){
+void Utils::setCoordToPixel(int v_width, int v_height){
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glTranslatef(-1,-1,0);
-    glScalef(2.0/512, 2.0/512, 1);
+    glScalef(2.5/v_width, 2.5/v_height, 1);
 }
 
 Point3 Utils::rotate_point(float cx, float cz, float angle, Point3 p){

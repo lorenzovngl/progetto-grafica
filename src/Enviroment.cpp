@@ -25,7 +25,7 @@
 Enviroment::Enviroment() {
     srand(time(NULL));
     for (int i = 0; i < BUOYS_COUNT; i++) {
-        buoy[i] = new Buoy(rand() % 20 - 10, rand() % 20 - 10);
+        buoy[i] = new Buoy(i, rand() % 20 - 10, rand() % 20 - 10);
     }
     glActiveTexture(GL_TEXTURE0);
     m_texture[0] = new Texture(TEXTURE_SEA);

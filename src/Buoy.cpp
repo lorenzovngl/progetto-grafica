@@ -20,11 +20,15 @@
 #include "headers/Buoy.h"
 #include "headers/Utils.h"
 
-Buoy::Buoy(float x, float z){
+Buoy::Buoy(int id, float x, float z){
     m_mesh = new Mesh((char *) "assets/sphere.obj");
     this->active = true;
     m_coord_x = x;
     m_coord_z = z;
+    this->id = id;
+    glActiveTexture(GL_TEXTURE7);
+    Texture *texture = new Texture(TEXTURE_FLAG_ITALY);
+    texture->loadTexture();
 }
 
 Mesh* Buoy::getMesh(){
@@ -49,7 +53,9 @@ void Buoy::disable(){
 
 void Buoy::render() {
     float scaleFactor = 0.005;
-    glTranslatef(getCoordX(), 0, getCoordZ());
+    float motion = (float) SDL_GetTicks()/500 + this->id;
+    const float H = 0.05;
+    glTranslatef(getCoordX(), sin(motion)*H - H/2, getCoordZ());
     //Utils::drawAxis();
     glScalef(scaleFactor, scaleFactor, scaleFactor);
     // Asta della boa
@@ -84,12 +90,22 @@ void Buoy::render() {
     glVertex3f((base/2),height,-(base/2));
 
     glEnd();
-    glBegin(GL_TRIANGLES);
+
+    glActiveTexture(GL_TEXTURE7);
+    glEnable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
     // Bandierina
     int size = 40;
+    glTexCoord2f(0, 0);
     glVertex3f(0, height, 0);
+    glTexCoord2f(0, 1);
     glVertex3f(0, height-size, 0);
-    glVertex3f(0, height-size/2, 50);
+    glTexCoord2f(1, 1);
+    glVertex3f(sin(motion)*50, height-size, cos(motion)*50);
+    glTexCoord2f(1, 0);
+    glVertex3f(sin(motion)*50, height, cos(motion)*50);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
 
     // Boa
     m_mesh->render();

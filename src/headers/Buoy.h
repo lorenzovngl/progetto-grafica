@@ -9,8 +9,9 @@ private:
     bool active;
     float m_coord_x;
     float m_coord_z;
+    int id;
 public:
-    Buoy(float, float);
+    Buoy(int, float, float);
     Mesh* getMesh();
     float getCoordX();
     float getCoordZ();
