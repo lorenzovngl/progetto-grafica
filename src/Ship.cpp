@@ -24,10 +24,10 @@
 #include "headers/ShipMesh.h"
 
 // var globale di tipo meshF
-ShipMesh carlinga((char *) "assets/ship/fishing_ship.obj"); // chiama il costruttore
+ShipMesh *carlinga;
 
 ShipMesh* Ship::getMesh(){
-    return &carlinga;
+    return carlinga;
 }
 
 // DoStep: facciamo un passo di fisica (a delta-t costante)
@@ -85,6 +85,7 @@ void Ship::DoStep() {
 }
 
 void Ship::Init() {
+    carlinga = new ShipMesh((char *) "assets/ship/fishing_ship.obj", textureManager);
     // inizializzo lo stato della macchina
     px = pz = facing = 0; // posizione e orientamento
     py = 0.0;
@@ -213,8 +214,8 @@ void Ship::render() {
     // Controlla l'inclinazione della barca basandosi sull'angolo di virata e sulla velocità
     glRotatef(-sterzo/3*((abs(vx)+abs(vz))*10), 1, 0, 0);
 
-    carlinga.render();
-    carlinga.ComputeBoundingBox(px, py, pz, 0.05, -90 + facing);
+    carlinga->render();
+    carlinga->ComputeBoundingBox(px, py, pz, 0.05, -90 + facing);
     glColor3f(.4, .4, .4);
 
     glPopMatrix();

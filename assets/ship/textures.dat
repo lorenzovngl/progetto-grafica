@@ -21,7 +21,7 @@
 # 17901 - 18699
 
 # Parte superiore dello scafo
-18700 - 20000 -> 4
+18700 - 20000 -> 5
 
 # Resto del modello
-20001 - 64000 -> 4
+20001 - 64000 -> 5

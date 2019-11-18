@@ -22,12 +22,13 @@
 #include "headers/HUD.h"
 #include "headers/Game.h"
 #include "headers/Utils.h"
+#include "headers/TextureManager.h"
 
 float viewAlpha = 20, viewBeta = 40; // angoli che definiscono la vista
 float eyeDist = 3.0; // distanza dell'occhio dall'origine
 int scrH = 700, scrW = 700; // altezza e larghezza viewport (in pixels)
 
-Ship ship;
+Ship *ship;
 int nstep = 0; // numero di passi di FISICA fatti fin'ora
 const int PHYS_SAMPLING_STEP = 10; // numero di millisec che un passo di fisica simula
 
@@ -38,6 +39,7 @@ int fpsNow = 0; // quanti fotogrammi ho disegnato fin'ora nell'intervallo attual
 Uint32 timeLastInterval = 0; // quando e' cominciato l'ultimo intervallo
 
 SDL_Renderer *renderer;
+TextureManager *textureManager;
 Enviroment *enviroment;
 Camera *camera;
 HUD *hud;
@@ -84,7 +86,7 @@ void rendering(SDL_Window *window) {
     glLightfv(GL_LIGHT0, GL_POSITION, tmpv);
 
 
-    camera->set(ship, eyeDist, viewBeta, viewAlpha);
+    camera->set(*ship, eyeDist, viewBeta, viewAlpha);
 
 
     static float tmpcol[4] = {1, 1, 1, 1};
@@ -96,9 +98,9 @@ void rendering(SDL_Window *window) {
     //Utils::drawAxis(); // disegna assi frame OGGETTO
     //drawCubeWire();
 
-    enviroment->render(ship.px, ship.py, ship.pz); // disegna il mare
+    enviroment->render(ship->px, ship->py, ship->pz); // disegna il mare
 
-    ship.render();
+    ship->render();
 
     game->detectCollision();
 
@@ -163,8 +165,11 @@ int main(int argc, char *argv[]) {
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
-    enviroment = new Enviroment();
-    game = new Game(&ship, enviroment);
+    textureManager = new TextureManager();
+
+    enviroment = new Enviroment(textureManager);
+    ship = new Ship(textureManager);
+    game = new Game(ship, enviroment);
     camera = new Camera();
     hud = new HUD(game);
 
@@ -178,14 +183,14 @@ int main(int argc, char *argv[]) {
             // se si: processa evento
             switch (e.type) {
                 case SDL_KEYDOWN:
-                    ship.controller.EatKey(e.key.keysym.sym, keymap, true);
+                    ship->controller.EatKey(e.key.keysym.sym, keymap, true);
                     if (e.key.keysym.sym == SDLK_F1){
-                        camera->change(ship, eyeDist, viewBeta, viewAlpha);
+                        camera->change(*ship, eyeDist, viewBeta, viewAlpha);
                         printf("Change to %d\n", camera->getType());
                     }
                     break;
                 case SDL_KEYUP:
-                    ship.controller.EatKey(e.key.keysym.sym, keymap, false);
+                    ship->controller.EatKey(e.key.keysym.sym, keymap, false);
                     break;
                 case SDL_QUIT:
                     done = 1;
@@ -239,16 +244,16 @@ int main(int argc, char *argv[]) {
                 case SDL_JOYAXISMOTION: /* Handle Joystick Motion */
                     if (e.jaxis.axis == 0) {
                         if (e.jaxis.value < -3200) {
-                            ship.controller.Joy(0, true);
-                            ship.controller.Joy(1, false);
+                            ship->controller.Joy(0, true);
+                            ship->controller.Joy(1, false);
                         }
                         if (e.jaxis.value > 3200) {
-                            ship.controller.Joy(0, false);
-                            ship.controller.Joy(1, true);
+                            ship->controller.Joy(0, false);
+                            ship->controller.Joy(1, true);
                         }
                         if (e.jaxis.value >= -3200 && e.jaxis.value <= 3200) {
-                            ship.controller.Joy(0, false);
-                            ship.controller.Joy(1, false);
+                            ship->controller.Joy(0, false);
+                            ship->controller.Joy(1, false);
                         }
                         rendering(window);
                         //redraw();
@@ -257,23 +262,23 @@ int main(int argc, char *argv[]) {
                 case SDL_JOYBUTTONDOWN: /* Handle Joystick Button Presses */
                     if (e.jbutton.button == 0) {
 //         done=1;
-                        ship.controller.Joy(2, true);
-                        ship.controller.Joy(3, false);
+                        ship->controller.Joy(2, true);
+                        ship->controller.Joy(3, false);
                     }
                     if (e.jbutton.button == 1) {
 //         done=1;
-                        ship.controller.Joy(2, false);
-                        ship.controller.Joy(3, false);
+                        ship->controller.Joy(2, false);
+                        ship->controller.Joy(3, false);
                     }
                     if (e.jbutton.button == 2) {
 //         done=1;
-                        ship.controller.Joy(2, false);
-                        ship.controller.Joy(3, true);
+                        ship->controller.Joy(2, false);
+                        ship->controller.Joy(3, true);
                     }
                     if (e.jbutton.button == 3) {
 //         done=1;
-                        ship.controller.Joy(2, false);
-                        ship.controller.Joy(3, false);
+                        ship->controller.Joy(2, false);
+                        ship->controller.Joy(3, false);
                     }
                     break;
             }
@@ -295,7 +300,7 @@ int main(int argc, char *argv[]) {
             // finche' il tempo simulato e' rimasto indietro rispetto
             // al tempo reale...
             while (nstep * PHYS_SAMPLING_STEP < timeNow) {
-                ship.DoStep();
+                ship->DoStep();
                 nstep++;
                 doneSomething = true;
                 timeNow = SDL_GetTicks();

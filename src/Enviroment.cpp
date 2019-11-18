@@ -21,18 +21,16 @@
 #include "headers/Utils.h"
 #include "headers/Enviroment.h"
 #include "headers/Texture.h"
+#include "headers/TextureManager.h"
 
-Enviroment::Enviroment() {
+Enviroment::Enviroment(TextureManager *textureManager) {
     srand(time(NULL));
     for (int i = 0; i < BUOYS_COUNT; i++) {
-        buoy[i] = new Buoy(i, rand() % 20 - 10, rand() % 20 - 10);
+        buoy[i] = new Buoy(i, rand() % 20 - 10, rand() % 20 - 10, textureManager);
     }
-    glActiveTexture(GL_TEXTURE0);
-    m_texture[0] = new Texture(TEXTURE_SEA);
-    m_texture[0]->loadTexture();
-    glActiveTexture(GL_TEXTURE1);
-    m_texture[1] = new Texture(TEXTURE_SKY);
-    m_texture[1]->loadTexture();
+    this->textureManager = textureManager;
+    textureManager->loadTexture(TEXTURE_SEA);
+    textureManager->loadTexture(TEXTURE_SKY);
 }
 
 Buoy* Enviroment::getBuoy(int i) {
@@ -45,7 +43,7 @@ void Enviroment::drawFarSea(float ship_x, float ship_y, float ship_z) {
     const int K = 100; //disegna K x K quads
     float scale_factor = 0.05;
 
-    glActiveTexture(GL_TEXTURE6);
+    textureManager->enableTexture(TEXTURE_SEA);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_TEXTURE_GEN_S);
     glEnable(GL_TEXTURE_GEN_T);
@@ -140,7 +138,7 @@ void Enviroment::drawNearSea(float ship_x, float ship_y, float ship_z) {
     //glTranslatef(ship_x, ship_y, ship_z);
     glScalef(scale_factor, scale_factor, scale_factor);         // Cambio la scala per disegnare il mare
 
-    glActiveTexture(GL_TEXTURE6);
+    textureManager->enableTexture(TEXTURE_SEA);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_TEXTURE_GEN_S);
     glEnable(GL_TEXTURE_GEN_T);
@@ -203,7 +201,7 @@ void Enviroment::drawNearSea(float ship_x, float ship_y, float ship_z) {
 }
 
 void Enviroment::drawSky() {
-    glActiveTexture(GL_TEXTURE1);
+    textureManager->enableTexture(TEXTURE_SKY);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_TEXTURE_GEN_S);
     glEnable(GL_TEXTURE_GEN_T);

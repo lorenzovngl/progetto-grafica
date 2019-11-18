@@ -71,13 +71,11 @@ void HUD::displayTime() {
 void HUD::display(int v_width, int v_height){
     char string[56];
 
+
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
 
-    glClearColor(1.0, 1.0, 1.0, 1.0);
-
     Utils::setCoordToPixel(v_width, v_height);
-    glActiveTexture(GL_TEXTURE0);
     GLText *text = new GLText(TEXTURE_TEXT_TIME,font);
     int millis = game->getGameTime();
     int sec = millis/1000;
@@ -87,7 +85,6 @@ void HUD::display(int v_width, int v_height){
     text->setPosition(50,50); //12 è Pixel dimension per il font
     text->render();
 
-    glActiveTexture(GL_TEXTURE0);
     text = new GLText(TEXTURE_TEXT_TIME,font);
     sprintf(string, "Catched: %d/%d", game->getScore(), game->getScoreLimit());
     text->setText(string, 255,255,255);
@@ -98,4 +95,5 @@ void HUD::display(int v_width, int v_height){
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
+    glDisable(GL_BLEND);
 }

@@ -6,6 +6,7 @@
 
 class Ship {
 private:
+    TextureManager *textureManager;
     void DrawHeadlight(float x, float y, float z, int lightN) const;
     void enableTilt();
 public:
@@ -14,7 +15,10 @@ public:
     void render(); // disegna a schermo
     void DoStep(); // computa un passo del motore fisico
     ShipMesh* getMesh();
-    Ship() { Init(); } // costruttore
+    Ship(TextureManager *textureManager) {
+        this->textureManager = textureManager;
+        Init();
+    } // costruttore
 
     Controller controller;
 

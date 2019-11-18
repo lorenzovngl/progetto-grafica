@@ -51,13 +51,13 @@ void GLText::render()
 {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_ONE, GL_ONE);
 	glEnable(GL_BLEND);
 	glDisable(GL_LIGHTING);
 	/* prepare to render our texture */
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, _id);
-	glColor3f(1.0f, 1.0f, 1.0f);
+	glColor3f(0.0f, 0.0f, 0.0f);
 
 	/* Draw a quad at location */
 	//std::cout<<"screen: "<<_w<< " "<<_h<<std::endl;

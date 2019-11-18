@@ -18,6 +18,7 @@ add_executable(ProgettoGrafica
         src/headers/Ship.h
         src/headers/ShipMesh.h
         src/headers/Texture.h
+        src/headers/TextureManager.h
         src/headers/Utils.h
         src/BoundingBox.cpp
         src/Buoy.cpp
@@ -33,5 +34,6 @@ add_executable(ProgettoGrafica
         src/Ship.cpp
         src/ShipMesh.cpp
         src/Texture.cpp
+        src/TextureManager.cpp
         src/Utils.cpp
         )
