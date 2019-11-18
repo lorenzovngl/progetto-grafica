@@ -213,10 +213,10 @@ void Enviroment::drawSky() {
 
     Utils::drawSphere(100.0, 20, 20);
 
+    glEnable(GL_LIGHTING);
     glDisable(GL_TEXTURE_GEN_S);
     glDisable(GL_TEXTURE_GEN_T);
     glDisable(GL_TEXTURE_2D);
-    glEnable(GL_LIGHTING);
 }
 
 void Enviroment::render(float ship_x, float ship_y, float ship_z) {

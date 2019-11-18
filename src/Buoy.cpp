@@ -91,23 +91,61 @@ void Buoy::render() {
 
     glEnd();
 
-    glActiveTexture(GL_TEXTURE7);
-    glEnable(GL_TEXTURE_2D);
-    glBegin(GL_QUADS);
-    // Bandierina
-    int size = 40;
-    glTexCoord2f(0, 0);
-    glVertex3f(0, height, 0);
-    glTexCoord2f(0, 1);
-    glVertex3f(0, height-size, 0);
-    glTexCoord2f(1, 1);
-    glVertex3f(sin(motion)*50, height-size, cos(motion)*50);
-    glTexCoord2f(1, 0);
-    glVertex3f(sin(motion)*50, height, cos(motion)*50);
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
-
     // Boa
     m_mesh->render();
     m_mesh->ComputeBoundingBox(getCoordX(), 0, getCoordZ(), scaleFactor, 0);
+
+    // Simulo direzione del vento
+    glRotatef(45, 0, 1, 0);
+
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_TEXTURE_GEN_S);
+    glEnable(GL_TEXTURE_GEN_T);
+    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+
+    glBegin(GL_QUADS);
+    // Bandierina
+    float flag_height = 40;
+    float flag_width = 50;
+    float pieces = 5;
+    float speed = 2;
+    float x0, y0, z0, x1, y1, z1;
+    for (int i = 0; i < pieces; i++){
+        x0 = flag_height / pieces * i;
+        z0 = flag_width / pieces * i;
+        x1 = flag_height / pieces * (i+1);
+        z1 = flag_width / pieces * (i+1);
+        for (int j = 0; j < pieces; j++){
+            if ((i+j) % 2 == 0){
+                glColor3f(0, 0, 0);
+            } else {
+                glColor3f(1, 1, 1);
+            }
+            /*if (i != 0){
+                x0 = sin(x0+motion)*speed;
+            }*/
+            y0 = height - (flag_height / pieces * j);
+            y1 = height - (flag_height / pieces * (j+1));
+            if (i == 0){
+                glTexCoord2f(0, 0);
+                glVertex3f(x0, y0, z0);
+                glTexCoord2f(0, 1);
+                glVertex3f(x0, y1, z0);
+            } else {
+                glTexCoord2f(0, 0);
+                glVertex3f(sin(x0+motion)*speed, y0, z0);
+                glTexCoord2f(0, 1);
+                glVertex3f(sin(x0+motion)*speed, y1, z0);
+            }
+            glTexCoord2f(1, 1);
+            glVertex3f(sin(x1+motion)*speed, y1, z1);
+            glTexCoord2f(1, 0);
+            glVertex3f(sin(x1+motion)*speed, y0, z1);
+        }
+    }
+    glEnd();
+    glDisable(GL_TEXTURE_GEN_S);
+    glDisable(GL_TEXTURE_GEN_T);
+    glDisable(GL_TEXTURE_2D);
 }
