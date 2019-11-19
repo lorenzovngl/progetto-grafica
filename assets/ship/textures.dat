@@ -5,8 +5,14 @@
 # B = Ultimo triangolo dell'intervallo
 # T = Indice della texture definito in /src/headers/Texture.h
 
+# Eliche - disegnate a parte
+# 15100 - 15500 -> 4
+
 # Parte più bassa dello scafo
-15000 - 17000 -> 5
+#15501 - 16599 -> 4
+
+# Timoni - disegnati a parte
+# 16600 - 17000 -> 4
 
 # Pavimentazione in legno
 17001 - 17450 -> 2
@@ -15,7 +21,7 @@
 17451 - 17650 -> 3
 
 # Parte più bassa dello scafo
-17651 - 17900 -> 3
+#17651 - 17900 -> 3
 
 # Unknown
 # 17901 - 18699
@@ -24,4 +30,4 @@
 18700 - 20000 -> 5
 
 # Resto del modello
-20001 - 64000 -> 5
+#20001 - 64000 -> 5

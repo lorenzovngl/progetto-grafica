@@ -98,13 +98,10 @@ void rendering(SDL_Window *window) {
     //Utils::drawAxis(); // disegna assi frame OGGETTO
     //drawCubeWire();
 
-    enviroment->render(ship->px, ship->py, ship->pz); // disegna il mare
-
+    //enviroment->render(ship->px, ship->py, ship->pz); // disegna il mare
     ship->render();
-
-    game->detectCollision();
-
-    hud->display(scrW, scrH);
+    //game->detectCollision();
+    //hud->display(scrW, scrH);
 
     // attendiamo la fine della rasterizzazione di
     // tutte le primitive mandate
@@ -221,7 +218,7 @@ int main(int argc, char *argv[]) {
                         viewAlpha += e.motion.xrel;
                         viewBeta += e.motion.yrel;
                         //if (viewBeta<-90) viewBeta=-90;
-                        if (viewBeta < +5) viewBeta = +5; //per non andare sotto la macchina
+                        //if (viewBeta < +5) viewBeta = +5; //per non andare sotto la macchina
                         if (viewBeta > +90) viewBeta = +90;
                         rendering(window);
                         //redraw(); // richiedi un ridisego

@@ -82,6 +82,7 @@ void Ship::DoStep() {
     px += vx;
     py += vy;
     pz += vz;
+    //printf("V: %f %f %f %f\n", vx, vy, vz, (abs(vx)+abs(vy)+abs(vz))*500);
 }
 
 void Ship::Init() {
@@ -214,7 +215,7 @@ void Ship::render() {
     // Controlla l'inclinazione della barca basandosi sull'angolo di virata e sulla velocità
     glRotatef(-sterzo/3*((abs(vx)+abs(vz))*10), 1, 0, 0);
 
-    carlinga->render();
+    carlinga->render(abs(vx)+abs(vy)+abs(vz), mozzoA);
     carlinga->ComputeBoundingBox(px, py, pz, 0.05, -90 + facing);
     glColor3f(.4, .4, .4);
 

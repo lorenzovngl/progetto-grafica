@@ -37,6 +37,10 @@ Buoy* Enviroment::getBuoy(int i) {
     return buoy[i];
 }
 
+int Enviroment::getBuoysCount() {
+    return BUOYS_COUNT;
+}
+
 void Enviroment::drawFarSea(float ship_x, float ship_y, float ship_z) {
     const float S = 100; // size
     const float H = 0;   // altezza

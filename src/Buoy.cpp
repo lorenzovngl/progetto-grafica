@@ -18,7 +18,6 @@
 #endif
 
 #include "headers/Buoy.h"
-#include "headers/Utils.h"
 
 Buoy::Buoy(int id, float x, float z, TextureManager *textureManager){
     m_mesh = new Mesh((char *) "assets/sphere.obj");
@@ -28,7 +27,6 @@ Buoy::Buoy(int id, float x, float z, TextureManager *textureManager){
     this->id = id;
     this->textureManager = textureManager;
     textureManager->loadTexture(TEXTURE_FLAG_ITALY);
-
 }
 
 Mesh* Buoy::getMesh(){

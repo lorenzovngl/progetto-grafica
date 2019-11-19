@@ -23,7 +23,7 @@ Game::Game(Ship *ship, Enviroment *enviroment) {
     game_start_time = SDL_GetTicks();
     game_end_time = 0;
     score = 0;
-    score_limit = 10;
+    score_limit = enviroment->getBuoysCount();
     this->ship = ship;
     this->enviroment = enviroment;
 }
@@ -47,7 +47,7 @@ int Game::getScoreLimit(){
 void Game::detectCollision(){
     ShipMesh* shipMesh = ship->getMesh();
     Mesh* buoyMesh;
-    for (int i = 0; i < BUOYS_COUNT && !isFinished(); i++){
+    for (int i = 0; i < enviroment->getBuoysCount() && !isFinished(); i++){
         buoyMesh = enviroment->getBuoy(i)->getMesh();
         /*printf("Center: %f %f, BB: %f %f, WBB: %f %f\n",
                ship->px, ship->pz,
@@ -65,7 +65,7 @@ void Game::detectCollision(){
 
 bool Game::isFinished(){
     bool isFinished = true;
-    for (int i = 0; i < BUOYS_COUNT; i++){
+    for (int i = 0; i < enviroment->getBuoysCount(); i++){
         if (enviroment->getBuoy(i)->isActive()){
             isFinished = false;
         }

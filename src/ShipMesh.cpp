@@ -72,43 +72,14 @@ void ShipMesh::drawTriangles(int gl_texture, int start, int end) {
     // mandiamo tutti i triangoli a schermo
     glBegin(GL_TRIANGLES);
     for (int i = start; i <= end; i++) {
-        /*float dx = std::max(std::max(f[i].v[0]->p.X(), f[i].v[1]->p.X()), f[i].v[2]->p.X());
-        float dy = std::max(std::max(f[i].v[0]->p.Y(), f[i].v[1]->p.Y()), f[i].v[2]->p.Y());
-        float dz = std::max(std::max(f[i].v[0]->p.Z(), f[i].v[1]->p.Z()), f[i].v[2]->p.Z());
-        float s[4] = {0, 0, 0, 0};
-        float t[4] = {0, 0, 0, 0};
-        if (dx < dy){
-            if (dx < dz){
-                // DX è minore di DY e DZ -> faccia rivolta verso l'asse X
-                printf("Asse X\n");
-                s[1] = 0.1;
-                t[2] = 0.1;
-            } else {
-                // DZ è minore di DX e DY -> faccia rivolta verso l'asse Z
-                printf("Asse Z\n");
-                s[0] = 0.1;
-                t[1] = 0.1;
-            }
-        } else {
-            if (dy < dz){
-                // DY è minore di DX e DZ -> faccia rivolta verso l'asse Y
-                printf("Asse Y\n");
-                s[0] = 0.1;
-                t[2] = 0.1;
-            } else {
-                // DZ è minore di DX e DY -> faccia rivolta verso l'asse Z
-                printf("Asse Z\n");
-                s[0] = 0.1;
-                t[1] = 0.1;
-            }
+        if (!((i >= 15100 && i <= 15500) || (i >= 16600 && i <= 17000))) {
+            // Disegno a parte le eliche e i timoni
+            glColor3f(1, 1, 1);
+            f[i].n.SendAsNormal(); // flat shading
+            (f[i].v[0])->p.SendAsVertex();
+            (f[i].v[1])->p.SendAsVertex();
+            (f[i].v[2])->p.SendAsVertex();
         }
-        glTexGenfv(GL_S, GL_OBJECT_PLANE, s);
-        glTexGenfv(GL_T, GL_OBJECT_PLANE, t);*/
-        glColor3f(1, 1, 1);
-        f[i].n.SendAsNormal(); // flat shading
-        (f[i].v[0])->p.SendAsVertex();
-        (f[i].v[1])->p.SendAsVertex();
-        (f[i].v[2])->p.SendAsVertex();
     }
     glEnd();
     glDisable(GL_TEXTURE_GEN_S);
@@ -116,9 +87,51 @@ void ShipMesh::drawTriangles(int gl_texture, int start, int end) {
     glDisable(GL_TEXTURE_2D);
 }
 
-void ShipMesh::render() {
-    char* filepath = (char*) "assets/ship/textures.dat";
-    FILE* file;
+void ShipMesh::drawHelixes(){
+    float offset[3] = {-19, 1.75, 1.45};
+    setupTexture(4, bbmin, bbmax);
+    // mandiamo tutti i triangoli a schermo
+    glBegin(GL_TRIANGLES);
+    for (int i = 15100; i <= 15500; i++) {
+        glColor3f(1, 1, 1);
+        f[i].n.SendAsNormal(); // flat shading
+        if (f[i].v[0]->p.coord[2] < 0){
+            // Ne disegno solo una (poi la duplico), l'altra non mi serve
+            glVertex3f(f[i].v[0]->p.coord[0] + offset[0], f[i].v[0]->p.coord[1] + offset[1], f[i].v[0]->p.coord[2] + offset[2]);
+            glVertex3f(f[i].v[1]->p.coord[0] + offset[0], f[i].v[1]->p.coord[1] + offset[1], f[i].v[1]->p.coord[2] + offset[2]);
+            glVertex3f(f[i].v[2]->p.coord[0] + offset[0], f[i].v[2]->p.coord[1] + offset[1], f[i].v[2]->p.coord[2] + offset[2]);
+        }
+    }
+    glEnd();
+    glDisable(GL_TEXTURE_GEN_S);
+    glDisable(GL_TEXTURE_GEN_T);
+    glDisable(GL_TEXTURE_2D);
+}
+
+void ShipMesh::drawRudders(){
+    float offset[3] = {-21.5, 0.3, 1.5};
+    setupTexture(4, bbmin, bbmax);
+    // mandiamo tutti i triangoli a schermo
+    glBegin(GL_TRIANGLES);
+    for (int i = 16600; i <= 17000; i++) {
+        glColor3f(1, 1, 1);
+        f[i].n.SendAsNormal(); // flat shading
+        if (f[i].v[0]->p.coord[2] < 0){
+            // Ne disegno solo una (poi la duplico), l'altra non mi serve
+            glVertex3f(f[i].v[0]->p.coord[0] + offset[0], f[i].v[0]->p.coord[1] + offset[1], f[i].v[0]->p.coord[2] + offset[2]);
+            glVertex3f(f[i].v[1]->p.coord[0] + offset[0], f[i].v[1]->p.coord[1] + offset[1], f[i].v[1]->p.coord[2] + offset[2]);
+            glVertex3f(f[i].v[2]->p.coord[0] + offset[0], f[i].v[2]->p.coord[1] + offset[1], f[i].v[2]->p.coord[2] + offset[2]);
+        }
+    }
+    glEnd();
+    glDisable(GL_TEXTURE_GEN_S);
+    glDisable(GL_TEXTURE_GEN_T);
+    glDisable(GL_TEXTURE_2D);
+}
+
+void ShipMesh::render(float speed, float angle) {
+    char *filepath = (char *) "assets/ship/textures.dat";
+    FILE *file;
     int start, end, tex;
     char line[100];
     if (model_file == NULL) {
@@ -129,11 +142,36 @@ void ShipMesh::render() {
         perror(filepath);
         return;
     }
-    while (fgets(line, 100, file) != NULL){
-        if (line[0] != '#' && line[0] != '\n'){                    // Avoid comments and blank lines
+    while (fgets(line, 100, file) != NULL) {
+        if (line[0] != '#' && line[0] != '\n') {                    // Avoid comments and blank lines
             sscanf(line, "%d - %d -> %d\n", &start, &end, &tex);
-            //printf("%d - %d -> %d\n", start, end, tex);
             drawTriangles(tex, start, end);
+            // Elica di sinistra
+            glPushMatrix();
+            glTranslatef(19, -1.5, 1.45);
+            glRotatef(SDL_GetTicks()*speed, 1, 0, 0);
+            drawHelixes();
+            glPopMatrix();
+            // Elica di destra
+            glPushMatrix();
+            glTranslatef(19, -1.5, -1.45);
+            glRotatef(SDL_GetTicks()*speed, 1, 0, 0);
+            drawHelixes();
+            glPopMatrix();
+            // Timone di sinistra
+            glPushMatrix();
+            glTranslatef(21.5, -0.3, 1.5);
+            glRotatef(angle, 0, 1, 0);
+            Utils::drawAxis();
+            drawRudders();
+            glPopMatrix();
+            // Timone di destra
+            glPushMatrix();
+            glTranslatef(21.5, -0.3, -1.5);
+            glRotatef(angle, 0, 1, 0);
+            Utils::drawAxis();
+            drawRudders();
+            glPopMatrix();
         }
     }
     fclose(file);

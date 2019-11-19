@@ -10,12 +10,14 @@ private:
     Texture *m_texture[10];
     void initModel();
     void drawTriangles(int, int, int);
+    void drawHelixes();
+    void drawRudders();
     void setupTexture(GLenum n_texture, Point3 min, Point3 max);
 public:
     ShipMesh(char *filename, TextureManager *textureManager):Mesh(filename) {
         this->textureManager = textureManager;
     }
-    void render();
+    void render(float speed, float facing);
 };
 
 #endif
