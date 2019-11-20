@@ -215,7 +215,7 @@ void Ship::render() {
     // Controlla l'inclinazione della barca basandosi sull'angolo di virata e sulla velocità
     glRotatef(-sterzo/3*((abs(vx)+abs(vz))*10), 1, 0, 0);
 
-    carlinga->render(abs(vx)+abs(vy)+abs(vz), mozzoA);
+    carlinga->render(abs(vx)+abs(vy)+abs(vz), -sterzo);
     carlinga->ComputeBoundingBox(px, py, pz, 0.05, -90 + facing);
     glColor3f(.4, .4, .4);
 

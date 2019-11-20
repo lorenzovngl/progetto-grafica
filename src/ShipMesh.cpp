@@ -102,6 +102,16 @@ void ShipMesh::drawHelixes(){
             glVertex3f(f[i].v[2]->p.coord[0] + offset[0], f[i].v[2]->p.coord[1] + offset[1], f[i].v[2]->p.coord[2] + offset[2]);
         }
     }
+    for (int i = 34001; i <= 34250; i++) {
+        glColor3f(1, 1, 1);
+        f[i].n.SendAsNormal(); // flat shading
+        if (f[i].v[0]->p.coord[2] < 0){
+            // Ne disegno solo una (poi la duplico), l'altra non mi serve
+            glVertex3f(f[i].v[0]->p.coord[0] + offset[0], f[i].v[0]->p.coord[1] + offset[1], f[i].v[0]->p.coord[2] + offset[2]);
+            glVertex3f(f[i].v[1]->p.coord[0] + offset[0], f[i].v[1]->p.coord[1] + offset[1], f[i].v[1]->p.coord[2] + offset[2]);
+            glVertex3f(f[i].v[2]->p.coord[0] + offset[0], f[i].v[2]->p.coord[1] + offset[1], f[i].v[2]->p.coord[2] + offset[2]);
+        }
+    }
     glEnd();
     glDisable(GL_TEXTURE_GEN_S);
     glDisable(GL_TEXTURE_GEN_T);
@@ -114,6 +124,16 @@ void ShipMesh::drawRudders(){
     // mandiamo tutti i triangoli a schermo
     glBegin(GL_TRIANGLES);
     for (int i = 16600; i <= 17000; i++) {
+        glColor3f(1, 1, 1);
+        f[i].n.SendAsNormal(); // flat shading
+        if (f[i].v[0]->p.coord[2] < 0){
+            // Ne disegno solo una (poi la duplico), l'altra non mi serve
+            glVertex3f(f[i].v[0]->p.coord[0] + offset[0], f[i].v[0]->p.coord[1] + offset[1], f[i].v[0]->p.coord[2] + offset[2]);
+            glVertex3f(f[i].v[1]->p.coord[0] + offset[0], f[i].v[1]->p.coord[1] + offset[1], f[i].v[1]->p.coord[2] + offset[2]);
+            glVertex3f(f[i].v[2]->p.coord[0] + offset[0], f[i].v[2]->p.coord[1] + offset[1], f[i].v[2]->p.coord[2] + offset[2]);
+        }
+    }
+    for (int i = 35800; i <= 36250; i++) {
         glColor3f(1, 1, 1);
         f[i].n.SendAsNormal(); // flat shading
         if (f[i].v[0]->p.coord[2] < 0){
@@ -148,13 +168,13 @@ void ShipMesh::render(float speed, float angle) {
             drawTriangles(tex, start, end);
             // Elica di sinistra
             glPushMatrix();
-            glTranslatef(19, -1.5, 1.45);
+            glTranslatef(19, -1.75, 1.45);
             glRotatef(SDL_GetTicks()*speed, 1, 0, 0);
             drawHelixes();
             glPopMatrix();
             // Elica di destra
             glPushMatrix();
-            glTranslatef(19, -1.5, -1.45);
+            glTranslatef(19, -1.75, -1.45);
             glRotatef(SDL_GetTicks()*speed, 1, 0, 0);
             drawHelixes();
             glPopMatrix();
@@ -162,14 +182,12 @@ void ShipMesh::render(float speed, float angle) {
             glPushMatrix();
             glTranslatef(21.5, -0.3, 1.5);
             glRotatef(angle, 0, 1, 0);
-            Utils::drawAxis();
             drawRudders();
             glPopMatrix();
             // Timone di destra
             glPushMatrix();
             glTranslatef(21.5, -0.3, -1.5);
             glRotatef(angle, 0, 1, 0);
-            Utils::drawAxis();
             drawRudders();
             glPopMatrix();
         }
