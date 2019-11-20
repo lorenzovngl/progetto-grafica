@@ -22,17 +22,38 @@
 bool TextureManager::loadTexture(int id){
     textures[id] = new Texture(id);
     switch (id){
+        case TEXTURE_SEA:
+            textures[id]->filename = (char*) "assets/sea.jpg";
+            break;
+        case TEXTURE_SKY:
+            textures[id]->filename = (char*) "assets/sky.jpg";
+            break;
+        case TEXTURE_ANTENNE_METAL:
+            textures[id]->filename = (char*) "assets/ship/antenne_metal.tga";
+            break;
+        case TEXTURE_BOTTOM_BODY_DARK_STRIPE:
+            textures[id]->filename = (char*) "assets/ship/bottom_body_dark_stripe.tga";
+            break;
         case TEXTURE_BOTTOM_BODY_DARK_RED_METAL:
             textures[id]->filename = (char*) "assets/ship/bottom_body_dark_red_metal.tga";
             break;
         case TEXTURE_DECK_WOODEN_FLOOR:
             textures[id]->filename = (char*) "assets/ship/deck_wooden_floor.tga";
             break;
-        case TEXTURE_SEA:
-            textures[id]->filename = (char*) "assets/sea.jpg";
+        case TEXTURE_SHIP_CATWALK:
+            textures[id]->filename = (char*) "assets/ship/ship_catwalk.tga";
             break;
-        case TEXTURE_SKY:
-            textures[id]->filename = (char*) "assets/sky.jpg";
+        case TEXTURE_SUPERSTRUCTURE_BASE_STRIPE:
+            textures[id]->filename = (char*) "assets/ship/superstructure_base_stripe.tga";
+            break;
+        case TEXTURE_SUPERSTRUCTURE_GLASS:
+            textures[id]->filename = (char*) "assets/ship/superstructure_glass.tga";
+            break;
+        case TEXTURE_SUPERSTRUCTURE_WHITE_METAL:
+            textures[id]->filename = (char*) "assets/ship/superstructure_white_metal.tga";
+            break;
+        case TEXTURE_SUPERSTRUCTURE_WIRES:
+            textures[id]->filename = (char*) "assets/ship/superstructure_wires.tga";
             break;
         case TEXTURE_TOP_BODY_BLACK_METAL:
             textures[id]->filename = (char*) "assets/ship/top_body_black_metal.tga";

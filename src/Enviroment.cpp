@@ -42,7 +42,7 @@ int Enviroment::getBuoysCount() {
 }
 
 void Enviroment::drawFarSea(float ship_x, float ship_y, float ship_z) {
-    const float S = 100; // size
+    const float S = 500; // size
     const float H = 0;   // altezza
     const int K = 100; //disegna K x K quads
     float scale_factor = 0.05;
@@ -133,16 +133,16 @@ void Enviroment::drawFarSea(float ship_x, float ship_y, float ship_z) {
 }
 
 void Enviroment::drawNearSea(float ship_x, float ship_y, float ship_z) {
-    const float S = 81; // size
+    const float S = 500; // size
     const float H = 0.2;   // altezza
-    const int K = 50; //disegna K x K quads
+    const int K = 100; //disegna K x K quads
     float scale_factor = 0.05;
 
     glPushMatrix();
     //glTranslatef(ship_x, ship_y, ship_z);
     glScalef(scale_factor, scale_factor, scale_factor);         // Cambio la scala per disegnare il mare
 
-    textureManager->enableTexture(TEXTURE_SEA);
+    /*textureManager->enableTexture(TEXTURE_SEA);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_TEXTURE_GEN_S);
     glEnable(GL_TEXTURE_GEN_T);
@@ -153,11 +153,16 @@ void Enviroment::drawNearSea(float ship_x, float ship_y, float ship_z) {
     float s[4] = {0.05, 0, 0, 0};
     float t[4] = {0, 0, 0.05, 0};
     glTexGenfv(GL_S, GL_OBJECT_PLANE, s);
-    glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
+    glTexGenfv(GL_T, GL_OBJECT_PLANE, t);*/
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glColor4f( 0.0f, 0.0f, 1.0f, 0.5f );
+    GLfloat cyl_mat[] = {0, 0, 1, 0.5};
+    glMaterialfv( GL_FRONT, GL_AMBIENT_AND_DIFFUSE, cyl_mat );
+    //glDepthMask(GL_FALSE);
     // disegna KxK quads
     glBegin(GL_TRIANGLES);
-    glColor3f(0.2, 0.2, 1); // colore uguale x tutti i quads
     glNormal3f(0, 1, 0);       // normale verticale uguale x tutti
     for (int x = 0; x < K; x++) {
         for (int z = 0; z < K; z++) {
@@ -198,9 +203,11 @@ void Enviroment::drawNearSea(float ship_x, float ship_y, float ship_z) {
         }
     }
     glEnd();
-    glDisable(GL_TEXTURE_GEN_S);
+    glDepthMask(GL_TRUE);
+    glDisable(GL_BLEND);
+    /*glDisable(GL_TEXTURE_GEN_S);
     glDisable(GL_TEXTURE_GEN_T);
-    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_TEXTURE_2D);*/
     glPopMatrix();
 }
 
@@ -223,8 +230,8 @@ void Enviroment::drawSky() {
 
 void Enviroment::render(float ship_x, float ship_y, float ship_z) {
     drawNearSea(ship_x, ship_y, ship_z);
-    drawFarSea(ship_x, ship_y, ship_z);
-    drawSky();
+    //drawFarSea(ship_x, ship_y, ship_z);
+    //drawSky();
     for (int i = 0; i < BUOYS_COUNT; i++) {
         if (buoy[i]->isActive()){
             glPushMatrix();

@@ -89,7 +89,7 @@ void ShipMesh::drawTriangles(int gl_texture, int start, int end) {
 
 void ShipMesh::drawHelixes(){
     float offset[3] = {-19, 1.75, 1.45};
-    setupTexture(4, bbmin, bbmax);
+    setupTexture(TEXTURE_BOTTOM_BODY_DARK_RED_METAL, bbmin, bbmax);
     // mandiamo tutti i triangoli a schermo
     glBegin(GL_TRIANGLES);
     for (int i = 15100; i <= 15500; i++) {
@@ -120,7 +120,7 @@ void ShipMesh::drawHelixes(){
 
 void ShipMesh::drawRudders(){
     float offset[3] = {-21.5, 0.3, 1.5};
-    setupTexture(4, bbmin, bbmax);
+    setupTexture(TEXTURE_BOTTOM_BODY_DARK_RED_METAL, bbmin, bbmax);
     // mandiamo tutti i triangoli a schermo
     glBegin(GL_TRIANGLES);
     for (int i = 16600; i <= 17000; i++) {

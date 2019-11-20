@@ -15,25 +15,27 @@
 
 # Parte più bassa dello scafo
 15501 - 16599 -> 4
+17651 - 17900 -> 4
+34251 - 35500 -> 4
 
 # Pavimentazione in legno
-17001 - 17450 -> 2
+17001 - 17450 -> 5
 
 # Parte intermedia dello scafo
-17451 - 17650 -> 3
-
-# Parte più bassa dello scafo
-17651 - 17900 -> 3
+17451 - 17650 -> 11
 
 # Unknown
-# 17901 - 18699
+#17901 - 18699
 
 # Parte superiore dello scafo
-18700 - 20000 -> 5
+18700 - 20000 -> 12
 
-# Componenti vari: scalini, oggetti posizionati sul pavimento, ecc
-20001 - 34000 -> 0
+# Componenti vari: scalini, oggetti posizionati sul ponte, ecc
+#20001 - 34000 -> 0
 
-# Resto del modello
-#34251 - 35799 -> 0
-#36250 - 64000 -> 0
+# Ringhiere
+37000 - 43000 -> 9
+45001 - 52000 -> 9
+
+52000 - 64000 -> 6
+

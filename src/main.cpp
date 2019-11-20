@@ -98,10 +98,10 @@ void rendering(SDL_Window *window) {
     //Utils::drawAxis(); // disegna assi frame OGGETTO
     //drawCubeWire();
 
-    //enviroment->render(ship->px, ship->py, ship->pz); // disegna il mare
     ship->render();
-    //game->detectCollision();
-    //hud->display(scrW, scrH);
+    enviroment->render(ship->px, ship->py, ship->pz); // disegna il mare
+    game->detectCollision();
+    hud->display(scrW, scrH);
 
     // attendiamo la fine della rasterizzazione di
     // tutte le primitive mandate
