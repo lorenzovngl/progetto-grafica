@@ -3,8 +3,6 @@
 
 #include "Texture.h"
 
-#define COUNT_TEXTURES 20
-
 #define TEXTURE_SEA 0
 #define TEXTURE_SKY 1
 
@@ -22,6 +20,9 @@
 #define TEXTURE_TOP_BODY_WHITE_METAL 12
 
 #define TEXTURE_FLAG_ITALY 13
+#define TEXTURE_MY_PHOTO 14
+
+#define COUNT_TEXTURES 20
 
 class TextureManager {
 private:

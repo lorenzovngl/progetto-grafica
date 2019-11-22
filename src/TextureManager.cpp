@@ -64,6 +64,9 @@ bool TextureManager::loadTexture(int id){
         case TEXTURE_FLAG_ITALY:
             textures[id]->filename = (char*) "assets/flags/italy.png";
             break;
+        case TEXTURE_MY_PHOTO:
+            textures[id]->filename = (char*) "assets/my_photo.jpg";
+            break;
         default:
             break;
     }

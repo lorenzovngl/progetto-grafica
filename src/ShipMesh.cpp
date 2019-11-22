@@ -43,6 +43,7 @@ void ShipMesh::initModel() {
     textureManager->loadTexture(TEXTURE_TOP_BODY_BLACK_METAL);
     textureManager->loadTexture(TEXTURE_TOP_BODY_WHITE_METAL);
     textureManager->loadTexture(TEXTURE_BOTTOM_BODY_DARK_RED_METAL);
+    textureManager->loadTexture(TEXTURE_MY_PHOTO);
 }
 
 // funzione che prepara tutto per creare le coordinate texture (s,t) da (x,y,z)
@@ -190,6 +191,30 @@ void ShipMesh::render(float speed, float angle) {
             glRotatef(angle, 0, 1, 0);
             drawRudders();
             glPopMatrix();
+            // Banner
+            textureManager->enableTexture(TEXTURE_MY_PHOTO);
+            glEnable(GL_TEXTURE_2D);
+            glBegin(GL_QUADS);
+
+            glTexCoord2f(0, 0);
+            glVertex3f(-14, 4.6, 3.14);
+            glTexCoord2f(0, 1);
+            glVertex3f(-14, 2.6, 3.14);
+            glTexCoord2f(1, 1);
+            glVertex3f(-12, 2.6, 3.5);
+            glTexCoord2f(1, 0);
+            glVertex3f(-12, 4.6, 3.5);
+
+            glTexCoord2f(1, 0);
+            glVertex3f(-14, 4.6, -3.14);
+            glTexCoord2f(1, 1);
+            glVertex3f(-14, 2.6, -3.14);
+            glTexCoord2f(0, 1);
+            glVertex3f(-12, 2.6, -3.5);
+            glTexCoord2f(0, 0);
+            glVertex3f(-12, 4.6, -3.5);
+
+            glEnd();
         }
     }
     fclose(file);

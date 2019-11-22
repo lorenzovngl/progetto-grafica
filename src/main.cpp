@@ -214,7 +214,8 @@ int main(int argc, char *argv[]) {
                     break;
 
                 case SDL_MOUSEMOTION:
-                    if (e.motion.state & SDL_BUTTON(1) & camera->getType() == CAMERA_MOUSE) {
+                    if (e.motion.state & SDL_BUTTON(1) &&
+                    (camera->getType() == CAMERA_MOUSE || camera->getType() == CAMERA_MOUSE_SHIP)) {
                         viewAlpha += e.motion.xrel;
                         viewBeta += e.motion.yrel;
                         //if (viewBeta<-90) viewBeta=-90;

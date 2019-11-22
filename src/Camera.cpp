@@ -22,7 +22,7 @@
 #include "headers/Utils.h"
 
 Camera::Camera(){
-    m_type = CAMERA_MOUSE;
+    m_type = CAMERA_MOUSE_SHIP;
 }
 
 int Camera::getType(){
@@ -71,19 +71,23 @@ void Camera::set(Ship ship, float eyeDist, float viewBeta, float viewAlpha) {
             gluLookAt(ex,ey,ez,cx,cy,cz,0.0,1.0,0.0);
             break;
         case CAMERA_MOUSE:
-            glTranslatef(0,0,-eyeDist);
+            glTranslatef(0, 0, -eyeDist);
             glRotatef(viewBeta,  1,0,0);
             glRotatef(viewAlpha, 0,1,0);
-/*
-printf("%f %f %f\n",viewAlpha,viewBeta,eyeDist);
-                ex=eyeDist*cos(viewAlpha)*sin(viewBeta);
-                ey=eyeDist*sin(viewAlpha)*sin(viewBeta);
-                ez=eyeDist*cos(viewBeta);
-                cx = px - camd*sinf;
-                cy = py + camh;
-                cz = pz - camd*cosf;
-                gluLookAt(ex,ey,ez,cx,cy,cz,0.0,1.0,0.0);
-*/
+            break;
+        case CAMERA_MOUSE_SHIP:
+            glTranslatef(0, 0, -eyeDist);
+            glRotatef(viewBeta,  1,0,0);
+            glRotatef(viewAlpha, 0,1,0);
+            camd = 0.2;
+            camh = 0.40;
+            ex = px + camd*sinf;
+            ey = py + camh;
+            ez = pz + camd*cosf;
+            cx = px - camd*sinf;
+            cy = py + camh;
+            cz = pz - camd*cosf;
+            gluLookAt(ex,ey,ez,cx,cy,cz,0.0,1.0,0.0);
             break;
     }
 }

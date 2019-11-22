@@ -6,7 +6,8 @@
 #define CAMERA_BACK_SHIP 0
 #define CAMERA_PILOT 1
 #define CAMERA_MOUSE 2
-#define CAMERA_TYPE_MAX 3
+#define CAMERA_MOUSE_SHIP 3
+#define CAMERA_TYPE_MAX 4
 
 class Camera {
 private:
