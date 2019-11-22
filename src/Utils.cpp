@@ -18,6 +18,13 @@
 
 #include "headers/Utils.h"
 
+void Utils::drawTranslatedAxis(float x, float y, float z) {
+    glPushMatrix();
+    glTranslatef(x, y, z);
+    drawAxis();
+    glPopMatrix();
+}
+
 void Utils::drawAxis(){
     const float K=0.10;
     glDisable(GL_LIGHTING);

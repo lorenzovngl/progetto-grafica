@@ -6,6 +6,7 @@
 class Utils {
 public:
     static void drawAxis();
+    static void drawTranslatedAxis(float x, float y, float z);
     static void drawSphere(double, int, int);
     static float floatMod(float, float);
     static void setCoordToPixel(int, int);

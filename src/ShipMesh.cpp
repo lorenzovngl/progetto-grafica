@@ -75,7 +75,6 @@ void ShipMesh::drawTriangles(int gl_texture, int start, int end) {
     for (int i = start; i <= end; i++) {
         if (!((i >= 15100 && i <= 15500) || (i >= 16600 && i <= 17000))) {
             // Disegno a parte le eliche e i timoni
-            glColor3f(1, 1, 1);
             f[i].n.SendAsNormal(); // flat shading
             (f[i].v[0])->p.SendAsVertex();
             (f[i].v[1])->p.SendAsVertex();
@@ -94,7 +93,6 @@ void ShipMesh::drawHelixes(){
     // mandiamo tutti i triangoli a schermo
     glBegin(GL_TRIANGLES);
     for (int i = 15100; i <= 15500; i++) {
-        glColor3f(1, 1, 1);
         f[i].n.SendAsNormal(); // flat shading
         if (f[i].v[0]->p.coord[2] < 0){
             // Ne disegno solo una (poi la duplico), l'altra non mi serve
@@ -104,7 +102,6 @@ void ShipMesh::drawHelixes(){
         }
     }
     for (int i = 34001; i <= 34250; i++) {
-        glColor3f(1, 1, 1);
         f[i].n.SendAsNormal(); // flat shading
         if (f[i].v[0]->p.coord[2] < 0){
             // Ne disegno solo una (poi la duplico), l'altra non mi serve
@@ -125,7 +122,6 @@ void ShipMesh::drawRudders(){
     // mandiamo tutti i triangoli a schermo
     glBegin(GL_TRIANGLES);
     for (int i = 16600; i <= 17000; i++) {
-        glColor3f(1, 1, 1);
         f[i].n.SendAsNormal(); // flat shading
         if (f[i].v[0]->p.coord[2] < 0){
             // Ne disegno solo una (poi la duplico), l'altra non mi serve
@@ -135,7 +131,6 @@ void ShipMesh::drawRudders(){
         }
     }
     for (int i = 35800; i <= 36250; i++) {
-        glColor3f(1, 1, 1);
         f[i].n.SendAsNormal(); // flat shading
         if (f[i].v[0]->p.coord[2] < 0){
             // Ne disegno solo una (poi la duplico), l'altra non mi serve

@@ -79,23 +79,27 @@ void rendering(SDL_Window *window) {
     // riempe tutto lo screen buffer di pixel color sfondo
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //drawAxis(); // disegna assi frame VISTA
-
-    // setto la posizione luce
-    float tmpv[4] = {0, 1, 2, 0}; // ultima comp=0 => luce direzionale
-    glLightfv(GL_LIGHT0, GL_POSITION, tmpv);
-
-
     camera->set(*ship, eyeDist, viewBeta, viewAlpha);
 
+    // setto la posizione luce
+    float ambient[4] = {1, 1, 1, 1};
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+    float diffuse[4] = {1, 1, 1, 1};
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+    float specular[4] = {1, 1, 1, 1};
+    glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+    float position[4] = {30, 50, 0, 1};
+    glLightfv(GL_LIGHT0, GL_POSITION, position);
 
     static float tmpcol[4] = {1, 1, 1, 1};
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, tmpcol);
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 127);
 
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
     // settiamo matrice di modellazione
 
-    //Utils::drawAxis(); // disegna assi frame OGGETTO
+    Utils::drawTranslatedAxis(30, 50, 0);
     //drawCubeWire();
 
     ship->render();
@@ -160,7 +164,7 @@ int main(int argc, char *argv[]) {
     //glEnable(GL_CULL_FACE);
     glFrontFace(GL_CW); // consideriamo Front Facing le facce ClockWise
     glEnable(GL_COLOR_MATERIAL);
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
 
     textureManager = new TextureManager();
 
