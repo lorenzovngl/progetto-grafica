@@ -68,8 +68,10 @@ void ShipMesh::setupTexture(GLenum n_texture, Point3 min, Point3 max) {
     glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
 }
 
-void ShipMesh::drawTriangles(int gl_texture, int start, int end) {
-    setupTexture(gl_texture, bbmin, bbmax);
+void ShipMesh::drawTriangles(bool texture_enabled, int gl_texture, int start, int end) {
+    if (texture_enabled) {
+        setupTexture(gl_texture, bbmin, bbmax);
+    }
     // mandiamo tutti i triangoli a schermo
     glBegin(GL_TRIANGLES);
     for (int i = start; i <= end; i++) {
@@ -82,14 +84,18 @@ void ShipMesh::drawTriangles(int gl_texture, int start, int end) {
         }
     }
     glEnd();
-    glDisable(GL_TEXTURE_GEN_S);
-    glDisable(GL_TEXTURE_GEN_T);
-    glDisable(GL_TEXTURE_2D);
+    if (texture_enabled){
+        glDisable(GL_TEXTURE_GEN_S);
+        glDisable(GL_TEXTURE_GEN_T);
+        glDisable(GL_TEXTURE_2D);
+    }
 }
 
-void ShipMesh::drawHelixes(){
+void ShipMesh::drawHelixes(bool texture_enabled){
     float offset[3] = {-19, 1.75, 1.45};
-    setupTexture(TEXTURE_BOTTOM_BODY_DARK_RED_METAL, bbmin, bbmax);
+    if (texture_enabled){
+        setupTexture(TEXTURE_BOTTOM_BODY_DARK_RED_METAL, bbmin, bbmax);
+    }
     // mandiamo tutti i triangoli a schermo
     glBegin(GL_TRIANGLES);
     for (int i = 15100; i <= 15500; i++) {
@@ -111,14 +117,18 @@ void ShipMesh::drawHelixes(){
         }
     }
     glEnd();
-    glDisable(GL_TEXTURE_GEN_S);
-    glDisable(GL_TEXTURE_GEN_T);
-    glDisable(GL_TEXTURE_2D);
+    if (texture_enabled){
+        glDisable(GL_TEXTURE_GEN_S);
+        glDisable(GL_TEXTURE_GEN_T);
+        glDisable(GL_TEXTURE_2D);
+    }
 }
 
-void ShipMesh::drawRudders(){
+void ShipMesh::drawRudders(bool texture_enabled){
     float offset[3] = {-21.5, 0.3, 1.5};
-    setupTexture(TEXTURE_BOTTOM_BODY_DARK_RED_METAL, bbmin, bbmax);
+    if (texture_enabled){
+        setupTexture(TEXTURE_BOTTOM_BODY_DARK_RED_METAL, bbmin, bbmax);
+    }
     // mandiamo tutti i triangoli a schermo
     glBegin(GL_TRIANGLES);
     for (int i = 16600; i <= 17000; i++) {
@@ -140,12 +150,14 @@ void ShipMesh::drawRudders(){
         }
     }
     glEnd();
-    glDisable(GL_TEXTURE_GEN_S);
-    glDisable(GL_TEXTURE_GEN_T);
-    glDisable(GL_TEXTURE_2D);
+    if (texture_enabled){
+        glDisable(GL_TEXTURE_GEN_S);
+        glDisable(GL_TEXTURE_GEN_T);
+        glDisable(GL_TEXTURE_2D);
+    }
 }
 
-void ShipMesh::render(float speed, float angle) {
+void ShipMesh::render(bool texture_enabled, float speed, float angle) {
     char *filepath = (char *) "assets/ship/textures.dat";
     FILE *file;
     int start, end, tex;
@@ -161,57 +173,62 @@ void ShipMesh::render(float speed, float angle) {
     while (fgets(line, 100, file) != NULL) {
         if (line[0] != '#' && line[0] != '\n') {                    // Avoid comments and blank lines
             sscanf(line, "%d - %d -> %d\n", &start, &end, &tex);
-            drawTriangles(tex, start, end);
-            // Elica di sinistra
-            glPushMatrix();
-            glTranslatef(19, -1.75, 1.45);
-            glRotatef(SDL_GetTicks()*speed, 1, 0, 0);
-            drawHelixes();
-            glPopMatrix();
-            // Elica di destra
-            glPushMatrix();
-            glTranslatef(19, -1.75, -1.45);
-            glRotatef(SDL_GetTicks()*speed, 1, 0, 0);
-            drawHelixes();
-            glPopMatrix();
-            // Timone di sinistra
-            glPushMatrix();
-            glTranslatef(21.5, -0.3, 1.5);
-            glRotatef(angle, 0, 1, 0);
-            drawRudders();
-            glPopMatrix();
-            // Timone di destra
-            glPushMatrix();
-            glTranslatef(21.5, -0.3, -1.5);
-            glRotatef(angle, 0, 1, 0);
-            drawRudders();
-            glPopMatrix();
-            // Banner
-            textureManager->enableTexture(TEXTURE_MY_PHOTO);
-            glEnable(GL_TEXTURE_2D);
-            glBegin(GL_QUADS);
-
-            glTexCoord2f(0, 0);
-            glVertex3f(-14, 4.6, 3.14);
-            glTexCoord2f(0, 1);
-            glVertex3f(-14, 2.6, 3.14);
-            glTexCoord2f(1, 1);
-            glVertex3f(-12, 2.6, 3.5);
-            glTexCoord2f(1, 0);
-            glVertex3f(-12, 4.6, 3.5);
-
-            glTexCoord2f(1, 0);
-            glVertex3f(-14, 4.6, -3.14);
-            glTexCoord2f(1, 1);
-            glVertex3f(-14, 2.6, -3.14);
-            glTexCoord2f(0, 1);
-            glVertex3f(-12, 2.6, -3.5);
-            glTexCoord2f(0, 0);
-            glVertex3f(-12, 4.6, -3.5);
-
-            glEnd();
+            drawTriangles(texture_enabled, tex, start, end);
         }
     }
     fclose(file);
+    // Elica di sinistra
+    glPushMatrix();
+    glTranslatef(19, -1.75, 1.45);
+    glRotatef(SDL_GetTicks()*speed, 1, 0, 0);
+    drawHelixes(texture_enabled);
+    glPopMatrix();
+    // Elica di destra
+    glPushMatrix();
+    glTranslatef(19, -1.75, -1.45);
+    glRotatef(SDL_GetTicks()*speed, 1, 0, 0);
+    drawHelixes(texture_enabled);
+    glPopMatrix();
+    // Timone di sinistra
+    glPushMatrix();
+    glTranslatef(21.5, -0.3, 1.5);
+    glRotatef(angle, 0, 1, 0);
+    drawRudders(texture_enabled);
+    glPopMatrix();
+    // Timone di destra
+    glPushMatrix();
+    glTranslatef(21.5, -0.3, -1.5);
+    glRotatef(angle, 0, 1, 0);
+    drawRudders(texture_enabled);
+    glPopMatrix();
+    // Banner
+    if (texture_enabled){
+        textureManager->enableTexture(TEXTURE_MY_PHOTO);
+        glEnable(GL_TEXTURE_2D);
+    }
+    glBegin(GL_QUADS);
+
+    glTexCoord2f(0, 0);
+    glVertex3f(-14, 4.6, 3.14);
+    glTexCoord2f(0, 1);
+    glVertex3f(-14, 2.6, 3.14);
+    glTexCoord2f(1, 1);
+    glVertex3f(-12, 2.6, 3.5);
+    glTexCoord2f(1, 0);
+    glVertex3f(-12, 4.6, 3.5);
+
+    glTexCoord2f(1, 0);
+    glVertex3f(-14, 4.6, -3.14);
+    glTexCoord2f(1, 1);
+    glVertex3f(-14, 2.6, -3.14);
+    glTexCoord2f(0, 1);
+    glVertex3f(-12, 2.6, -3.5);
+    glTexCoord2f(0, 0);
+    glVertex3f(-12, 4.6, -3.5);
+
+    glEnd();
+    if (texture_enabled){
+        glDisable(GL_TEXTURE_2D);
+    }
     //displayBoundingBox();
 }

@@ -17,13 +17,13 @@ ifeq ($(OS),MINGW32_NT-6.1)
 ## caso Windows MinGW
 $(info Windows MinGW detected)
 FRMPATH = -IC:\MinGW\include
-LIBS = -LC:\MinGW\lib -lmingw32 -lSDL2main -lSDL2 -lopengl32 -lglu32 -lSDL2_ttf -lm
+LIBS = -LC:\MinGW\lib -lmingw32 -lSDL2main -lSDL2 -lopengl32 -lglu32 -lSDL2_ttf -lGLEW -lglfw -lm
 else
 ##caso Linux
 $(info Linux detected)
 #framework presenti solo nel caso MAC OS
 FRMPATH =
-LIBS = -lGL -lGLU -lglut -lSDL2 -lSDL2_image -lSDL2_ttf -lm
+LIBS = -lGL -lGLU -lglut -lSDL2 -lSDL2_image -lSDL2_ttf -lGLEW -lglfw -lm
 endif
 endif
 

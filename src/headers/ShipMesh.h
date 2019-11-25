@@ -9,15 +9,15 @@ private:
     TextureManager *textureManager;
     Texture *m_texture[10];
     void initModel();
-    void drawTriangles(int, int, int);
-    void drawHelixes();
-    void drawRudders();
+    void drawTriangles(bool texture_enabled, int, int, int);
+    void drawHelixes(bool texture_enabled);
+    void drawRudders(bool texture_enabled);
     void setupTexture(GLenum n_texture, Point3 min, Point3 max);
 public:
     ShipMesh(char *filename, TextureManager *textureManager):Mesh(filename) {
         this->textureManager = textureManager;
     }
-    void render(float speed, float facing);
+    void render(bool texture_enabled, float speed, float facing);
 };
 
 #endif

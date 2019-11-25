@@ -12,7 +12,7 @@ private:
 public:
     // Metodi
     void Init(); // inizializza variabili
-    void render(); // disegna a schermo
+    void render(bool texture_enabled); // disegna a schermo
     void DoStep(); // computa un passo del motore fisico
     ShipMesh* getMesh();
     Ship(TextureManager *textureManager) {

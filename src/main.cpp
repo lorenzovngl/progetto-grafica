@@ -102,7 +102,18 @@ void rendering(SDL_Window *window) {
     Utils::drawTranslatedAxis(30, 50, 0);
     //drawCubeWire();
 
-    ship->render();
+    ship->render(true);
+    glPushMatrix();
+    float l[] = { 30.0, 50.0, 0.0 }; // Coordinates of the light source
+    float n[] = { 0.0,  -1.0, 0.0 }; // Normal vector for the plane
+    float e[] = { 0.0, 0.0, 0.0 }; // Point of the plane
+    glTranslatef(0, -0.02, 0);
+    Utils::glShadowProjection(l,e,n);
+    glDisable(GL_LIGHTING);
+    glColor3f(0.4,0.4,0.4);
+    ship->render(false);
+    glEnable(GL_LIGHTING);
+    glPopMatrix();
     enviroment->render(ship->px, ship->py, ship->pz); // disegna il mare
     game->detectCollision();
     hud->display(scrW, scrH);
