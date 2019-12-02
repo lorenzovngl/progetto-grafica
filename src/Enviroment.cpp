@@ -121,34 +121,35 @@ void Enviroment::drawFarSea(float ship_x, float ship_y, float ship_z) {
 }
 
 void Enviroment::drawNearSea(float ship_x, float ship_y, float ship_z) {
+    float scale_factor = 0.05;
     const float S = 400; // size
     const float H = 0.2;   // altezza
     const int K = 100; //disegna K x K quads
-    float scale_factor = 0.05;
 
     glPushMatrix();
-    //glTranslatef(ship_x, ship_y, ship_z);
-    glScalef(scale_factor, scale_factor, scale_factor);         // Cambio la scala per disegnare il mare
+    glTranslatef(ship_x, ship_y, ship_z);
 
     float s[4] = {0.05, 0, 0, 0};
     float t[4] = {0, 0, 0.05, 0};
     glTexGenfv(GL_S, GL_OBJECT_PLANE, s);
     glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
 
+    //glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
     // disegna KxK quads
     glBegin(GL_TRIANGLES);
     glNormal3f(0, 1, 0);       // normale verticale uguale x tutti
     for (int x = 0; x < K; x++) {
         for (int z = 0; z < K; z++) {
-            float x0 = -S + 2 * (x + 0) * S / K + ship_x*1/scale_factor;
-            float x1 = -S + 2 * (x + 1) * S / K + ship_x*1/scale_factor;
-            float z0 = -S + 2 * (z + 0) * S / K + ship_z*1/scale_factor;
-            float z1 = -S + 2 * (z + 1) * S / K + ship_z*1/scale_factor;
+            float x0 = (-S + 2 * (x + 0) * S / K)*scale_factor;
+            float x1 = (-S + 2 * (x + 1) * S / K)*scale_factor;
+            float z0 = (-S + 2 * (z + 0) * S / K)*scale_factor;
+            float z1 = (-S + 2 * (z + 1) * S / K)*scale_factor;
             float motion = (float) SDL_GetTicks()/500;
-            float y00 = (cos(x0 + motion) + sin(z0 + motion))*H;
-            float y01 = (cos(x0 + motion) + sin(z1 + motion))*H;
-            float y11 = (cos(x1 + motion) + sin(z1 + motion))*H;
-            float y10 = (cos(x1 + motion) + sin(z0 + motion))*H;
+            float y00 = (cos(x0 + motion) + sin(z0 + motion))*H*scale_factor;
+            float y01 = (cos(x0 + motion) + sin(z1 + motion))*H*scale_factor;
+            float y11 = (cos(x1 + motion) + sin(z1 + motion))*H*scale_factor;
+            float y10 = (cos(x1 + motion) + sin(z0 + motion))*H*scale_factor;
 
             // Blocco il movimento dei vertici del perimetro
             if (x == 0){
@@ -197,7 +198,7 @@ void Enviroment::drawSky() {
     glDisable(GL_TEXTURE_2D);
 }
 
-void Enviroment::render(float ship_x, float ship_y, float ship_z) {
+void Enviroment::renderBuoys(){
     for (int i = 0; i < BUOYS_COUNT; i++) {
         if (buoy[i]->isActive()){
             glPushMatrix();
@@ -205,22 +206,29 @@ void Enviroment::render(float ship_x, float ship_y, float ship_z) {
             glPopMatrix();
         }
     }
-    textureManager->enableTexture(TEXTURE_SEA);
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_TEXTURE_GEN_S);
-    glEnable(GL_TEXTURE_GEN_T);
-    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glColor4f( 0.0f, 0.0f, 1.0f, 0.7f );
+}
+
+void Enviroment::render(float ship_x, float ship_y, float ship_z, bool texture_enabled) {
+    if (texture_enabled){
+        textureManager->enableTexture(TEXTURE_SEA);
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_TEXTURE_GEN_S);
+        glEnable(GL_TEXTURE_GEN_T);
+        glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+        glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glColor4f( 0.0f, 0.0f, 1.0f, 0.7f );
+    }
     drawNearSea(ship_x, ship_y, ship_z);
-    drawFarSea(ship_x, ship_y, ship_z);
-    glDisable(GL_BLEND);
-    glDisable(GL_TEXTURE_GEN_S);
-    glDisable(GL_TEXTURE_GEN_T);
-    glDisable(GL_TEXTURE_2D);
-    drawSky();
+    //drawFarSea(ship_x, ship_y, ship_z);
+    if (texture_enabled){
+        glDisable(GL_BLEND);
+        glDisable(GL_TEXTURE_GEN_S);
+        glDisable(GL_TEXTURE_GEN_T);
+        glDisable(GL_TEXTURE_2D);
+    }
+    //drawSky();
 }

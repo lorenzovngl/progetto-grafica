@@ -17,7 +17,8 @@ public:
     Enviroment(TextureManager *textureManager);
     Buoy* getBuoy(int);
     int getBuoysCount();
-    void render(float, float, float);
+    void renderBuoys();
+    void render(float, float, float, bool texture_enabled);
 };
 
 

@@ -117,6 +117,7 @@ void DrawGL()
         glPushMatrix();glLoadMatrixf(lvpMatrix); // we load both (light) projection and view matrices here (it's the same after all)
         //Helper_GlutDrawGeometry(elapsedMs,cosAlpha,sinAlpha,shadowManager->targetPos,shadowManager->pgDisplayListBase);  // Done SHADOW_MAP_NUM_CASCADES times!
         ship->render(false);
+        enviroment->renderBuoys();
         glPopMatrix();
         glUseProgram(0);
         glDisable(GL_DEPTH_CLAMP);
@@ -138,26 +139,17 @@ void DrawGL()
         // Draw to world
         glViewport(0, 0, scrW, scrH);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, shadowManager->shadowPass.textureId);
+        //glActiveTexture(GL_TEXTURE1);
         glUseProgram( shadowManager->defaultPass.program);
         glUniformMatrix4fv( shadowManager->defaultPass.uniform_location_biasedShadowMvpMatrix,
                 1, GL_FALSE,biasedShadowMvpMatrix);
         glDisable(GL_CULL_FACE);
         //ship->render(false);
-        //enviroment->render(ship->px, ship->py, ship->pz); // disegna il mare
-        // ground
-        glColor3f(0.2,0.4,0.2);
-        glPushMatrix();
-
-        glTranslatef(0,-0.5,0);
-
-        glPushMatrix();
-        glScalef(11.f,0.5f,14.f);
-        glutSolidCube(1.0);
+        glColor3f(0,0,1);
+        enviroment->render(ship->px, ship->py, ship->pz, false);
         glPopMatrix();
-
-        glPopMatrix();
-        //Helper_GlutDrawGeometry(elapsedMs,cosAlpha,sinAlpha,shadowManager->targetPos,shadowManager->pgDisplayListBase);  // Done SHADOW_MAP_NUM_CASCADES times!
         glUseProgram(0);
         glBindTexture(GL_TEXTURE_2D,0);
     }
@@ -238,6 +230,7 @@ void rendering(SDL_Window *window) {
     glDisable(GL_CULL_FACE);
     //glColor3f(1, 1, 1);
     ship->render(false);
+    enviroment->renderBuoys();
     //enviroment->render(ship->px, ship->py, ship->pz); // disegna il mare
 
     {
