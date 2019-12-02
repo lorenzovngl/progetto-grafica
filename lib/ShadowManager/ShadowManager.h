@@ -50,7 +50,7 @@ public:
     void DestroyShadowPass();
     void InitDefaultPass();
     void DestroyDefaultPass();
-    void resetCamera();  // Mandatory
+    void resetCamera(float eyeDist, float viewBeta, float viewAlpha);  // Mandatory
     void resetLight();   // Mandatory
     void updateCameraPos();
     void updateDirectionalLight();

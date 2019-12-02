@@ -53,7 +53,7 @@ ShadowManager *shadowManager;
 
 #define SHADOW_MAP_RESOLUTION 1024
 
-void DrawGL(void)
+void DrawGL()
 {
     printf("DrawGL() called\n");
     // All the things about time are just used to display FPS (F2)
@@ -115,7 +115,8 @@ void DrawGL(void)
         glEnable(GL_DEPTH_CLAMP);
         glUseProgram( shadowManager->shadowPass.program);            // we can just use glUseProgram(0) here
         glPushMatrix();glLoadMatrixf(lvpMatrix); // we load both (light) projection and view matrices here (it's the same after all)
-        Helper_GlutDrawGeometry(elapsedMs,cosAlpha,sinAlpha,shadowManager->targetPos,shadowManager->pgDisplayListBase);  // Done SHADOW_MAP_NUM_CASCADES times!
+        //Helper_GlutDrawGeometry(elapsedMs,cosAlpha,sinAlpha,shadowManager->targetPos,shadowManager->pgDisplayListBase);  // Done SHADOW_MAP_NUM_CASCADES times!
+        ship->render(false);
         glPopMatrix();
         glUseProgram(0);
         glDisable(GL_DEPTH_CLAMP);
@@ -139,12 +140,105 @@ void DrawGL(void)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glBindTexture(GL_TEXTURE_2D, shadowManager->shadowPass.textureId);
         glUseProgram( shadowManager->defaultPass.program);
-        glUniformMatrix4fv( shadowManager->defaultPass.uniform_location_biasedShadowMvpMatrix, 1 /*only setting 1 matrix*/, GL_FALSE /*transpose?*/,biasedShadowMvpMatrix);
-        Helper_GlutDrawGeometry(elapsedMs,cosAlpha,sinAlpha,shadowManager->targetPos,shadowManager->pgDisplayListBase);  // Done SHADOW_MAP_NUM_CASCADES times!
+        glUniformMatrix4fv( shadowManager->defaultPass.uniform_location_biasedShadowMvpMatrix,
+                1, GL_FALSE,biasedShadowMvpMatrix);
+        glDisable(GL_CULL_FACE);
+        //ship->render(false);
+        //enviroment->render(ship->px, ship->py, ship->pz); // disegna il mare
+        // ground
+        glColor3f(0.2,0.4,0.2);
+        glPushMatrix();
+
+        glTranslatef(0,-0.5,0);
+
+        glPushMatrix();
+        glScalef(11.f,0.5f,14.f);
+        glutSolidCube(1.0);
+        glPopMatrix();
+
+        glPopMatrix();
+        //Helper_GlutDrawGeometry(elapsedMs,cosAlpha,sinAlpha,shadowManager->targetPos,shadowManager->pgDisplayListBase);  // Done SHADOW_MAP_NUM_CASCADES times!
         glUseProgram(0);
         glBindTexture(GL_TEXTURE_2D,0);
     }
 
+}
+
+/* Esegue il Rendering della scena */
+void rendering(SDL_Window *window) {
+    // un frame in piu'!!!
+    fpsNow++;
+
+    glLineWidth(3); // linee larghe
+
+    // settiamo il viewport
+    glViewport(0, 0, scrW, scrH);
+
+    glClearColor(1,1,1,1);
+
+    // settiamo matrice di vista
+    glTranslatef(0, 0, -eyeDist);
+    glRotatef(viewBeta, 1, 0, 0);
+    glRotatef(viewAlpha, 0, 1, 0);
+
+
+    // settiamo la matrice di proiezione
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective( 70, //fovy,
+                    ((float)scrW) / scrH,//aspect Y/X,
+                    0.2,//distanza del NEAR CLIPPING PLANE in coordinate vista
+                    1000  //distanza del FAR CLIPPING PLANE in coordinate vista
+    );
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    // riempe tutto lo screen buffer di pixel color sfondo
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    camera->set(*ship, eyeDist, viewBeta, viewAlpha);
+
+    // setto la posizione luce
+    /*float ambient[4] = {1, 1, 1, 1};
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+    float diffuse[4] = {1, 1, 1, 1};
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+    float specular[4] = {1, 1, 1, 1};
+    glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+    float position[4] = {30, 50, 0, 1};
+    glLightfv(GL_LIGHT0, GL_POSITION, position);
+
+    static float tmpcol[4] = {1, 1, 1, 1};
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, tmpcol);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 127);
+
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);*/
+
+    // settiamo matrice di modellazione
+
+    //Utils::drawTranslatedAxis(30, 50, 0);
+    //drawCubeWire();
+
+    // Shadow rendering
+    /*glPushMatrix();
+    float l[] = { 30.0, 50.0, 0.0 }; // Coordinates of the light source
+    float n[] = { 0.0,  -1.0, 0.0 }; // Normal vector for the plane
+    float e[] = { 0.0, 0.0, 0.0 }; // Point of the plane
+    glTranslatef(0, -0.02, 0);
+    Utils::glShadowProjection(l,e,n);
+    glDisable(GL_LIGHTING);
+    glColor3f(0.4,0.4,0.4);
+    ship->render(false);
+    glEnable(GL_LIGHTING);
+    glPopMatrix();*/
+
+    glEnable(GL_CULL_FACE);
+    DrawGL();
+    glDisable(GL_CULL_FACE);
+    //glColor3f(1, 1, 1);
+    ship->render(false);
+    //enviroment->render(ship->px, ship->py, ship->pz); // disegna il mare
 
     {
         glDisable(GL_DEPTH_TEST);
@@ -183,82 +277,6 @@ void DrawGL(void)
         glEnable(GL_CULL_FACE);
         glDepthMask(GL_TRUE);
     }
-}
-
-/* Esegue il Rendering della scena */
-void rendering(SDL_Window *window) {
-    // un frame in piu'!!!
-    /*fpsNow++;
-
-    glLineWidth(3); // linee larghe
-
-    // settiamo il viewport
-    glViewport(0, 0, scrW, scrH);
-
-    glClearColor(0,0,0,0);
-
-    // settiamo matrice di vista
-    glTranslatef(0, 0, -eyeDist);
-    glRotatef(viewBeta, 1, 0, 0);
-    glRotatef(viewAlpha, 0, 1, 0);
-
-
-    // settiamo la matrice di proiezione
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective( 70, //fovy,
-                    ((float)scrW) / scrH,//aspect Y/X,
-                    0.2,//distanza del NEAR CLIPPING PLANE in coordinate vista
-                    1000  //distanza del FAR CLIPPING PLANE in coordinate vista
-    );
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    // riempe tutto lo screen buffer di pixel color sfondo
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    camera->set(*ship, eyeDist, viewBeta, viewAlpha);*/
-
-    // setto la posizione luce
-    /*float ambient[4] = {1, 1, 1, 1};
-    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-    float diffuse[4] = {1, 1, 1, 1};
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
-    float specular[4] = {1, 1, 1, 1};
-    glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
-    float position[4] = {30, 50, 0, 1};
-    glLightfv(GL_LIGHT0, GL_POSITION, position);
-
-    static float tmpcol[4] = {1, 1, 1, 1};
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, tmpcol);
-    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 127);
-
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);*/
-
-    // settiamo matrice di modellazione
-
-    //Utils::drawTranslatedAxis(30, 50, 0);
-    //drawCubeWire();
-
-    //glColor3f(0.4,0.4,0.4);
-
-    // Shadow rendering
-    /*glPushMatrix();
-    float l[] = { 30.0, 50.0, 0.0 }; // Coordinates of the light source
-    float n[] = { 0.0,  -1.0, 0.0 }; // Normal vector for the plane
-    float e[] = { 0.0, 0.0, 0.0 }; // Point of the plane
-    glTranslatef(0, -0.02, 0);
-    Utils::glShadowProjection(l,e,n);
-    glDisable(GL_LIGHTING);
-    glColor3f(0.4,0.4,0.4);
-    ship->render(false);
-    glEnable(GL_LIGHTING);
-    glPopMatrix();*/
-
-    shadowManager->DrawGL();
-    //ship->render(false);
-    //enviroment->render(ship->px, ship->py, ship->pz); // disegna il mare
 
     //game->detectCollision();
     //hud->display(scrW, scrH);
@@ -266,7 +284,7 @@ void rendering(SDL_Window *window) {
     // attendiamo la fine della rasterizzazione di
     // tutte le primitive mandate
 
-    //glFinish();
+    glFinish();
     // ho finito: buffer di lavoro diventa visibile
     SDL_GL_SwapWindow(window);
 }
@@ -330,15 +348,14 @@ int main(int argc, char *argv[]) {
     //Create our opengl context and attach it to our window
     mainContext = SDL_GL_CreateContext(window);
 
-   /* glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_NORMALIZE); // rinormalizza le normali prima di usarle
-    glEnable(GL_CULL_FACE);
-    glFrontFace(GL_CW); // consideriamo Front Facing le facce ClockWise*/
-    //glEnable(GL_COLOR_MATERIAL);
-    //glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  // Otherwise transparent objects are not displayed correctly
+    glFrontFace(GL_CW); // consideriamo Front Facing le facce ClockWise
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  // Otherwise transparent objects are not displayed correctly
 
     textureManager = new TextureManager();
 
@@ -351,7 +368,7 @@ int main(int argc, char *argv[]) {
 
     shadowManager->InitGL();
     shadowManager->ResizeGL(scrW, scrH);
-    shadowManager->resetCamera();
+    shadowManager->resetCamera(eyeDist, viewBeta, viewAlpha);
     shadowManager->resetLight();
 
 
@@ -406,6 +423,7 @@ int main(int argc, char *argv[]) {
                         //if (viewBeta<-90) viewBeta=-90;
                         //if (viewBeta < +5) viewBeta = +5; //per non andare sotto la macchina
                         if (viewBeta > +90) viewBeta = +90;
+                        shadowManager->resetCamera(eyeDist, viewBeta*0.005, -viewAlpha*0.005);
                         rendering(window);
                         //redraw(); // richiedi un ridisego
                     }
@@ -421,6 +439,7 @@ int main(int argc, char *argv[]) {
                         // allontano il punto di vista (zoom out)
                         eyeDist = eyeDist / 0.9;
                     };
+                    shadowManager->resetCamera(eyeDist, viewBeta*0.005, -viewAlpha*0.005);
                     rendering(window);
                     break;
 

@@ -17,6 +17,7 @@
 
 #include <vector> // la classe vector di SDL
 #include <SDL2/SDL_timer.h>
+#include <GL/freeglut_std.h>
 
 #include "headers/Mesh.h"
 #include "headers/Ship.h"
@@ -197,10 +198,6 @@ void Ship::render(bool texture_enabled) {
     // disegna la carliga con una mesh
     //glPushMatrix();
     glScalef(0.05, 0.05, 0.05); // patch: riscaliamo la mesh di 1/10
-
-    //carlinga.render();
-    //carlinga.Texturize();
-    //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);

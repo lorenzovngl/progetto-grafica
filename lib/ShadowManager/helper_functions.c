@@ -21,6 +21,8 @@
 #include <stdio.h>
 #include <GL/glew.h>
 #include <stdlib.h>
+#include <GL/freeglut_std.h>
+#include <GL/freeglut_ext.h>
 #include "helper_functions.h"
 
 #ifdef __cplusplus

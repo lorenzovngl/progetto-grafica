@@ -327,7 +327,7 @@ void ShadowManager::InitGL(void) {
 
     // These are important, but often overlooked OpenGL calls
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  // Otherwise transparent objects are not displayed correctly
     glClearColor(0.3f, 0.6f, 1.0f, 1.0f);
     glEnable(GL_TEXTURE_2D);    // Only needed for ffp, when VISUALIZE_DEPTH_TEXTURE is defined
@@ -549,12 +549,15 @@ void ShadowManager::updateDirectionalLight() {
     lightDirection[3]=0.f;
 }
 
-void ShadowManager::resetCamera() {
+void ShadowManager::resetCamera(float eyeDist, float viewBeta, float viewAlpha) {
     // You can set the initial camera position here through:
     targetPos[0]=0; targetPos[1]=0; targetPos[2]=0; // The camera target point
-    cameraYaw = 2*M_PI;                             // The camera rotation around the Y axis
-    cameraPitch = M_PI*0.125f;                      // The camera rotation around the XZ plane
-    cameraDistance = 5;                             // The distance between the camera position and the camera target point
+    //cameraYaw = 2*M_PI;                             // The camera rotation around the Y axis
+    cameraYaw = viewAlpha;
+    //cameraPitch = M_PI*0.125f;                      // The camera rotation around the XZ plane
+    cameraPitch = viewBeta;
+    //cameraDistance = 5;                             // The distance between the camera position and the camera target point
+    cameraDistance = eyeDist;
 
     updateCameraPos();
     if (config.use_camera_ortho3d_projection_matrix)    ShadowManager::ResizeGL(current_width,current_height); // Needed because in Helper_Orho3D(...) cameraTargetDistance changes
