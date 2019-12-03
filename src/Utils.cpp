@@ -13,6 +13,8 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+#include <fstream>
+#include <iostream>
 
 #endif
 
@@ -173,4 +175,11 @@ void Utils::glShadowProjection(float * l, float * e, float * n){
 
     // Finally multiply the matrices together *plonk*
     glMultMatrixf(mat);
+}
+
+void Utils::loadFileIntoCharArray(char* dest, char* filepath) {
+    std::ifstream file(filepath);
+    std::string contents((std::istreambuf_iterator<char>(file)),
+                         std::istreambuf_iterator<char>());
+    strcpy(dest, contents.c_str());
 }

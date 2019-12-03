@@ -90,6 +90,7 @@ extern "C" {
     #include "helper_functions.h"
 }
 #include "ShadowManager.h"
+#include "../../src/headers/Utils.h"
 // only very few of its functions are used.
 
 #include <stdio.h>
@@ -181,21 +182,14 @@ int gameModeWindowId = 0;	// window Id when in fullscreen mode
 
 float instantFrameTime = 16.2f;
 
-
-static const char* ShadowPassVertexShader[] = {
-    "   void main() {\n"
-    "       gl_Position = ftransform();\n"
-    "   }\n"
-};
-static const char* ShadowPassFragmentShader[] = {
-    "   void main() {\n"
-    "       //gl_FragColor =  gl_Color;\n"
-    "   }\n"
-};
+char ShadowPassFragmentShader[5000];
+char ShadowPassVertexShader[5000];
 
 void ShadowManager::InitShadowPass()	{
     printf("InitShadowPass() called\n");
-    shadowPass.program = Helper_LoadShaderProgramFromSource(*ShadowPassVertexShader,*ShadowPassFragmentShader);
+    Utils::loadFileIntoCharArray(ShadowPassFragmentShader, (char*) "lib/ShadowManager/shaders/shadowPassFragShader.frag");
+    Utils::loadFileIntoCharArray(ShadowPassVertexShader, (char*) "lib/ShadowManager/shaders/shadowPassVertShader.vert");
+    shadowPass.program = Helper_LoadShaderProgramFromSource(ShadowPassVertexShader, ShadowPassFragmentShader);
 
     // create depth texture
     glGenTextures(1, &shadowPass.textureId);
@@ -239,42 +233,14 @@ void ShadowManager::DestroyShadowPass()	{
     if (shadowPass.textureId) {glDeleteTextures(1,&shadowPass.textureId);}
 }
 
-static const char* DefaultPassVertexShader[] = {
-    "uniform mat4 u_biasedShadowMvpMatrix;\n"   // (*) Actually it's already multiplied with vMatrixInverse (in C code, so that the multiplication can be easily done with doubles)
-    "varying vec4 v_shadowCoord;\n"
-    "varying vec4 v_diffuse;\n"
-    "\n"
-    "void main()	{\n"
-    "	gl_Position = ftransform();\n"
-    "\n"
-	"	vec3 normal = gl_NormalMatrix * gl_Normal;\n"	
-    "	vec3 lightVector = gl_LightSource[0].position.xyz\n;// - gl_Vertex.xyz;\n"
-    "	float nxDir = max(0.0, dot(normal, lightVector));\n"
-    "	v_diffuse = gl_LightSource[0].diffuse * nxDir; \n"
-	"\n"	
-    "	gl_FrontColor = gl_Color;\n"
-	"\n"
-    "   v_shadowCoord = u_biasedShadowMvpMatrix*(gl_ModelViewMatrix*gl_Vertex);\n"  // (*) We don't pass a 'naked' mMatrix in shaders (not robust to double precision usage). We dress it in a mvMatrix. So here we're passing a mMatrix from camera space to light space (through a mvMatrix).
-    "}\n"                                                                           // (the bias just converts clip space to texture space)
-};
-static const char* DefaultPassFragmentShader[] = {
-    "uniform sampler2D u_shadowMap;\n"
-    "uniform vec2 u_shadowDarkening;\n" // .x = fDarkeningFactor [10.0-80.0], .y = min value clamp [0.0-1.0]
-    "varying vec4 v_shadowCoord;\n"
-    "varying vec4 v_diffuse;\n"
-    "\n"
-    "void main() {\n"
-    "	float shadowFactor = 1.0;\n"
-    "	vec4 shadowCoordinateWdivide = v_shadowCoord/v_shadowCoord.w;\n"
-    "   shadowFactor = clamp(exp(u_shadowDarkening.x*(texture2D(u_shadowMap,(shadowCoordinateWdivide.st)).r - shadowCoordinateWdivide.z)),u_shadowDarkening.y,1.0);\n"
-    "//   shadowFactor = clamp(   exp(u_shadowDarkening.x*texture2D(u_shadowMap,(shadowCoordinateWdivide.st)).r) *   exp(-u_shadowDarkening.x*shadowCoordinateWdivide.z),u_shadowDarkening.y,1.0);\n"
-    "	gl_FragColor = gl_LightSource[0].ambient + (v_diffuse * vec4(gl_Color.rgb*shadowFactor,1.0));\n"
-    "}\n"
-};
+char DefaultPassFragmentShader[5000];
+char DefaultPassVertexShader[5000];
 
 void ShadowManager::InitDefaultPass()	{
     printf("InitDefaultPass() called\n");
-	defaultPass.program = Helper_LoadShaderProgramFromSource(*DefaultPassVertexShader,*DefaultPassFragmentShader);
+    Utils::loadFileIntoCharArray(DefaultPassFragmentShader, (char*) "lib/ShadowManager/shaders/defaultPassFragShader.frag");
+    Utils::loadFileIntoCharArray(DefaultPassVertexShader, (char*) "lib/ShadowManager/shaders/defaultPassVertShader.vert");
+	defaultPass.program = Helper_LoadShaderProgramFromSource(DefaultPassVertexShader, DefaultPassFragmentShader);
     defaultPass.uniform_location_biasedShadowMvpMatrix = glGetUniformLocation(defaultPass.program,"u_biasedShadowMvpMatrix");
     defaultPass.uniform_location_shadowMap = glGetUniformLocation(defaultPass.program,"u_shadowMap");
     defaultPass.uniform_location_shadowDarkening = glGetUniformLocation(defaultPass.program,"u_shadowDarkening");

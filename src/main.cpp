@@ -55,7 +55,6 @@ ShadowManager *shadowManager;
 
 void DrawGL()
 {
-    printf("DrawGL() called\n");
     // All the things about time are just used to display FPS (F2)
     // or to move objects around (NOT for shadow)
     static unsigned begin = 0;
