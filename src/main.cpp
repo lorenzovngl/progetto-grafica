@@ -140,14 +140,13 @@ void DrawGL()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, shadowManager->shadowPass.textureId);
-        //glActiveTexture(GL_TEXTURE1);
-        glUseProgram( shadowManager->defaultPass.program);
-        glUniformMatrix4fv( shadowManager->defaultPass.uniform_location_biasedShadowMvpMatrix,
-                1, GL_FALSE,biasedShadowMvpMatrix);
-        glDisable(GL_CULL_FACE);
-        //ship->render(false);
-        glColor3f(0,0,1);
-        enviroment->render(ship->px, ship->py, ship->pz, false);
+        glActiveTexture(GL_TEXTURE1);
+        glUseProgram(shadowManager->defaultPass.program);
+        glUniform1i(glGetUniformLocation(shadowManager->defaultPass.program, "u_texture"), 1);
+        glUniformMatrix4fv( shadowManager->defaultPass.uniform_location_biasedShadowMvpMatrix, 1, GL_FALSE, biasedShadowMvpMatrix);
+        ship->render(true);
+        enviroment->renderBuoys();
+        enviroment->render(ship->px, ship->py, ship->pz, true);
         glPopMatrix();
         glUseProgram(0);
         glBindTexture(GL_TEXTURE_2D,0);
@@ -228,8 +227,7 @@ void rendering(SDL_Window *window) {
     DrawGL();
     glDisable(GL_CULL_FACE);
     //glColor3f(1, 1, 1);
-    ship->render(false);
-    enviroment->renderBuoys();
+    //ship->render(false);
     //enviroment->render(ship->px, ship->py, ship->pz); // disegna il mare
 
     {
