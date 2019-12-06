@@ -4,11 +4,11 @@ project(ProgettoGrafica)
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(ProgettoGrafica
-        lib/ShadowManager/my_shadow_mapping.c
-        lib/ShadowManager/helper_functions.h
-        lib/ShadowManager/helper_functions.c
-        lib/ShadowManager/ShadowManager.cpp
-        lib/ShadowManager/ShadowManager.h
+        lib/ShadowMapper/my_shadow_mapping.c
+        lib/ShadowMapper/helper_functions.h
+        lib/ShadowMapper/helper_functions.c
+        lib/ShadowMapper/ShadowMapper.cpp
+        lib/ShadowMapper/ShadowMapper.h
         src/headers/BoundingBox.h
         src/headers/Buoy.h
         src/headers/Camera.h

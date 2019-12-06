@@ -97,8 +97,8 @@ void Buoy::render() {
     glRotatef(45, 0, 1, 0);
 
     //glActiveTexture(GL_TEXTURE7);
-    //textureManager->enableTexture(TEXTURE_FLAG_ITALY);
-    //glEnable(GL_TEXTURE_2D);
+    textureManager->enableTexture(TEXTURE_FLAG_ITALY);
+    glEnable(GL_TEXTURE_2D);
     glBegin(GL_QUADS);
     glColor3f(1, 1, 1);
     // Bandierina
@@ -133,5 +133,5 @@ void Buoy::render() {
         }
     }
     glEnd();
-    //glDisable(GL_TEXTURE_2D);
+    glDisable(GL_TEXTURE_2D);
 }

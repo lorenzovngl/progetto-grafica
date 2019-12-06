@@ -18,9 +18,9 @@
 #endif
 
 extern "C" {
-    #include "../lib/ShadowManager/helper_functions.h"
+    #include "../lib/ShadowMapper/helper_functions.h"
 }
-#include "../lib/ShadowManager/ShadowManager.h"
+#include "../lib/ShadowMapper/ShadowMapper.h"
 #include "headers/Ship.h"
 #include "headers/Enviroment.h"
 #include "headers/Camera.h"
@@ -49,72 +49,48 @@ Enviroment *enviroment;
 Camera *camera;
 HUD *hud;
 Game *game;
-ShadowManager *shadowManager;
+ShadowMapper *shadowMapper;
 
-#define SHADOW_MAP_RESOLUTION 1024
-
-void DrawGL()
-{
-    // All the things about time are just used to display FPS (F2)
-    // or to move objects around (NOT for shadow)
-    static unsigned begin = 0;
-    static unsigned cur_time = 0;
-    unsigned elapsed_time,delta_time;
-    float elapsedMs;float cosAlpha,sinAlpha;    // used to move objects around
+void DrawGL(){
 
     // These two instead are necessary for shadow mapping
     static float vMatrixInverse[16];            // view Matrix inverse (it's the camera matrix).
     static float lvpMatrix[16];                 // = light_pMatrix*light_vMatrix
 
-    // Just some time stuff here
-    if (begin==0) begin = glutGet(GLUT_ELAPSED_TIME);
-    elapsed_time = glutGet(GLUT_ELAPSED_TIME) - begin;
-    delta_time = elapsed_time - cur_time;
-    float instantFrameTime = (float)delta_time*0.001f;
-    cur_time = elapsed_time;
-
-    elapsedMs = (float)elapsed_time;
-    cosAlpha = cos(elapsedMs*0.0005f);
-    sinAlpha = sin(elapsedMs*0.00075f);
-
 
     // view Matrix
-    Helper_LookAt(shadowManager->vMatrix,shadowManager->cameraPos[0],shadowManager->cameraPos[1],shadowManager->cameraPos[2],
-                  shadowManager->targetPos[0],shadowManager->targetPos[1],shadowManager->targetPos[2],0,1,0);
-    glLoadMatrixf(shadowManager->vMatrix);
-    glLightfv(GL_LIGHT0,GL_POSITION,shadowManager->lightDirection);    // Important: the ffp must recalculate internally lightDirectionEyeSpace based on vMatrix [=> every frame]
+    Helper_LookAt(shadowMapper->vMatrix,shadowMapper->cameraPos[0],shadowMapper->cameraPos[1],shadowMapper->cameraPos[2],
+            shadowMapper->targetPos[0],shadowMapper->targetPos[1],shadowMapper->targetPos[2],0,1,0);
+    //printf("%f %f %f\n", camera->cameraPos[0],camera->cameraPos[1],camera->cameraPos[2]);
+    //Helper_LookAt(shadowMapper->vMatrix,camera->cameraPos[0],camera->cameraPos[1],camera->cameraPos[2],
+    //              camera->targetPos[0],camera->targetPos[1],camera->targetPos[2],0,1,0);
+    glLoadMatrixf(shadowMapper->vMatrix);
+    glLightfv(GL_LIGHT0,GL_POSITION,shadowMapper->lightDirection);    // Important: the ffp must recalculate internally lightDirectionEyeSpace based on vMatrix [=> every frame]
 
     // view Matrix inverse (it's the camera matrix). Used twice below (and very important to keep in any case).
-    Helper_InvertMatrixFast(vMatrixInverse,shadowManager->vMatrix);    // We can use Helper_InvertMatrixFast(...) instead of Helper_InvertMatrix(...) here [No scaling inside and no projection matrix]
+    Helper_InvertMatrixFast(vMatrixInverse,shadowMapper->vMatrix);    // We can use Helper_InvertMatrixFast(...) instead of Helper_InvertMatrix(...) here [No scaling inside and no projection matrix]
 
 
     // Draw to Shadow Map------------------------------------------------------------------------------------------
     {
-#       ifndef USE_UNSTABLE_SHADOW_MAPPING_TECHNIQUE
         Helper_GetLightViewProjectionMatrix(lvpMatrix,
-                                            vMatrixInverse,shadowManager->pMatrixNearPlane,shadowManager->pMatrixFarPlane,
-                                            shadowManager->pMatrixFovyDeg,(scrW/scrH),shadowManager->lightDirection,1.0f/(float)SHADOW_MAP_RESOLUTION);
-#       else //USE_UNSTABLE_SHADOW_MAPPING_TECHNIQUE
-        Helper_GetLightViewProjectionMatrixExtra(0,
-                                             vMatrixInverse,pMatrixNearPlane,pMatrixFarPlane,pMatrixFovyDeg,current_aspect_ratio,config.use_camera_ortho3d_projection_matrix?cameraDistance:0,  // in camera ortho3d mode, we can still pass zero as last arg here to avoid shadow-flickering when zooming in-out, at the expense of the further boost in shadow resolution that ortho mode can give us
-                                             lightDirection,1.0f/(float)SHADOW_MAP_RESOLUTION,
-                                             0,0,
-                                             pMatrixInverse,    // Mandatory when we need to retrieve arguments that follow it
-                                             0,0,
-                                             lvpMatrix);        // Technically this was provided as an 'lvpMatrix for optimal frustum culling usage' in the 'Stable Shadow Mapping' case (but can be used to replace it too)
-#       endif //USE_UNSTABLE_SHADOW_MAPPING_TECHNIQUE
+                                            vMatrixInverse,shadowMapper->pMatrixNearPlane,shadowMapper->pMatrixFarPlane,
+                                            shadowMapper->pMatrixFovyDeg,(scrW/scrH),shadowMapper->lightDirection,1.0f/(float)SHADOW_MAP_RESOLUTION);
 
         // Draw to shadow map texture
-        glMatrixMode(GL_PROJECTION);glPushMatrix();glLoadIdentity();glMatrixMode(GL_MODELVIEW);        // We'll set the combined light view-projection matrix in GL_MODELVIEW (do you know that it's the same?)
-        glBindFramebuffer(GL_FRAMEBUFFER,  shadowManager->shadowPass.fbo);
-        glViewport(0, 0, SHADOW_MAP_RESOLUTION,SHADOW_MAP_RESOLUTION);
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
+        glMatrixMode(GL_MODELVIEW);        // We'll set the combined light view-projection matrix in GL_MODELVIEW (do you know that it's the same?)
+        glBindFramebuffer(GL_FRAMEBUFFER,  shadowMapper->shadowPass.fbo);
+        glViewport(0, 0, SHADOW_MAP_RESOLUTION, SHADOW_MAP_RESOLUTION);
         glClear(GL_DEPTH_BUFFER_BIT);
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
         glCullFace(GL_FRONT);
         glEnable(GL_DEPTH_CLAMP);
-        glUseProgram( shadowManager->shadowPass.program);            // we can just use glUseProgram(0) here
-        glPushMatrix();glLoadMatrixf(lvpMatrix); // we load both (light) projection and view matrices here (it's the same after all)
-        //Helper_GlutDrawGeometry(elapsedMs,cosAlpha,sinAlpha,shadowManager->targetPos,shadowManager->pgDisplayListBase);  // Done SHADOW_MAP_NUM_CASCADES times!
+        glUseProgram( shadowMapper->shadowPass.program);            // we can just use glUseProgram(0) here
+        glPushMatrix();
+        glLoadMatrixf(lvpMatrix); // we load both (light) projection and view matrices here (it's the same after all)
         ship->render(false);
         enviroment->renderBuoys();
         glPopMatrix();
@@ -124,7 +100,6 @@ void DrawGL()
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
         glBindFramebuffer(GL_FRAMEBUFFER,0);
         glMatrixMode(GL_PROJECTION);glPopMatrix();glMatrixMode(GL_MODELVIEW);
-
     }
 
     // Draw world
@@ -139,17 +114,18 @@ void DrawGL()
         glViewport(0, 0, scrW, scrH);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, shadowManager->shadowPass.textureId);
+        glBindTexture(GL_TEXTURE_2D, shadowMapper->shadowPass.textureId);
         glActiveTexture(GL_TEXTURE1);
-        glUseProgram(shadowManager->defaultPass.program);
-        glUniform1i(glGetUniformLocation(shadowManager->defaultPass.program, "u_texture"), 1);
-        glUniformMatrix4fv( shadowManager->defaultPass.uniform_location_biasedShadowMvpMatrix, 1, GL_FALSE, biasedShadowMvpMatrix);
+        glUseProgram(shadowMapper->defaultPass.program);
+        glUniform1i(glGetUniformLocation(shadowMapper->defaultPass.program, "u_texture"), 1);
+        glUniformMatrix4fv( shadowMapper->defaultPass.uniform_location_biasedShadowMvpMatrix, 1, GL_FALSE, biasedShadowMvpMatrix);
+        glDisable(GL_CULL_FACE);
         ship->render(true);
-        enviroment->renderBuoys();
         enviroment->render(ship->px, ship->py, ship->pz, true);
         glPopMatrix();
         glUseProgram(0);
         glBindTexture(GL_TEXTURE_2D,0);
+        glActiveTexture(GL_TEXTURE0);
     }
 
 }
@@ -187,8 +163,6 @@ void rendering(SDL_Window *window) {
     // riempe tutto lo screen buffer di pixel color sfondo
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    camera->set(*ship, eyeDist, viewBeta, viewAlpha);
-
     // setto la posizione luce
     /*float ambient[4] = {1, 1, 1, 1};
     glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
@@ -223,50 +197,11 @@ void rendering(SDL_Window *window) {
     glEnable(GL_LIGHTING);
     glPopMatrix();*/
 
-    glEnable(GL_CULL_FACE);
+    //camera->set(*ship, eyeDist, viewBeta, viewAlpha);
     DrawGL();
-    glDisable(GL_CULL_FACE);
-    //glColor3f(1, 1, 1);
-    //ship->render(false);
-    //enviroment->render(ship->px, ship->py, ship->pz); // disegna il mare
-
-    {
-        glDisable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
-        glDepthMask(GL_FALSE);
-
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
-        glLoadIdentity();
-
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-        glLoadIdentity();
-
-        glColor3f(1,1,1);
-        glDisable(GL_LIGHTING);
-        glEnable(GL_BLEND);
-        glBindTexture(GL_TEXTURE_2D, shadowManager->shadowPass.textureId);
-        glColor4f(1,1,1,0.9f);
-        glBegin(GL_QUADS);
-        glTexCoord2f(0,0);glVertex2f(-1,    -1);
-        glTexCoord2f(1,0);glVertex2f(-0.25*(scrW/scrH), -1);
-        glTexCoord2f(1,1);glVertex2f(-0.25*(scrW/scrH), -0.25/(scrW/scrH));
-        glTexCoord2f(0,1);glVertex2f(-1,    -0.25/(scrW/scrH));
-        glEnd();
-        glBindTexture(GL_TEXTURE_2D,0);
-        glDisable(GL_BLEND);
-        glEnable(GL_LIGHTING);
-
-        glPopMatrix();
-        glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
-        glMatrixMode(GL_MODELVIEW);
-
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
-        glDepthMask(GL_TRUE);
-    }
+    enviroment->drawSky();
+    enviroment->renderBuoys();
+    //shadowMapper->showShadowMask(scrH, scrW);
 
     //game->detectCollision();
     //hud->display(scrW, scrH);
@@ -354,12 +289,13 @@ int main(int argc, char *argv[]) {
     game = new Game(ship, enviroment);
     camera = new Camera();
     hud = new HUD(game);
-    shadowManager = new ShadowManager();
+    shadowMapper = new ShadowMapper();
 
-    shadowManager->InitGL();
-    shadowManager->ResizeGL(scrW, scrH);
-    shadowManager->resetCamera(eyeDist, viewBeta, viewAlpha);
-    shadowManager->resetLight();
+    shadowMapper->InitGL();
+    shadowMapper->ResizeGL(scrW, scrH);
+    shadowMapper->resetCamera(eyeDist, viewBeta, viewAlpha);
+    camera->set(*ship, eyeDist, viewBeta, viewAlpha);
+    shadowMapper->resetLight();
 
 
     bool done = 0;
@@ -413,7 +349,7 @@ int main(int argc, char *argv[]) {
                         //if (viewBeta<-90) viewBeta=-90;
                         //if (viewBeta < +5) viewBeta = +5; //per non andare sotto la macchina
                         if (viewBeta > +90) viewBeta = +90;
-                        shadowManager->resetCamera(eyeDist, viewBeta*0.005, -viewAlpha*0.005);
+                        shadowMapper->resetCamera(eyeDist, viewBeta*0.005, -viewAlpha*0.005);
                         rendering(window);
                         //redraw(); // richiedi un ridisego
                     }
@@ -429,7 +365,7 @@ int main(int argc, char *argv[]) {
                         // allontano il punto di vista (zoom out)
                         eyeDist = eyeDist / 0.9;
                     };
-                    shadowManager->resetCamera(eyeDist, viewBeta*0.005, -viewAlpha*0.005);
+                    shadowMapper->resetCamera(eyeDist, viewBeta*0.005, -viewAlpha*0.005);
                     rendering(window);
                     break;
 

@@ -45,7 +45,6 @@ for glut.h, glew.h, etc. with something like:
 
 #define PROGRAM_NAME "shadow_mapping"
 #define VISUALIZE_DEPTH_TEXTURE
-#define SHADOW_MAP_RESOLUTION 1024 //1024
 #define SHADOW_MAP_CLAMP_MODE GL_CLAMP_TO_EDGE // GL_CLAMP or GL_CLAMP_TO_EDGE or GL_CLAMP_TO_BORDER
     //          GL_CLAMP;               // sampling outside of the shadow map gives always shadowed pixels
     //          GL_CLAMP_TO_EDGE;       // sampling outside of the shadow map can give shadowed or unshadowed pixels (it depends on the edge of the shadow map)
@@ -89,7 +88,7 @@ for glut.h, glew.h, etc. with something like:
 extern "C" {
     #include "helper_functions.h"
 }
-#include "ShadowManager.h"
+#include "ShadowMapper.h"
 #include "../../src/headers/Utils.h"
 // only very few of its functions are used.
 
@@ -185,10 +184,10 @@ float instantFrameTime = 16.2f;
 char ShadowPassFragmentShader[5000];
 char ShadowPassVertexShader[5000];
 
-void ShadowManager::InitShadowPass()	{
+void ShadowMapper::InitShadowPass()	{
     printf("InitShadowPass() called\n");
-    Utils::loadFileIntoCharArray(ShadowPassFragmentShader, (char*) "lib/ShadowManager/shaders/shadowPassFragShader.frag");
-    Utils::loadFileIntoCharArray(ShadowPassVertexShader, (char*) "lib/ShadowManager/shaders/shadowPassVertShader.vert");
+    Utils::loadFileIntoCharArray(ShadowPassFragmentShader, (char*) "lib/ShadowMapper/shaders/shadowPassFragShader.glsl");
+    Utils::loadFileIntoCharArray(ShadowPassVertexShader, (char*) "lib/ShadowMapper/shaders/shadowPassVertShader.glsl");
     shadowPass.program = Helper_LoadShaderProgramFromSource(ShadowPassVertexShader, ShadowPassFragmentShader);
 
     // create depth texture
@@ -226,7 +225,7 @@ void ShadowManager::InitShadowPass()	{
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-void ShadowManager::DestroyShadowPass()	{
+void ShadowMapper::DestroyShadowPass()	{
     printf("DestroyShadowPass() called\n");
     if (shadowPass.program) {glDeleteProgram(shadowPass.program);shadowPass.program=0;}
     if (shadowPass.fbo) {glDeleteBuffers(1,&shadowPass.fbo);shadowPass.fbo=0;}
@@ -236,10 +235,10 @@ void ShadowManager::DestroyShadowPass()	{
 char DefaultPassFragmentShader[5000];
 char DefaultPassVertexShader[5000];
 
-void ShadowManager::InitDefaultPass()	{
+void ShadowMapper::InitDefaultPass()	{
     printf("InitDefaultPass() called\n");
-    Utils::loadFileIntoCharArray(DefaultPassFragmentShader, (char*) "lib/ShadowManager/shaders/defaultPassFragShader.frag");
-    Utils::loadFileIntoCharArray(DefaultPassVertexShader, (char*) "lib/ShadowManager/shaders/defaultPassVertShader.vert");
+    Utils::loadFileIntoCharArray(DefaultPassFragmentShader, (char*) "lib/ShadowMapper/shaders/defaultPassFragShader.glsl");
+    Utils::loadFileIntoCharArray(DefaultPassVertexShader, (char*) "lib/ShadowMapper/shaders/defaultPassVertShader.glsl");
 	defaultPass.program = Helper_LoadShaderProgramFromSource(DefaultPassVertexShader, DefaultPassFragmentShader);
     defaultPass.uniform_location_biasedShadowMvpMatrix = glGetUniformLocation(defaultPass.program,"u_biasedShadowMvpMatrix");
     defaultPass.uniform_location_shadowMap = glGetUniformLocation(defaultPass.program,"u_shadowMap");
@@ -251,13 +250,13 @@ void ShadowManager::InitDefaultPass()	{
     //glUniformMatrix4fv(defaultPass.uniform_location_biasedShadowMvpMatrix, 1 /*only setting 1 matrix*/, GL_FALSE /*transpose?*/, Matrix);
 	glUseProgram(0);
 }
-void ShadowManager::DestroyDefaultPass()	{
+void ShadowMapper::DestroyDefaultPass()	{
     printf("DestroyDefaulyPass() called\n");
 	if (defaultPass.program) {glDeleteProgram(defaultPass.program);defaultPass.program=0;}
 }
 
 float current_width=0,current_height=0,current_aspect_ratio=1;  // Not sure when I've used these...
-void ShadowManager::ResizeGL(int w,int h) {
+void ShadowMapper::ResizeGL(int w, int h) {
     printf("ResizeGL() called\n");
     current_width = (float) w;
     current_height = (float) h;
@@ -288,7 +287,7 @@ void ShadowManager::ResizeGL(int w,int h) {
 }
 
 
-void ShadowManager::InitGL(void) {
+void ShadowMapper::InitGL(void) {
     printf("InitGL() called\n");
 
     // These are important, but often overlooked OpenGL calls
@@ -301,7 +300,7 @@ void ShadowManager::InitGL(void) {
 
 	// ffp stuff
     glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);	
+	glEnable(GL_LIGHT0);
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_NORMALIZE);
 
@@ -313,7 +312,7 @@ void ShadowManager::InitGL(void) {
     // If you copy/paste this code you can call it explicitly...
 }
 
-void ShadowManager::DestroyGL() {
+void ShadowMapper::DestroyGL() {
     printf("DestroyGL() called\n");
 	// New
     DestroyShadowPass();
@@ -324,7 +323,7 @@ void ShadowManager::DestroyGL() {
 
 
 
-void ShadowManager::DrawGL(void)
+void ShadowMapper::DrawGL(void)
 {
     printf("DrawGL() called\n");
     // All the things about time are just used to display FPS (F2)
@@ -351,7 +350,7 @@ void ShadowManager::DrawGL(void)
 
 
     // view Matrix
-    Helper_LookAt(vMatrix,cameraPos[0],cameraPos[1],cameraPos[2],targetPos[0],targetPos[1],targetPos[2],0,1,0);    
+    Helper_LookAt(vMatrix,cameraPos[0],cameraPos[1],cameraPos[2],targetPos[0],targetPos[1],targetPos[2],0,1,0);
 	glLoadMatrixf(vMatrix);
     glLightfv(GL_LIGHT0,GL_POSITION,lightDirection);    // Important: the ffp must recalculate internally lightDirectionEyeSpace based on vMatrix [=> every frame]
 
@@ -437,7 +436,7 @@ void ShadowManager::DrawGL(void)
         glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
         glLoadIdentity();
-	
+
 		glColor3f(1,1,1);
 		glDisable(GL_LIGHTING);
         glEnable(GL_BLEND);
@@ -472,32 +471,7 @@ static void GlutCreateWindow();
 
 void GlutCloseWindow(void)  {Config_Save(&config,ConfigFileName);}
 
-/*void GlutNormalKeys(unsigned char key, int x, int y) {
-    const int mod = glutGetModifiers();
-    switch (key) {
-    case 27: 	// esc key
-        Config_Save(&config,ConfigFileName);
-        GlutDestroyWindow();
-#		ifdef __FREEGLUT_STD_H__
-        glutLeaveMainLoop();
-#		else
-        exit(0);
-#		endif
-        break;
-    case 13:	// return key
-    {
-        if (mod&GLUT_ACTIVE_CTRL) {
-            config.fullscreen_enabled = gameModeWindowId ? 0 : 1;
-            GlutDestroyWindow();
-            GlutCreateWindow();
-        }
-    }
-        break;
-    }
-
-}*/
-
-void ShadowManager::updateCameraPos() {
+void ShadowMapper::updateCameraPos() {
     const float distanceY = sin(cameraPitch)*cameraDistance;
     const float distanceXZ = cos(cameraPitch)*cameraDistance;
     cameraPos[0] = targetPos[0] + sin(cameraYaw)*distanceXZ;
@@ -505,7 +479,7 @@ void ShadowManager::updateCameraPos() {
     cameraPos[2] = targetPos[2] + cos(cameraYaw)*distanceXZ;
 }
 
-void ShadowManager::updateDirectionalLight() {
+void ShadowMapper::updateDirectionalLight() {
     const float distanceY = sin(lightPitch);
     const float distanceXZ = cos(lightPitch);
     lightDirection[0] = sin(lightYaw)*distanceXZ;
@@ -515,7 +489,7 @@ void ShadowManager::updateDirectionalLight() {
     lightDirection[3]=0.f;
 }
 
-void ShadowManager::resetCamera(float eyeDist, float viewBeta, float viewAlpha) {
+void ShadowMapper::resetCamera(float eyeDist, float viewBeta, float viewAlpha) {
     // You can set the initial camera position here through:
     targetPos[0]=0; targetPos[1]=0; targetPos[2]=0; // The camera target point
     //cameraYaw = 2*M_PI;                             // The camera rotation around the Y axis
@@ -526,240 +500,52 @@ void ShadowManager::resetCamera(float eyeDist, float viewBeta, float viewAlpha) 
     cameraDistance = eyeDist;
 
     updateCameraPos();
-    if (config.use_camera_ortho3d_projection_matrix)    ShadowManager::ResizeGL(current_width,current_height); // Needed because in Helper_Orho3D(...) cameraTargetDistance changes
+    if (config.use_camera_ortho3d_projection_matrix)    ShadowMapper::ResizeGL(current_width, current_height); // Needed because in Helper_Orho3D(...) cameraTargetDistance changes
 }
 
-void  ShadowManager::resetLight() {
+void ShadowMapper::resetLight() {
     lightYaw = M_PI*0.425f;
     lightPitch = M_PI*0.235f;
     updateDirectionalLight();
 }
 
-/*void GlutSpecialKeys(int key,int x,int y)
-{
-    const int mod = glutGetModifiers();
-    if (!(mod&GLUT_ACTIVE_CTRL) && !(mod&GLUT_ACTIVE_SHIFT))	{
-        switch (key) {
-        case GLUT_KEY_LEFT:
-        case GLUT_KEY_RIGHT:
-            cameraYaw+= instantFrameTime*cameraSpeed*(key==GLUT_KEY_LEFT ? -4.0f : 4.0f);
-            if (cameraYaw>M_PI) cameraYaw-=2*M_PI;
-            else if (cameraYaw<=-M_PI) cameraYaw+=2*M_PI;
-            updateCameraPos();		break;
-        case GLUT_KEY_UP:
-        case GLUT_KEY_DOWN:
-            cameraPitch+= instantFrameTime*cameraSpeed*(key==GLUT_KEY_UP ? 2.f : -2.f);
-            if (cameraPitch>M_PI-0.001f) cameraPitch=M_PI-0.001f;
-            else if (cameraPitch<-M_PI*0.05f) cameraPitch=-M_PI*0.05f;
-            updateCameraPos();
-            break;
-        case GLUT_KEY_PAGE_UP:
-        case GLUT_KEY_PAGE_DOWN:
-            cameraDistance+= instantFrameTime*cameraSpeed*(key==GLUT_KEY_PAGE_DOWN ? 25.0f : -25.0f);
-            if (cameraDistance<1.f) cameraDistance=1.f;
-            updateCameraPos();
-            if (config.use_camera_ortho3d_projection_matrix)    ResizeGL(current_width,current_height); // Needed because in Helper_Orho3D(...) cameraTargetDistance changes
-            break;
-        case GLUT_KEY_F2:
-            config.show_fps = !config.show_fps;
-            //printf("showFPS: %s.\n",config.show_fps?"ON":"OFF");fflush(stdout);
-            break;
-        case GLUT_KEY_F1:
-            config.use_camera_ortho3d_projection_matrix = !config.use_camera_ortho3d_projection_matrix;
-            //printf("camera ortho mode: %s.\n",config.use_camera_ortho3d_projection_matrix?"ON":"OFF");fflush(stdout);
-            ResizeGL(current_width,current_height);
-            break;
-        case GLUT_KEY_HOME:
-            // Reset the camera
-            resetCamera();
-            break;
-        }
-    }
-    else if (mod&GLUT_ACTIVE_CTRL) {
-        switch (key) {
-        case GLUT_KEY_LEFT:
-        case GLUT_KEY_RIGHT:
-        case GLUT_KEY_UP:
-        case GLUT_KEY_DOWN:
-        {
-            // Here we move targetPos and cameraPos at the same time
+void ShadowMapper::showShadowMask(int vpHeight, int vpWidth){
 
-            // We must find a pivot relative to the camera here (ignoring Y)
-            float forward[3] = {targetPos[0]-cameraPos[0],0,targetPos[2]-cameraPos[2]};
-            float up[3] = {0,1,0};
-            float left[3];
-
-            Helper_Vector3Normalize(forward);
-            Helper_Vector3Cross(left,up,forward);
-            {
-                float delta[3] = {0,0,0};int i;
-                if (key==GLUT_KEY_LEFT || key==GLUT_KEY_RIGHT) {
-                    float amount = instantFrameTime*cameraSpeed*(key==GLUT_KEY_RIGHT ? -25.0f : 25.0f);
-                    for (i=0;i<3;i++) delta[i]+=amount*left[i];
-                }
-                else {
-                    float amount = instantFrameTime*cameraSpeed*(key==GLUT_KEY_DOWN ? -25.0f : 25.0f);
-                    for ( i=0;i<3;i++) delta[i]+=amount*forward[i];
-                }
-                for ( i=0;i<3;i++) {
-                    targetPos[i]+=delta[i];
-                    cameraPos[i]+=delta[i];
-                }
-            }
-        }
-        break;
-        case GLUT_KEY_PAGE_UP:
-        case GLUT_KEY_PAGE_DOWN:
-            // We use world space coords here.
-            targetPos[1]+= instantFrameTime*cameraSpeed*(key==GLUT_KEY_PAGE_DOWN ? -25.0f : 25.0f);
-            if (targetPos[1]<-50.f) targetPos[1]=-50.f;
-            else if (targetPos[1]>500.f) targetPos[1]=500.f;
-            updateCameraPos();
-            if (config.use_camera_ortho3d_projection_matrix)    ResizeGL(current_width,current_height); // Needed because in Helper_Orho3D(...) cameraTargetDistance changes
-        break;
-        }
-    }
-    else if (mod&GLUT_ACTIVE_SHIFT)	{
-        switch (key) {
-        case GLUT_KEY_LEFT:
-        case GLUT_KEY_RIGHT:
-            lightYaw+= instantFrameTime*cameraSpeed*(key==GLUT_KEY_LEFT ? -4.0f : 4.0f);
-            if (lightYaw>M_PI) lightYaw-=2*M_PI;
-            else if (lightYaw<=-M_PI) lightYaw+=2*M_PI;
-            updateDirectionalLight();
-            break;
-        case GLUT_KEY_UP:
-        case GLUT_KEY_DOWN:
-        case GLUT_KEY_PAGE_UP:
-        case GLUT_KEY_PAGE_DOWN:
-            lightPitch+= instantFrameTime*cameraSpeed*( (key==GLUT_KEY_UP || key==GLUT_KEY_PAGE_UP) ? 2.f : -2.f);
-            if (lightPitch>M_PI-0.001f) lightPitch=M_PI-0.001f;
-            else if (lightPitch<-M_PI*0.05f) lightPitch=-M_PI*0.05f;
-            updateDirectionalLight();
-            break;
-        case GLUT_KEY_HOME:
-            // Reset the light
-            resetLight();
-            break;
-        }
-    }
-}*/
-
-void GlutMouse(int a,int b,int c,int d) {
-
-}
-
-// Note that we have used GlutFakeDrawGL() so that at startup
-// the calling order is: InitGL(),ResizeGL(...),DrawGL()
-// Also note that glutSwapBuffers() must NOT be called inside DrawGL()
-/*static void GlutDrawGL(void)		{DrawGL();glutSwapBuffers();}
-static void GlutIdle(void)			{glutPostRedisplay();}
-static void GlutFakeDrawGL(void) 	{glutDisplayFunc(GlutDrawGL);}
-void GlutDestroyWindow(void) {
-    if (gameModeWindowId || windowId)	{
-        DestroyGL();
-
-        if (gameModeWindowId) {
-            glutLeaveGameMode();
-            gameModeWindowId = 0;
-        }
-        if (windowId) {
-            glutDestroyWindow(windowId);
-            windowId=0;
-        }
-    }
-}*/
-/*void GlutCreateWindow() {
-    GlutDestroyWindow();
-    if (config.fullscreen_enabled)	{
-        char gms[16]="";
-        if (config.fullscreen_width>0 && config.fullscreen_height>0)	{
-            sprintf(gms,"%dx%d:32",config.fullscreen_width,config.fullscreen_height);
-            glutGameModeString(gms);
-            if (glutGameModeGet (GLUT_GAME_MODE_POSSIBLE)) gameModeWindowId = glutEnterGameMode();
-            else config.fullscreen_width=config.fullscreen_height=0;
-        }
-        if (gameModeWindowId==0)	{
-            const int screenWidth = glutGet(GLUT_SCREEN_WIDTH);
-            const int screenHeight = glutGet(GLUT_SCREEN_HEIGHT);
-            sprintf(gms,"%dx%d:32",screenWidth,screenHeight);
-            glutGameModeString(gms);
-            if (glutGameModeGet (GLUT_GAME_MODE_POSSIBLE)) gameModeWindowId = glutEnterGameMode();
-        }
-    }
-    if (!gameModeWindowId) {
-        char windowTitle[1024] = PROGRAM_NAME".c\t";
-#       ifdef  USE_UNSTABLE_SHADOW_MAPPING_TECHNIQUE
-        strcat(windowTitle,"[Unstable]\t");
-#       endif  //USE_UNSTABLE_SHADOW_MAPPING_TECHNIQUE
-        strcat(windowTitle,"("XSTR_MACRO(SHADOW_MAP_RESOLUTION)")");
-        config.fullscreen_enabled = 0;
-        glutInitWindowPosition(100,100);
-        glutInitWindowSize(config.windowed_width,config.windowed_height);
-        windowId = glutCreateWindow(windowTitle);
-    }
-
-    glutKeyboardFunc(GlutNormalKeys);
-    glutSpecialFunc(GlutSpecialKeys);
-    glutMouseFunc(GlutMouse);
-    glutIdleFunc(GlutIdle);
-    glutReshapeFunc(ResizeGL);
-    glutDisplayFunc(GlutFakeDrawGL);
-#   ifdef __FREEGLUT_STD_H__
-    glutWMCloseFunc(GlutCloseWindow);
-#   endif //__FREEGLUT_STD_H__
-
-#ifdef USE_GLEW
     {
-        GLenum err = glewInit();
-        if( GLEW_OK != err ) {
-            fprintf(stderr, "Error initializing GLEW: %s\n", glewGetErrorString(err) );
-            return;
-        }
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+        glDepthMask(GL_FALSE);
+
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
+
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadIdentity();
+
+        glColor3f(1,1,1);
+        glDisable(GL_LIGHTING);
+        glEnable(GL_BLEND);
+        glBindTexture(GL_TEXTURE_2D, shadowPass.textureId);
+        glColor4f(1,1,1,0.9f);
+        glBegin(GL_QUADS);
+        glTexCoord2f(0,0);glVertex2f(-1, -1);
+        glTexCoord2f(1,0);glVertex2f(-0.25*(vpWidth/vpHeight), -1);
+        glTexCoord2f(1,1);glVertex2f(-0.25*(vpWidth/vpHeight), -0.25/(vpWidth/vpHeight));
+        glTexCoord2f(0,1);glVertex2f(-1, -0.25/(vpWidth/vpHeight));
+        glEnd();
+        glBindTexture(GL_TEXTURE_2D,0);
+        glDisable(GL_BLEND);
+        glEnable(GL_LIGHTING);
+
+        glPopMatrix();
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
+
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+        glDepthMask(GL_TRUE);
     }
-#endif //USE_GLEW
-
-    InitGL();
-
-}*/
-
-
-/*int main(int argc, char** argv)
-{
-
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
-    //glutInitContextFlags(GLUT_FORWARD_COMPATIBLE);
-#ifdef __FREEGLUT_STD_H__
-    glutSetOption ( GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION ) ;
-#endif //__FREEGLUT_STD_H__
-
-    Config_Init(&config);
-    Config_Load(&config,ConfigFileName);
-
-    GlutCreateWindow();
-
-    //OpenGL info
-    printf("\nGL Vendor: %s\n", glGetString( GL_VENDOR ));
-    printf("GL Renderer : %s\n", glGetString( GL_RENDERER ));
-    printf("GL Version (string) : %s\n",  glGetString( GL_VERSION ));
-    printf("GLSL Version : %s\n", glGetString( GL_SHADING_LANGUAGE_VERSION ));
-    //printf("GL Extensions:\n%s\n",(char *) glGetString(GL_EXTENSIONS));
-
-    printf("\nKEYS:\n");
-    printf("AROW KEYS + PAGE_UP/PAGE_DOWN:\tmove camera (optionally with CTRL down)\n");
-    printf("HOME KEY:\t\t\treset camera\n");
-    printf("ARROW KEYS + SHIFT:\tmove directional light\n");
-    printf("CTRL+RETURN:\t\ttoggle fullscreen on/off\n");
-    printf("F2:\t\t\tdisplay FPS\n");
-    printf("F1:\t\t\ttoggle camera ortho mode on and off\n");
-    printf("\n");
-
-    resetCamera();  // Mandatory
-    resetLight();   // Mandatory
-
-    glutMainLoop();
-
-
-    return 0;
-}*/
+}

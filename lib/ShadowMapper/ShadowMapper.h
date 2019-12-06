@@ -1,7 +1,9 @@
-#ifndef PROGETTOGRAFICA_SHADOWMANAGER_H
-#define PROGETTOGRAFICA_SHADOWMANAGER_H
+#ifndef PROGETTOGRAFICA_SHADOWMAPPER_H
+#define PROGETTOGRAFICA_SHADOWMAPPER_H
 
 #include <GL/gl.h>
+
+#define SHADOW_MAP_RESOLUTION 2048
 
 typedef struct {
     GLuint fbo;
@@ -16,7 +18,7 @@ typedef struct {
     GLint uniform_location_shadowDarkening;
 } DefaultPass;
 
-class ShadowManager {
+class ShadowMapper {
 public:
     // camera data:
     float targetPos[3];         // please set it in resetCamera()
@@ -54,6 +56,7 @@ public:
     void resetLight();   // Mandatory
     void updateCameraPos();
     void updateDirectionalLight();
+    void showShadowMask(int vpHeight, int vpWidth);
 };
 
 #endif

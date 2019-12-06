@@ -27,8 +27,8 @@ LIBS = -lGL -lGLU -lglut -lSDL2 -lSDL2_image -lSDL2_ttf -lGLEW -lglfw -lm
 endif
 endif
 
-OBJ = out/helper_functions.o out/ShadowManager.o out/main.o out/BoundingBox.o out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/Game.o out/glm.o out/GLText.o out/HUD.o out/Mesh.o out/Ship.o out/ShipMesh.o out/Texture.o out/TextureManager.o out/Utils.o 
-LINKOBJ = out/helper_functions.o out/ShadowManager.o out/main.o out/BoundingBox.o out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/Game.o out/glm.o out/GLText.o out/HUD.o out/Mesh.o out/Ship.o out/ShipMesh.o out/Texture.o out/TextureManager.o out/Utils.o 
+OBJ = out/helper_functions.o out/ShadowMapper.o out/main.o out/BoundingBox.o out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/Game.o out/glm.o out/GLText.o out/HUD.o out/Mesh.o out/Ship.o out/ShipMesh.o out/Texture.o out/TextureManager.o out/Utils.o 
+LINKOBJ = out/helper_functions.o out/ShadowMapper.o out/main.o out/BoundingBox.o out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/Game.o out/glm.o out/GLText.o out/HUD.o out/Mesh.o out/Ship.o out/ShipMesh.o out/Texture.o out/TextureManager.o out/Utils.o 
 
 RM = rm -f
 
@@ -43,11 +43,11 @@ $(BIN): $(OBJ)
 out/GCGraLib2.o: lib/GCGraLib2/GCGraLib2.c
 	$(CC) $(CFLAGS) $(FRMPATH) lib/GCGraLib2/GCGraLib2.c -o lib/GCGraLib2/GCGraLib2.o
 
-out/helper_functions.o: lib/ShadowManager/helper_functions.h lib/ShadowManager/helper_functions.c
-	gcc $(CFLAGS) $(FRMPATH) lib/ShadowManager/helper_functions.c -o out/helper_functions.o
+out/helper_functions.o: lib/ShadowMapper/helper_functions.h lib/ShadowMapper/helper_functions.c
+	gcc $(CFLAGS) $(FRMPATH) lib/ShadowMapper/helper_functions.c -o out/helper_functions.o
 
-out/ShadowManager.o: lib/ShadowManager/ShadowManager.h lib/ShadowManager/ShadowManager.cpp
-	$(CC) $(CFLAGS) $(FRMPATH) lib/ShadowManager/ShadowManager.cpp -o out/ShadowManager.o
+out/ShadowMapper.o: lib/ShadowMapper/ShadowMapper.h lib/ShadowMapper/ShadowMapper.cpp
+	$(CC) $(CFLAGS) $(FRMPATH) lib/ShadowMapper/ShadowMapper.cpp -o out/ShadowMapper.o
 
 out/BoundingBox.o: src/headers/BoundingBox.h src/BoundingBox.cpp
 	$(CPP) -c -Wno-deprecated $(FRMPATH) src/BoundingBox.cpp -o out/BoundingBox.o

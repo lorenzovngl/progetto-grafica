@@ -19,7 +19,6 @@
 
 #include "headers/Camera.h"
 #include "headers/Ship.h"
-#include "headers/Utils.h"
 
 Camera::Camera(){
     m_type = CAMERA_MOUSE_SHIP;
@@ -27,6 +26,10 @@ Camera::Camera(){
 
 int Camera::getType(){
     return m_type;
+}
+
+void Camera::setShadowMapper(ShadowMapper *shadowMapper){
+    this->shadowMapper = shadowMapper;
 }
 
 void Camera::change(Ship ship, float eyeDist, float viewBeta, float viewAlpha) {
@@ -87,7 +90,15 @@ void Camera::set(Ship ship, float eyeDist, float viewBeta, float viewAlpha) {
             cx = px - camd*sinf;
             cy = py + camh;
             cz = pz - camd*cosf;
+            //printf("%f %f %f\n", ex, ey, ez);
             gluLookAt(ex,ey,ez,cx,cy,cz,0.0,1.0,0.0);
             break;
     }
+    cameraPos[0] = (float) ex;
+    cameraPos[1] = (float) ey;
+    cameraPos[2] = (float) ez;
+    targetPos[0] = (float) cx;
+    targetPos[1] = (float) cy;
+    targetPos[2] = (float) cz;
+    //printf("%f %f %f\n", cameraPos[0], cameraPos[1], cameraPos[2]);
 }

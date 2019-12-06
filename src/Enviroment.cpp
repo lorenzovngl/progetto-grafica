@@ -223,12 +223,11 @@ void Enviroment::render(float ship_x, float ship_y, float ship_z, bool texture_e
         glColor4f( 0.0f, 0.0f, 1.0f, 0.7f );
     }
     drawNearSea(ship_x, ship_y, ship_z);
-    //drawFarSea(ship_x, ship_y, ship_z);
+    drawFarSea(ship_x, ship_y, ship_z);
     if (texture_enabled){
         glDisable(GL_BLEND);
         glDisable(GL_TEXTURE_GEN_S);
         glDisable(GL_TEXTURE_GEN_T);
         glDisable(GL_TEXTURE_2D);
     }
-    //drawSky();
 }

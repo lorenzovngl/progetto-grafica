@@ -10,14 +10,14 @@ class Enviroment {
 private:
     TextureManager *textureManager;
     Buoy *buoy[BUOYS_COUNT];
-    void drawNearSea(float, float, float);
-    void drawFarSea(float, float, float);
-    void drawSky();
 public:
     Enviroment(TextureManager *textureManager);
     Buoy* getBuoy(int);
     int getBuoysCount();
     void renderBuoys();
+    void drawNearSea(float, float, float);
+    void drawFarSea(float, float, float);
+    void drawSky();
     void render(float, float, float, bool texture_enabled);
 };
 
