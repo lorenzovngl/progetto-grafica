@@ -58,17 +58,11 @@ void DrawGL(){
     static float lvpMatrix[16];                 // = light_pMatrix*light_vMatrix
 
 
-    // view Matrix
-    Helper_LookAt(shadowMapper->vMatrix,shadowMapper->cameraPos[0],shadowMapper->cameraPos[1],shadowMapper->cameraPos[2],
-            shadowMapper->targetPos[0],shadowMapper->targetPos[1],shadowMapper->targetPos[2],0,1,0);
-    //printf("%f %f %f\n", camera->cameraPos[0],camera->cameraPos[1],camera->cameraPos[2]);
-    //Helper_LookAt(shadowMapper->vMatrix,camera->cameraPos[0],camera->cameraPos[1],camera->cameraPos[2],
-    //              camera->targetPos[0],camera->targetPos[1],camera->targetPos[2],0,1,0);
-    glLoadMatrixf(shadowMapper->vMatrix);
+    glLoadMatrixf(camera->viewMatrix);
     glLightfv(GL_LIGHT0,GL_POSITION,shadowMapper->lightDirection);    // Important: the ffp must recalculate internally lightDirectionEyeSpace based on vMatrix [=> every frame]
 
     // view Matrix inverse (it's the camera matrix). Used twice below (and very important to keep in any case).
-    Helper_InvertMatrixFast(vMatrixInverse,shadowMapper->vMatrix);    // We can use Helper_InvertMatrixFast(...) instead of Helper_InvertMatrix(...) here [No scaling inside and no projection matrix]
+    Helper_InvertMatrixFast(vMatrixInverse,camera->viewMatrix);    // We can use Helper_InvertMatrixFast(...) instead of Helper_InvertMatrix(...) here [No scaling inside and no projection matrix]
 
 
     // Draw to Shadow Map------------------------------------------------------------------------------------------
@@ -99,8 +93,11 @@ void DrawGL(){
         glCullFace(GL_BACK);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
         glBindFramebuffer(GL_FRAMEBUFFER,0);
-        glMatrixMode(GL_PROJECTION);glPopMatrix();glMatrixMode(GL_MODELVIEW);
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
     }
+
 
     // Draw world
     {
@@ -197,13 +194,13 @@ void rendering(SDL_Window *window) {
     glEnable(GL_LIGHTING);
     glPopMatrix();*/
 
-    //camera->set(*ship, eyeDist, viewBeta, viewAlpha);
+    camera->set(*ship, eyeDist, viewBeta, viewAlpha);
     DrawGL();
     enviroment->drawSky();
     enviroment->renderBuoys();
     //shadowMapper->showShadowMask(scrH, scrW);
 
-    //game->detectCollision();
+    game->detectCollision();
     //hud->display(scrW, scrH);
 
     // attendiamo la fine della rasterizzazione di

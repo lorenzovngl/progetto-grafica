@@ -185,7 +185,6 @@ char ShadowPassFragmentShader[5000];
 char ShadowPassVertexShader[5000];
 
 void ShadowMapper::InitShadowPass()	{
-    printf("InitShadowPass() called\n");
     Utils::loadFileIntoCharArray(ShadowPassFragmentShader, (char*) "lib/ShadowMapper/shaders/shadowPassFragShader.glsl");
     Utils::loadFileIntoCharArray(ShadowPassVertexShader, (char*) "lib/ShadowMapper/shaders/shadowPassVertShader.glsl");
     shadowPass.program = Helper_LoadShaderProgramFromSource(ShadowPassVertexShader, ShadowPassFragmentShader);
@@ -226,7 +225,6 @@ void ShadowMapper::InitShadowPass()	{
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 void ShadowMapper::DestroyShadowPass()	{
-    printf("DestroyShadowPass() called\n");
     if (shadowPass.program) {glDeleteProgram(shadowPass.program);shadowPass.program=0;}
     if (shadowPass.fbo) {glDeleteBuffers(1,&shadowPass.fbo);shadowPass.fbo=0;}
     if (shadowPass.textureId) {glDeleteTextures(1,&shadowPass.textureId);}
@@ -236,7 +234,6 @@ char DefaultPassFragmentShader[5000];
 char DefaultPassVertexShader[5000];
 
 void ShadowMapper::InitDefaultPass()	{
-    printf("InitDefaultPass() called\n");
     Utils::loadFileIntoCharArray(DefaultPassFragmentShader, (char*) "lib/ShadowMapper/shaders/defaultPassFragShader.glsl");
     Utils::loadFileIntoCharArray(DefaultPassVertexShader, (char*) "lib/ShadowMapper/shaders/defaultPassVertShader.glsl");
 	defaultPass.program = Helper_LoadShaderProgramFromSource(DefaultPassVertexShader, DefaultPassFragmentShader);
@@ -257,7 +254,6 @@ void ShadowMapper::DestroyDefaultPass()	{
 
 float current_width=0,current_height=0,current_aspect_ratio=1;  // Not sure when I've used these...
 void ShadowMapper::ResizeGL(int w, int h) {
-    printf("ResizeGL() called\n");
     current_width = (float) w;
     current_height = (float) h;
     if (current_height!=0) current_aspect_ratio = current_width/current_height;
@@ -287,8 +283,7 @@ void ShadowMapper::ResizeGL(int w, int h) {
 }
 
 
-void ShadowMapper::InitGL(void) {
-    printf("InitGL() called\n");
+void ShadowMapper::InitGL() {
 
     // These are important, but often overlooked OpenGL calls
     glEnable(GL_DEPTH_TEST);
@@ -313,7 +308,6 @@ void ShadowMapper::InitGL(void) {
 }
 
 void ShadowMapper::DestroyGL() {
-    printf("DestroyGL() called\n");
 	// New
     DestroyShadowPass();
     DestroyDefaultPass();
@@ -321,155 +315,10 @@ void ShadowMapper::DestroyGL() {
     if (pgDisplayListBase && *pgDisplayListBase) {glDeleteLists(*pgDisplayListBase,40);*pgDisplayListBase=0;}
 }
 
-
-
-void ShadowMapper::DrawGL(void)
-{
-    printf("DrawGL() called\n");
-    // All the things about time are just used to display FPS (F2)
-    // or to move objects around (NOT for shadow)
-    static unsigned begin = 0;
-    static unsigned cur_time = 0;
-    unsigned elapsed_time,delta_time;
-    float elapsedMs;float cosAlpha,sinAlpha;    // used to move objects around
-
-    // These two instead are necessary for shadow mapping
-    static float vMatrixInverse[16];            // view Matrix inverse (it's the camera matrix).
-    static float lvpMatrix[16];                 // = light_pMatrix*light_vMatrix
-
-    // Just some time stuff here
-    if (begin==0) begin = glutGet(GLUT_ELAPSED_TIME);
-    elapsed_time = glutGet(GLUT_ELAPSED_TIME) - begin;
-    delta_time = elapsed_time - cur_time;
-    instantFrameTime = (float)delta_time*0.001f;
-    cur_time = elapsed_time;
-
-    elapsedMs = (float)elapsed_time;
-    cosAlpha = cos(elapsedMs*0.0005f);
-    sinAlpha = sin(elapsedMs*0.00075f);
-
-
-    // view Matrix
-    Helper_LookAt(vMatrix,cameraPos[0],cameraPos[1],cameraPos[2],targetPos[0],targetPos[1],targetPos[2],0,1,0);
-	glLoadMatrixf(vMatrix);
-    glLightfv(GL_LIGHT0,GL_POSITION,lightDirection);    // Important: the ffp must recalculate internally lightDirectionEyeSpace based on vMatrix [=> every frame]
-
-    // view Matrix inverse (it's the camera matrix). Used twice below (and very important to keep in any case).
-    Helper_InvertMatrixFast(vMatrixInverse,vMatrix);    // We can use Helper_InvertMatrixFast(...) instead of Helper_InvertMatrix(...) here [No scaling inside and no projection matrix]
-
-
-    // Draw to Shadow Map------------------------------------------------------------------------------------------
-    {
-#       ifndef USE_UNSTABLE_SHADOW_MAPPING_TECHNIQUE
-        Helper_GetLightViewProjectionMatrix(lvpMatrix,
-                                             vMatrixInverse,pMatrixNearPlane,pMatrixFarPlane,pMatrixFovyDeg,current_aspect_ratio,
-                                             lightDirection,1.0f/(float)SHADOW_MAP_RESOLUTION);
-#       else //USE_UNSTABLE_SHADOW_MAPPING_TECHNIQUE
-        Helper_GetLightViewProjectionMatrixExtra(0,
-                                             vMatrixInverse,pMatrixNearPlane,pMatrixFarPlane,pMatrixFovyDeg,current_aspect_ratio,config.use_camera_ortho3d_projection_matrix?cameraDistance:0,  // in camera ortho3d mode, we can still pass zero as last arg here to avoid shadow-flickering when zooming in-out, at the expense of the further boost in shadow resolution that ortho mode can give us
-                                             lightDirection,1.0f/(float)SHADOW_MAP_RESOLUTION,
-                                             0,0,
-                                             pMatrixInverse,    // Mandatory when we need to retrieve arguments that follow it
-                                             0,0,
-                                             lvpMatrix);        // Technically this was provided as an 'lvpMatrix for optimal frustum culling usage' in the 'Stable Shadow Mapping' case (but can be used to replace it too)
-#       endif //USE_UNSTABLE_SHADOW_MAPPING_TECHNIQUE
-
-        // Draw to shadow map texture
-        glMatrixMode(GL_PROJECTION);glPushMatrix();glLoadIdentity();glMatrixMode(GL_MODELVIEW);        // We'll set the combined light view-projection matrix in GL_MODELVIEW (do you know that it's the same?)
-        glBindFramebuffer(GL_FRAMEBUFFER, shadowPass.fbo);
-        glViewport(0, 0, SHADOW_MAP_RESOLUTION,SHADOW_MAP_RESOLUTION);
-        glClear(GL_DEPTH_BUFFER_BIT);
-        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-        glCullFace(GL_FRONT);
-        glEnable(GL_DEPTH_CLAMP);
-        glUseProgram(shadowPass.program);            // we can just use glUseProgram(0) here
-        glPushMatrix();glLoadMatrixf(lvpMatrix); // we load both (light) projection and view matrices here (it's the same after all)
-        Helper_GlutDrawGeometry(elapsedMs,cosAlpha,sinAlpha,targetPos,pgDisplayListBase);  // Done SHADOW_MAP_NUM_CASCADES times!
-        glPopMatrix();
-        glUseProgram(0);
-        glDisable(GL_DEPTH_CLAMP);
-        glCullFace(GL_BACK);
-        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-        glBindFramebuffer(GL_FRAMEBUFFER,0);
-        glMatrixMode(GL_PROJECTION);glPopMatrix();glMatrixMode(GL_MODELVIEW);
-
-    }
-
-    // Draw world
-    {
-        // biasedShadowMvpMatrix is used only in the DefaultPass:
-        static float bias[16] = {0.5,0,0,0, 0,0.5,0,0,  0,0,0.5,0,    0.5,0.5,0.5,1}; // Moving from unit cube in NDC [-1,1][-1,1][-1,1] to [0,1][0,1][0,1] (x and y are texCoords; z is the depth range, [0,1] by default in window coordinates)
-        static float biasedShadowMvpMatrix[16];     // multiplied per vMatrixInverse
-        Helper_MultMatrix(biasedShadowMvpMatrix,bias,lvpMatrix);
-        Helper_MultMatrix(biasedShadowMvpMatrix,biasedShadowMvpMatrix,vMatrixInverse);  // We do this, so that when in the vertex shader we multiply it with the camera mvMatrix, we get: biasedShadowMvpMatrix * mMatrix (using mMatrices directly in the shaders prevents the usage of double precision matrices: mvMatrices are good when converted to float to feed the shader, mMatrices are bad)
-
-        // Draw to world
-        glViewport(0, 0, current_width,current_height);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glBindTexture(GL_TEXTURE_2D,shadowPass.textureId);
-        glUseProgram(defaultPass.program);
-        glUniformMatrix4fv(defaultPass.uniform_location_biasedShadowMvpMatrix, 1 /*only setting 1 matrix*/, GL_FALSE /*transpose?*/,biasedShadowMvpMatrix);
-        Helper_GlutDrawGeometry(elapsedMs,cosAlpha,sinAlpha,targetPos,pgDisplayListBase);  // Done SHADOW_MAP_NUM_CASCADES times!
-        glUseProgram(0);
-        glBindTexture(GL_TEXTURE_2D,0);
-    }
-
-
-    if (config.show_fps && instantFrameTime>0) {
-        if ((elapsed_time/1000)%2==0)   {
-            printf("FPS=%1.0f\n",1.f/instantFrameTime);fflush(stdout);
-            config.show_fps=0;
-        }
-    }
-
-
-#   ifdef VISUALIZE_DEPTH_TEXTURE
-    {
-        glDisable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
-        glDepthMask(GL_FALSE);
-
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
-        glLoadIdentity();
-
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-        glLoadIdentity();
-
-		glColor3f(1,1,1);
-		glDisable(GL_LIGHTING);
-        glEnable(GL_BLEND);
-        glBindTexture(GL_TEXTURE_2D,shadowPass.textureId);
-        glColor4f(1,1,1,0.9f);
-        glBegin(GL_QUADS);
-        glTexCoord2f(0,0);glVertex2f(-1,    -1);
-        glTexCoord2f(1,0);glVertex2f(-0.25*current_aspect_ratio, -1);
-        glTexCoord2f(1,1);glVertex2f(-0.25*current_aspect_ratio, -0.25/current_aspect_ratio);
-        glTexCoord2f(0,1);glVertex2f(-1,    -0.25/current_aspect_ratio);
-        glEnd();
-        glBindTexture(GL_TEXTURE_2D,0);
-        glDisable(GL_BLEND);
-		glEnable(GL_LIGHTING);
-
-        glPopMatrix();
-        glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
-        glMatrixMode(GL_MODELVIEW);
-
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
-        glDepthMask(GL_TRUE);
-    }
-#   endif //VISUALIZE_DEPTH_TEXTURE
-
-
-}
-
-static void GlutDestroyWindow(void);
+static void GlutDestroyWindow();
 static void GlutCreateWindow();
 
-void GlutCloseWindow(void)  {Config_Save(&config,ConfigFileName);}
+void GlutCloseWindow()  {Config_Save(&config,ConfigFileName);}
 
 void ShadowMapper::updateCameraPos() {
     const float distanceY = sin(cameraPitch)*cameraDistance;
