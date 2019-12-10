@@ -51,7 +51,7 @@ void GLText::render()
 {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glBlendFunc(GL_ONE, GL_ONE);
+	//glBlendFunc(GL_ONE, GL_ONE);
 	glEnable(GL_BLEND);
 	glDisable(GL_LIGHTING);
 	/* prepare to render our texture */
@@ -71,7 +71,7 @@ void GLText::render()
 		glTexCoord2f(0.0f, 1.0f);
 		glVertex2f(_x, _y - _h);
 	glEnd();
-	
+
 	/* Clean up */
 	glDisable(GL_TEXTURE_2D);
     glEnable(GL_LIGHTING);

@@ -19,6 +19,7 @@ public:
     int getScore();
     int getScoreLimit();
     void detectCollision();
+    void go();
     bool isFinished();
 };
 

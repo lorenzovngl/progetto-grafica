@@ -20,7 +20,7 @@
 #include "headers/Game.h"
 
 Game::Game(Ship *ship, Enviroment *enviroment) {
-    game_start_time = SDL_GetTicks();
+    game_start_time = 0;
     game_end_time = 0;
     score = 0;
     score_limit = enviroment->getBuoysCount();
@@ -31,8 +31,10 @@ Game::Game(Ship *ship, Enviroment *enviroment) {
 int Game::getGameTime() {
     if (game_end_time != 0){
         return game_end_time;
-    } else {
+    } else if (game_start_time != 0){
         return SDL_GetTicks() - game_start_time;
+    } else {
+        return 0;
     }
 }
 
@@ -49,17 +51,17 @@ void Game::detectCollision(){
     Mesh* buoyMesh;
     for (int i = 0; i < enviroment->getBuoysCount() && !isFinished(); i++){
         buoyMesh = enviroment->getBuoy(i)->getMesh();
-        /*printf("Center: %f %f, BB: %f %f, WBB: %f %f\n",
-               ship->px, ship->pz,
-               shipMesh->bbmin.X(), shipMesh->bbmin.Z(),
-               shipMesh->w_bounding_box->vertex[0]->X(), shipMesh->w_bounding_box->vertex[0]->Z());*/
-        //buoyMesh->w_bounding_box->display();
-        //shipMesh->w_bounding_box->display();
         if (enviroment->getBuoy(i)->isActive() &&
             BoundingBox::isCollision(shipMesh->w_bounding_box, buoyMesh->w_bounding_box)){
             enviroment->getBuoy(i)->disable();
             score++;
         }
+    }
+}
+
+void Game::go(){
+    if (game_start_time == 0){
+        game_start_time = SDL_GetTicks();
     }
 }
 

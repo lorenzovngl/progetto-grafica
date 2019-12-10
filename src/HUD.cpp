@@ -68,12 +68,21 @@ void HUD::displayTime() {
     glPopMatrix();
 }
 
-void HUD::display(int v_width, int v_height){
+void drawCircle(float cx, float cy, float radius, int slices){
+    float angle_step = 2*M_PI / slices;
+    glBegin(GL_TRIANGLES);
+    for (int i = 0; i < slices; i++){
+        float angle = angle_step * i;
+        glVertex2f(cx, cy);
+        glVertex2f(cx + radius*cos(angle), cy + radius*sin(angle));
+        angle = angle_step * (i+1);
+        glVertex2f(cx + radius*cos(angle), cy + radius*sin(angle));
+    }
+    glEnd();
+}
+
+void HUD::display(int v_width, int v_height, float ship_cx, float ship_cy, Enviroment* enviroment){
     char string[56];
-
-
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_LIGHTING);
 
     Utils::setCoordToPixel(v_width, v_height);
     GLText *text = new GLText(TEXTURE_TEXT_TIME,font);
@@ -88,12 +97,31 @@ void HUD::display(int v_width, int v_height){
     text = new GLText(TEXTURE_TEXT_TIME,font);
     sprintf(string, "Catched: %d/%d", game->getScore(), game->getScoreLimit());
     text->setText(string, 255,255,255);
-    text->setPosition(v_width/1.8,50);
+    text->setPosition(50,80);
     text->render();
 
-    glPopMatrix();
+    // Map
+    glDisable(GL_LIGHTING);
+    float mapWidth = 100;
+    float mapCenterX = v_width-mapWidth*2;
+    float mapCenterY = 100;
+    float worldWidth = 100;
 
-    glEnable(GL_DEPTH_TEST);
+    // Ship
+    glColor3f(1, 0, 0);
+    drawCircle(mapCenterX + ship_cx, mapCenterY + ship_cy, 5, 50);
+    // Buoys
+    glColor3f(0, 1, 0);
+    for (int i = 0; i < enviroment->getBuoysCount(); i++){
+        Buoy* buoy = enviroment->getBuoy(i);
+        if (buoy->isActive()){
+            drawCircle(mapCenterX + buoy->getCoordX(), mapCenterY - buoy->getCoordZ(), 3, 50);
+        }
+    }
+    // World
+    glColor3f(0, 0, 1);
+    drawCircle(mapCenterX, mapCenterY, 50, 50);
+
     glEnable(GL_LIGHTING);
-    glDisable(GL_BLEND);
+    glPopMatrix();
 }

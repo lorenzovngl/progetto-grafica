@@ -178,30 +178,13 @@ void rendering(SDL_Window *window) {
 
     // settiamo matrice di modellazione
 
-    //Utils::drawTranslatedAxis(30, 50, 0);
-    //drawCubeWire();
-
-    // Shadow rendering
-    /*glPushMatrix();
-    float l[] = { 30.0, 50.0, 0.0 }; // Coordinates of the light source
-    float n[] = { 0.0,  -1.0, 0.0 }; // Normal vector for the plane
-    float e[] = { 0.0, 0.0, 0.0 }; // Point of the plane
-    glTranslatef(0, -0.02, 0);
-    Utils::glShadowProjection(l,e,n);
-    glDisable(GL_LIGHTING);
-    glColor3f(0.4,0.4,0.4);
-    ship->render(false);
-    glEnable(GL_LIGHTING);
-    glPopMatrix();*/
-
     camera->set(*ship, eyeDist, viewBeta, viewAlpha);
     DrawGL();
     enviroment->drawSky();
     enviroment->renderBuoys();
-    //shadowMapper->showShadowMask(scrH, scrW);
 
     game->detectCollision();
-    //hud->display(scrW, scrH);
+    hud->display(scrW, scrH, ship->px, -ship->pz, enviroment);
 
     // attendiamo la fine della rasterizzazione di
     // tutte le primitive mandate
@@ -309,6 +292,8 @@ int main(int argc, char *argv[]) {
                     if (e.key.keysym.sym == SDLK_F1){
                         camera->change(*ship, eyeDist, viewBeta, viewAlpha);
                         printf("Change to %d\n", camera->getType());
+                    } else if (e.key.keysym.sym == SDLK_w || e.key.keysym.sym == SDLK_s){
+                        game->go();
                     }
                     break;
                 case SDL_KEYUP:

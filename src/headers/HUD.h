@@ -10,11 +10,10 @@ class HUD {
 private:
     TTF_Font *font;
     Game *game;
-    int viewport_width, viewport_height;
 public:
     HUD(Game*);
     void displayTime();
-    void display(int v_width, int v_height);
+    void display(int v_width, int v_height, float ship_cx, float ship_cy, Enviroment* enviroment);
 };
 
 #endif
