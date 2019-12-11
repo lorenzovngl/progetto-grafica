@@ -3,6 +3,7 @@
 
 #include "Mesh.h"
 #include "TextureManager.h"
+#include "../../lib/ShadowMapper/ShadowMapper.h"
 
 class ShipMesh : public Mesh {
 private:
@@ -17,7 +18,7 @@ public:
     ShipMesh(char *filename, TextureManager *textureManager):Mesh(filename) {
         this->textureManager = textureManager;
     }
-    void render(bool texture_enabled, float speed, float facing);
+    void render(bool texture_enabled, float speed, float facing, ShadowMapper *shadowMapper);
 };
 
 #endif

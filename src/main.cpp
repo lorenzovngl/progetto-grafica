@@ -82,13 +82,11 @@ void DrawGL(){
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
         glCullFace(GL_FRONT);
         glEnable(GL_DEPTH_CLAMP);
-        glUseProgram( shadowMapper->shadowPass.program);            // we can just use glUseProgram(0) here
         glPushMatrix();
         glLoadMatrixf(lvpMatrix); // we load both (light) projection and view matrices here (it's the same after all)
-        ship->render(false);
+        ship->render(false, shadowMapper);
         enviroment->renderBuoys();
         glPopMatrix();
-        glUseProgram(0);
         glDisable(GL_DEPTH_CLAMP);
         glCullFace(GL_BACK);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -115,9 +113,11 @@ void DrawGL(){
         glActiveTexture(GL_TEXTURE1);
         glUseProgram(shadowMapper->defaultPass.program);
         glUniform1i(glGetUniformLocation(shadowMapper->defaultPass.program, "u_texture"), 1);
+        GLint texcoords = glGetUniformLocation(shadowMapper->defaultPass.program, "i_texcoords");
+        glUniform2f(texcoords, -1.0, -1.0);
         glUniformMatrix4fv( shadowMapper->defaultPass.uniform_location_biasedShadowMvpMatrix, 1, GL_FALSE, biasedShadowMvpMatrix);
         glDisable(GL_CULL_FACE);
-        ship->render(true);
+        ship->render(true, shadowMapper);
         enviroment->render(ship->px, ship->py, ship->pz, true);
         glPopMatrix();
         glUseProgram(0);

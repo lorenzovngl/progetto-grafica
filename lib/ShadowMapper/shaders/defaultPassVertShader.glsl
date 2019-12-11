@@ -1,3 +1,4 @@
+uniform vec2 i_texcoords;
 uniform mat4 u_biasedShadowMvpMatrix;  // (*) Actually it's already multiplied with vMatrixInverse (in C code, so that the multiplication can be easily done with doubles)
 varying vec4 v_shadowCoord;
 varying vec4 v_diffuse;
@@ -10,9 +11,13 @@ void main()	{
 	float nxDir = max(0.0, dot(normal, lightVector));
 	v_diffuse = gl_LightSource[0].diffuse * nxDir;
 	gl_FrontColor = gl_Color;
-	vec4 sPlane = vec4(1.0, 1.0, 1.0, 0.0);
-	vec4 tPlane = vec4(0.0, 1.0, 1.0, 0.0);
-	v_texCoord.x = dot(gl_Vertex * vec4(1, 1, 0, 0), sPlane);
-	v_texCoord.y = dot(gl_Vertex * vec4(0, 1, 1, 0), tPlane);
+	gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;		// Normalizza le coordinate texture
+	v_texCoord = gl_TexCoord[0].st;
+	/*
+		vec4 sPlane = vec4(1.0, 1.0, 1.0, 0.0);
+		vec4 tPlane = vec4(0.0, 1.0, 1.0, 0.0);
+		v_texCoord.x = dot(gl_Vertex * vec4(1, 1, 0, 0), sPlane);
+		v_texCoord.y = dot(gl_Vertex * vec4(0, 1, 1, 0), tPlane);
+	*/
 	v_shadowCoord = u_biasedShadowMvpMatrix*(gl_ModelViewMatrix*gl_Vertex); // (*) We don't pass a 'naked' mMatrix in shaders (not robust to double precision usage). We dress it in a mvMatrix. So here we're passing a mMatrix from camera space to light space (through a mvMatrix).
 }                                                                          // (the bias just converts clip space to texture space)

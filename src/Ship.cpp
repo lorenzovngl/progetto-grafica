@@ -23,6 +23,7 @@
 #include "headers/Ship.h"
 #include "headers/Utils.h"
 #include "headers/ShipMesh.h"
+#include "../lib/ShadowMapper/ShadowMapper.h"
 
 // var globale di tipo meshF
 ShipMesh *carlinga;
@@ -178,7 +179,7 @@ void Ship::enableTilt(){
 }
 
 // disegna a schermo
-void Ship::render(bool texture_enabled) {
+void Ship::render(bool texture_enabled, ShadowMapper *shadowMapper) {
     // sono nello spazio mondo
 
     //Utils::drawAxis(); // disegno assi spazio mondo
@@ -205,11 +206,11 @@ void Ship::render(bool texture_enabled) {
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     glRotatef(-90, 0, 1, 0);
-    //enableTilt();
+    enableTilt();
     // Controlla l'inclinazione della barca basandosi sull'angolo di virata e sulla velocità
     glRotatef(-sterzo/3*((abs(vx)+abs(vz))*10), 1, 0, 0);
 
-    carlinga->render(texture_enabled, abs(vx)+abs(vy)+abs(vz), -sterzo);
+    carlinga->render(texture_enabled, abs(vx)+abs(vy)+abs(vz), -sterzo, shadowMapper);
     carlinga->ComputeBoundingBox(px, py, pz, 0.05, -90 + facing);
     //glColor3f(.4, .4, .4);
 

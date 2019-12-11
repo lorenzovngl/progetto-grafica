@@ -10,6 +10,8 @@
 #include <OpenGL/glu.h>
 #else
 
+
+#include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
@@ -23,6 +25,7 @@
 #include "headers/Texture.h"
 #include "headers/ShipMesh.h"
 #include "headers/Utils.h"
+#include "../lib/ShadowMapper/ShadowMapper.h"
 
 void ShipMesh::initModel() {
     model_file = (char *) "assets/ship/fishing_ship.obj";
@@ -43,7 +46,7 @@ void ShipMesh::initModel() {
     textureManager->loadTexture(TEXTURE_TOP_BODY_BLACK_METAL);
     textureManager->loadTexture(TEXTURE_TOP_BODY_WHITE_METAL);
     textureManager->loadTexture(TEXTURE_BOTTOM_BODY_DARK_RED_METAL);
-    //textureManager->loadTexture(TEXTURE_MY_PHOTO);
+    textureManager->loadTexture(TEXTURE_MY_PHOTO);
 }
 
 // funzione che prepara tutto per creare le coordinate texture (s,t) da (x,y,z)
@@ -157,7 +160,7 @@ void ShipMesh::drawRudders(bool texture_enabled){
     }
 }
 
-void ShipMesh::render(bool texture_enabled, float speed, float angle) {
+void ShipMesh::render(bool texture_enabled, float speed, float angle, ShadowMapper *shadowMapper) {
     char *filepath = (char *) "assets/ship/textures.dat";
     FILE *file;
     int start, end, tex;
@@ -202,33 +205,36 @@ void ShipMesh::render(bool texture_enabled, float speed, float angle) {
     drawRudders(texture_enabled);
     glPopMatrix();
     // Banner
-   /* if (texture_enabled){
-        textureManager->enableTexture(TEXTURE_MY_PHOTO);
-        glEnable(GL_TEXTURE_2D);
-    }
-    glBegin(GL_QUADS);
-
-    glTexCoord2f(0, 0);
-    glVertex3f(-14, 4.6, 3.14);
-    glTexCoord2f(0, 1);
-    glVertex3f(-14, 2.6, 3.14);
-    glTexCoord2f(1, 1);
-    glVertex3f(-12, 2.6, 3.5);
-    glTexCoord2f(1, 0);
-    glVertex3f(-12, 4.6, 3.5);
-
-    glTexCoord2f(1, 0);
-    glVertex3f(-14, 4.6, -3.14);
-    glTexCoord2f(1, 1);
-    glVertex3f(-14, 2.6, -3.14);
-    glTexCoord2f(0, 1);
-    glVertex3f(-12, 2.6, -3.5);
-    glTexCoord2f(0, 0);
-    glVertex3f(-12, 4.6, -3.5);
-
-    glEnd();
     if (texture_enabled){
+        textureManager->enableTexture(TEXTURE_MY_PHOTO);
+        glPushMatrix();
+        glTranslatef(-13, 3.6, 3.5);
+        glEnable(GL_TEXTURE_2D);
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0, 0.0);
+        glVertex3f(-1, 1, -0.3);
+        glTexCoord2f(0.0, 1.0);
+        glVertex3f(-1, -1, -0.3);
+        glTexCoord2f(1.0, 1.0);
+        glVertex3f(1, -1, 0);
+        glTexCoord2f(1.0, 0.0);
+        glVertex3f(1, 1, 0);
+        glEnd();
+        glPopMatrix();
+        glPushMatrix();
+        glTranslatef(-13, 3.6, -3.2);
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0, 0.0);
+        glVertex3f(1, 1, -0.3);
+        glTexCoord2f(0.0, 1.0);
+        glVertex3f(1, -1, -0.3);
+        glTexCoord2f(1.0, 1.0);
+        glVertex3f(-1, -1, 0);
+        glTexCoord2f(1.0, 0.0);
+        glVertex3f(-1, 1, 0);
+        glEnd();
         glDisable(GL_TEXTURE_2D);
-    }*/
+        glPopMatrix();
+    }
     //displayBoundingBox();
 }

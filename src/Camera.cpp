@@ -21,7 +21,7 @@
 #include "headers/Ship.h"
 
 Camera::Camera(){
-    m_type = CAMERA_BACK_SHIP;
+    m_type = CAMERA_MOUSE_SHIP;
 }
 
 int Camera::getType(){

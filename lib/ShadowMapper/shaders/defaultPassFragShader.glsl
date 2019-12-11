@@ -10,6 +10,5 @@ void main() {
     vec4 shadowCoordinateWdivide = v_shadowCoord/v_shadowCoord.w;
     shadowFactor = clamp(exp(u_shadowDarkening.x*(texture2D(u_shadowMap,(shadowCoordinateWdivide.st)).r - shadowCoordinateWdivide.z)),u_shadowDarkening.y,1.0);
     gl_FragColor = gl_LightSource[0].ambient + vec4(texture2D(u_texture, v_texCoord).rgb*shadowFactor, 1);
-    //gl_FragColor = gl_LightSource[0].ambient + vec4(gl_Color.rgb*shadowFactor, 1);
-    //gl_FragColor = vec4(v_texCoord.xy, 0, 1);
+    //gl_FragColor = vec4(v_texCoord * vec2(255, 255), 0, 1);
 }

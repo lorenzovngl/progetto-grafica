@@ -91,20 +91,20 @@ void HUD::display(int v_width, int v_height, float ship_cx, float ship_cy, Envir
     int min = sec/60;
     sprintf(string, "Time: %02d:%02d:%03d", min, sec-min*60, millis-sec*1000-min*60);
     text->setText(string, 255,255,255);
-    text->setPosition(50,50);
+    text->setPosition(20,50);
     text->render();
 
     text = new GLText(TEXTURE_TEXT_TIME,font);
     sprintf(string, "Catched: %d/%d", game->getScore(), game->getScoreLimit());
     text->setText(string, 255,255,255);
-    text->setPosition(50,80);
+    text->setPosition(20,80);
     text->render();
 
     // Map
     glDisable(GL_LIGHTING);
     float mapWidth = 100;
     float mapCenterX = v_width-mapWidth*2;
-    float mapCenterY = 100;
+    float mapCenterY = 70;
     float worldWidth = 100;
 
     // Ship
