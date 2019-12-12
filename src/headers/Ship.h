@@ -7,16 +7,18 @@
 class Ship {
 private:
     TextureManager *textureManager;
+    ShadowMapper *shadowMapper;
     void DrawHeadlight(float x, float y, float z, int lightN) const;
     void enableTilt();
 public:
     // Metodi
     void Init(); // inizializza variabili
-    void render(bool texture_enabled, ShadowMapper *shadowMapper); // disegna a schermo
+    void render(bool texture_enabled); // disegna a schermo
     void DoStep(); // computa un passo del motore fisico
     ShipMesh* getMesh();
-    Ship(TextureManager *textureManager) {
+    Ship(TextureManager *textureManager, ShadowMapper *shadowMapper) {
         this->textureManager = textureManager;
+        this->shadowMapper = shadowMapper;
         Init();
     } // costruttore
 

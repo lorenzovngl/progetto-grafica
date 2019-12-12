@@ -11,6 +11,7 @@
 #include <OpenGL/glu.h>
 #else
 
+#include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
@@ -22,13 +23,15 @@
 #include "headers/Enviroment.h"
 #include "headers/Texture.h"
 #include "headers/TextureManager.h"
+#include "../lib/ShadowMapper/ShadowMapper.h"
 
-Enviroment::Enviroment(TextureManager *textureManager) {
+Enviroment::Enviroment(TextureManager *textureManager, ShadowMapper *shadowMapper) {
     srand(time(NULL));
     for (int i = 0; i < BUOYS_COUNT; i++) {
         buoy[i] = new Buoy(i, rand() % 20 - 10, rand() % 20 - 10, textureManager);
     }
     this->textureManager = textureManager;
+    this->shadowMapper = shadowMapper;
     textureManager->loadTexture(TEXTURE_SEA);
     textureManager->loadTexture(TEXTURE_SKY);
 }
@@ -129,10 +132,16 @@ void Enviroment::drawNearSea(float ship_x, float ship_y, float ship_z) {
     glPushMatrix();
     glTranslatef(ship_x, ship_y, ship_z);
 
-    float s[4] = {0.05, 0, 0, 0};
-    float t[4] = {0, 0, 0.05, 0};
+    float s[4] = {1, 0, 0, 0};
+    float t[4] = {0, 0, 1, 0};
     glTexGenfv(GL_S, GL_OBJECT_PLANE, s);
     glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
+    GLint genCoords = glGetUniformLocation(shadowMapper->defaultPass.program, "u_genCoords");
+    GLint sPlane = glGetUniformLocation(shadowMapper->defaultPass.program, "u_sPlane");
+    GLint tPlane = glGetUniformLocation(shadowMapper->defaultPass.program, "u_tPlane");
+    glUniform1i(genCoords, 1);
+    glUniform4fv(sPlane, 1, s);
+    glUniform4fv(tPlane, 1, t);
 
     //glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 

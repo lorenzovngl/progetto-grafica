@@ -88,7 +88,7 @@ void Ship::DoStep() {
 }
 
 void Ship::Init() {
-    carlinga = new ShipMesh((char *) "assets/ship/fishing_ship.obj", textureManager);
+    carlinga = new ShipMesh((char *) "assets/ship/fishing_ship.obj", textureManager, shadowMapper);
     // inizializzo lo stato della macchina
     px = pz = facing = 0; // posizione e orientamento
     py = 0.0;
@@ -179,7 +179,7 @@ void Ship::enableTilt(){
 }
 
 // disegna a schermo
-void Ship::render(bool texture_enabled, ShadowMapper *shadowMapper) {
+void Ship::render(bool texture_enabled) {
     // sono nello spazio mondo
 
     //Utils::drawAxis(); // disegno assi spazio mondo
@@ -210,7 +210,7 @@ void Ship::render(bool texture_enabled, ShadowMapper *shadowMapper) {
     // Controlla l'inclinazione della barca basandosi sull'angolo di virata e sulla velocità
     glRotatef(-sterzo/3*((abs(vx)+abs(vz))*10), 1, 0, 0);
 
-    carlinga->render(texture_enabled, abs(vx)+abs(vy)+abs(vz), -sterzo, shadowMapper);
+    carlinga->render(texture_enabled, abs(vx)+abs(vy)+abs(vz), -sterzo);
     carlinga->ComputeBoundingBox(px, py, pz, 0.05, -90 + facing);
     //glColor3f(.4, .4, .4);
 

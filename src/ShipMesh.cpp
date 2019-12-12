@@ -65,10 +65,16 @@ void ShipMesh::setupTexture(GLenum n_texture, Point3 min, Point3 max) {
     // in modo che la texture sia "attaccata" all'oggetto, e non "proiettata" su esso
     glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
     glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-    float s[4] = {0.1, 0, 0, 0};
-    float t[4] = {0, 0, 0.1, 0};
+    float s[4] = {0.3, 0, 0, 0};
+    float t[4] = {0, 0, 0.3, 0};
     glTexGenfv(GL_S, GL_OBJECT_PLANE, s);
     glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
+    GLint genCoords = glGetUniformLocation(shadowMapper->defaultPass.program, "u_genCoords");
+    GLint sPlane = glGetUniformLocation(shadowMapper->defaultPass.program, "u_sPlane");
+    GLint tPlane = glGetUniformLocation(shadowMapper->defaultPass.program, "u_tPlane");
+    glUniform1i(genCoords, 1);
+    glUniform4fv(sPlane, 1, s);
+    glUniform4fv(tPlane, 1, t);
 }
 
 void ShipMesh::drawTriangles(bool texture_enabled, int gl_texture, int start, int end) {
@@ -160,7 +166,7 @@ void ShipMesh::drawRudders(bool texture_enabled){
     }
 }
 
-void ShipMesh::render(bool texture_enabled, float speed, float angle, ShadowMapper *shadowMapper) {
+void ShipMesh::render(bool texture_enabled, float speed, float angle) {
     char *filepath = (char *) "assets/ship/textures.dat";
     FILE *file;
     int start, end, tex;
@@ -210,6 +216,8 @@ void ShipMesh::render(bool texture_enabled, float speed, float angle, ShadowMapp
         glPushMatrix();
         glTranslatef(-13, 3.6, 3.5);
         glEnable(GL_TEXTURE_2D);
+        GLint genCoords = glGetUniformLocation(shadowMapper->defaultPass.program, "u_genCoords");
+        glUniform1i(genCoords, 0);
         glBegin(GL_QUADS);
         glTexCoord2f(0.0, 0.0);
         glVertex3f(-1, 1, -0.3);

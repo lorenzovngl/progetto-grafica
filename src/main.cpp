@@ -84,7 +84,7 @@ void DrawGL(){
         glEnable(GL_DEPTH_CLAMP);
         glPushMatrix();
         glLoadMatrixf(lvpMatrix); // we load both (light) projection and view matrices here (it's the same after all)
-        ship->render(false, shadowMapper);
+        ship->render(false);
         enviroment->renderBuoys();
         glPopMatrix();
         glDisable(GL_DEPTH_CLAMP);
@@ -113,11 +113,9 @@ void DrawGL(){
         glActiveTexture(GL_TEXTURE1);
         glUseProgram(shadowMapper->defaultPass.program);
         glUniform1i(glGetUniformLocation(shadowMapper->defaultPass.program, "u_texture"), 1);
-        GLint texcoords = glGetUniformLocation(shadowMapper->defaultPass.program, "i_texcoords");
-        glUniform2f(texcoords, -1.0, -1.0);
         glUniformMatrix4fv( shadowMapper->defaultPass.uniform_location_biasedShadowMvpMatrix, 1, GL_FALSE, biasedShadowMvpMatrix);
         glDisable(GL_CULL_FACE);
-        ship->render(true, shadowMapper);
+        ship->render(true);
         enviroment->render(ship->px, ship->py, ship->pz, true);
         glPopMatrix();
         glUseProgram(0);
@@ -263,13 +261,13 @@ int main(int argc, char *argv[]) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  // Otherwise transparent objects are not displayed correctly
 
     textureManager = new TextureManager();
+    shadowMapper = new ShadowMapper();
 
-    enviroment = new Enviroment(textureManager);
-    ship = new Ship(textureManager);
+    enviroment = new Enviroment(textureManager, shadowMapper);
+    ship = new Ship(textureManager, shadowMapper);
     game = new Game(ship, enviroment);
     camera = new Camera();
     hud = new HUD(game);
-    shadowMapper = new ShadowMapper();
 
     shadowMapper->InitGL();
     shadowMapper->ResizeGL(scrW, scrH);
