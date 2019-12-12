@@ -132,19 +132,6 @@ void Enviroment::drawNearSea(float ship_x, float ship_y, float ship_z) {
     glPushMatrix();
     glTranslatef(ship_x, ship_y, ship_z);
 
-    float s[4] = {1, 0, 0, 0};
-    float t[4] = {0, 0, 1, 0};
-    glTexGenfv(GL_S, GL_OBJECT_PLANE, s);
-    glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
-    GLint genCoords = glGetUniformLocation(shadowMapper->defaultPass.program, "u_genCoords");
-    GLint sPlane = glGetUniformLocation(shadowMapper->defaultPass.program, "u_sPlane");
-    GLint tPlane = glGetUniformLocation(shadowMapper->defaultPass.program, "u_tPlane");
-    glUniform1i(genCoords, 1);
-    glUniform4fv(sPlane, 1, s);
-    glUniform4fv(tPlane, 1, t);
-
-    //glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
     // disegna KxK quads
     glBegin(GL_TRIANGLES);
     glNormal3f(0, 1, 0);       // normale verticale uguale x tutti
@@ -218,25 +205,16 @@ void Enviroment::renderBuoys(){
 }
 
 void Enviroment::render(float ship_x, float ship_y, float ship_z, bool texture_enabled) {
-    if (texture_enabled){
-        textureManager->enableTexture(TEXTURE_SEA);
-        glEnable(GL_TEXTURE_2D);
-        glEnable(GL_TEXTURE_GEN_S);
-        glEnable(GL_TEXTURE_GEN_T);
-        glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-        glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glColor4f( 0.0f, 0.0f, 1.0f, 0.7f );
-    }
+    GLint colorOrTexture = glGetUniformLocation(shadowMapper->defaultPass.program, "u_colorOrTexture");
+    GLint u_color = glGetUniformLocation(shadowMapper->defaultPass.program, "u_color");
+    glUniform1i(colorOrTexture, 0);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glColor4f(0, 0, 1,0.5);
+    float color[4] = {0, 0, 1, 0.5};
+    glUniform4fv(u_color, 1, color);
     drawNearSea(ship_x, ship_y, ship_z);
     drawFarSea(ship_x, ship_y, ship_z);
-    if (texture_enabled){
-        glDisable(GL_BLEND);
-        glDisable(GL_TEXTURE_GEN_S);
-        glDisable(GL_TEXTURE_GEN_T);
-        glDisable(GL_TEXTURE_2D);
-    }
+    glUniform1i(colorOrTexture, 1);
+    glDisable(GL_BLEND);
 }

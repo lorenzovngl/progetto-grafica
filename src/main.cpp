@@ -159,20 +159,20 @@ void rendering(SDL_Window *window) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // setto la posizione luce
-    /*float ambient[4] = {1, 1, 1, 1};
-    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-    float diffuse[4] = {1, 1, 1, 1};
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
-    float specular[4] = {1, 1, 1, 1};
-    glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+    float ambient[4] = {0.2, 0.2, 0.2, 1};
+    glLightfv(GL_LIGHT1, GL_AMBIENT, ambient);
+    float diffuse[4] = {0.8, 0.8, 0.8, 1};
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse);
+    float specular[4] = {0, 0, 0, 0};
+    glLightfv(GL_LIGHT1, GL_SPECULAR, specular);
     float position[4] = {30, 50, 0, 1};
-    glLightfv(GL_LIGHT0, GL_POSITION, position);
+    glLightfv(GL_LIGHT1, GL_POSITION, position);
 
     static float tmpcol[4] = {1, 1, 1, 1};
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, tmpcol);
-    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 127);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 0);
 
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);*/
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
     // settiamo matrice di modellazione
 
@@ -254,10 +254,11 @@ int main(int argc, char *argv[]) {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHT1);
     glEnable(GL_NORMALIZE); // rinormalizza le normali prima di usarle
     glFrontFace(GL_CW); // consideriamo Front Facing le facce ClockWise
     glEnable(GL_COLOR_MATERIAL);
-    glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  // Otherwise transparent objects are not displayed correctly
 
     textureManager = new TextureManager();

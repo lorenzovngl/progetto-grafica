@@ -1,10 +1,15 @@
-uniform int u_genCoords;
+uniform int u_genCoords; // 0 = explicit coors, 1 = object linear, 2 = sphere map
 uniform vec4 u_sPlane;
 uniform vec4 u_tPlane;
 uniform mat4 u_biasedShadowMvpMatrix;  // (*) Actually it's already multiplied with vMatrixInverse (in C code, so that the multiplication can be easily done with doubles)
 varying vec4 v_shadowCoord;
 varying vec4 v_diffuse;
 varying vec2 v_texCoord;
+
+varying vec3 N;
+varying vec3 L;
+varying vec3 E;
+varying vec3 H;
 
 void main()	{
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
@@ -29,5 +34,11 @@ void main()	{
 		v_texCoord.x = (r.x/m + 0.5)/1;
 		v_texCoord.y = (r.y/m + 0.5)/1;
 	}*/
+	vec4 eyePosition = gl_ModelViewMatrix * gl_Vertex;
+	vec4 eyeLightPos = gl_LightSource[1].position;
+	N = normalize(gl_NormalMatrix * gl_Normal);
+	L = normalize(eyeLightPos.xyz - eyePosition.xyz);
+	E = -normalize(eyePosition.xyz);
+	H = normalize(L + E);
 	v_shadowCoord = u_biasedShadowMvpMatrix*(gl_ModelViewMatrix*gl_Vertex); // (*) We don't pass a 'naked' mMatrix in shaders (not robust to double precision usage). We dress it in a mvMatrix. So here we're passing a mMatrix from camera space to light space (through a mvMatrix).
 }                                                                          // (the bias just converts clip space to texture space)
