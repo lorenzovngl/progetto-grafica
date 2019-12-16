@@ -4,6 +4,7 @@
 #include "Buoy.h"
 #include "TextureManager.h"
 #include "../../lib/ShadowMapper/ShadowMapper.h"
+#include "Options.h"
 
 #define BUOYS_COUNT 20
 
@@ -11,9 +12,10 @@ class Enviroment {
 private:
     TextureManager *textureManager;
     ShadowMapper *shadowMapper;
+    Options *options;
     Buoy *buoy[BUOYS_COUNT];
 public:
-    Enviroment(TextureManager *textureManager, ShadowMapper *shadowMapper);
+    Enviroment(TextureManager *textureManager, ShadowMapper *shadowMapper, Options *options);
     Buoy* getBuoy(int);
     int getBuoysCount();
     void renderBuoys();

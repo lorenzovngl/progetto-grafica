@@ -3,28 +3,25 @@
 
 #include "Controller.h"
 #include "ShipMesh.h"
+#include "Options.h"
 
 class Ship {
 private:
     TextureManager *textureManager;
     ShadowMapper *shadowMapper;
+    Options *options;
     void DrawHeadlight(float x, float y, float z, int lightN) const;
     void enableTilt();
 public:
+    Controller controller;
+    Ship(TextureManager *textureManager, ShadowMapper *shadowMapper, Options *options);
     // Metodi
     void Init(); // inizializza variabili
     void render(bool texture_enabled); // disegna a schermo
     void DoStep(); // computa un passo del motore fisico
     ShipMesh* getMesh();
-    Ship(TextureManager *textureManager, ShadowMapper *shadowMapper) {
-        this->textureManager = textureManager;
-        this->shadowMapper = shadowMapper;
-        Init();
-    } // costruttore
 
-    Controller controller;
-
-    // STATO DELLA MACCHINA
+    // STATO DELLA BARCA
     // (DoStep fa evolvere queste variabili nel tempo)
     float px, py, pz, facing; // posizione e orientamento
     float mozzoA, mozzoP, sterzo; // stato interno

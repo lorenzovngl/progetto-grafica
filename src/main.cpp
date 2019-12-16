@@ -28,6 +28,7 @@ extern "C" {
 #include "headers/Game.h"
 #include "headers/Utils.h"
 #include "headers/TextureManager.h"
+#include "headers/Options.h"
 
 float viewAlpha = 20, viewBeta = 40; // angoli che definiscono la vista
 float eyeDist = 3.0; // distanza dell'occhio dall'origine
@@ -50,6 +51,7 @@ Camera *camera;
 HUD *hud;
 Game *game;
 ShadowMapper *shadowMapper;
+Options *options;
 
 void DrawGL(){
 
@@ -130,7 +132,7 @@ void rendering(SDL_Window *window) {
     // un frame in piu'!!!
     fpsNow++;
 
-    glLineWidth(3); // linee larghe
+    glLineWidth(1);
 
     // settiamo il viewport
     glViewport(0, 0, scrW, scrH);
@@ -263,9 +265,10 @@ int main(int argc, char *argv[]) {
 
     textureManager = new TextureManager();
     shadowMapper = new ShadowMapper();
+    options = new Options();
 
-    enviroment = new Enviroment(textureManager, shadowMapper);
-    ship = new Ship(textureManager, shadowMapper);
+    enviroment = new Enviroment(textureManager, shadowMapper, options);
+    ship = new Ship(textureManager, shadowMapper, options);
     game = new Game(ship, enviroment);
     camera = new Camera();
     hud = new HUD(game);
@@ -275,7 +278,7 @@ int main(int argc, char *argv[]) {
     shadowMapper->resetCamera(eyeDist, viewBeta, viewAlpha);
     camera->set(*ship, eyeDist, viewBeta, viewAlpha);
     shadowMapper->resetLight();
-
+    options->printMenu();
 
     bool done = 0;
     while (!done) {
@@ -290,7 +293,12 @@ int main(int argc, char *argv[]) {
                     ship->controller.EatKey(e.key.keysym.sym, keymap, true);
                     if (e.key.keysym.sym == SDLK_F1){
                         camera->change(*ship, eyeDist, viewBeta, viewAlpha);
-                        printf("Change to %d\n", camera->getType());
+                    } else if (e.key.keysym.sym == SDLK_F2){
+                        options->toggleWireframes();
+                    } else if (e.key.keysym.sym == SDLK_F2){
+                        options->toggleShadows();
+                    } else if (e.key.keysym.sym == SDLK_F4){
+                        options->toggleShaders();
                     } else if (e.key.keysym.sym == SDLK_w || e.key.keysym.sym == SDLK_s){
                         game->go();
                     }

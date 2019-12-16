@@ -25,13 +25,14 @@
 #include "headers/TextureManager.h"
 #include "../lib/ShadowMapper/ShadowMapper.h"
 
-Enviroment::Enviroment(TextureManager *textureManager, ShadowMapper *shadowMapper) {
+Enviroment::Enviroment(TextureManager *textureManager, ShadowMapper *shadowMapper, Options *options) {
     srand(time(NULL));
     for (int i = 0; i < BUOYS_COUNT; i++) {
-        buoy[i] = new Buoy(i, rand() % 20 - 10, rand() % 20 - 10, textureManager);
+        buoy[i] = new Buoy(i, rand() % 20 - 10, rand() % 20 - 10, textureManager, options);
     }
     this->textureManager = textureManager;
     this->shadowMapper = shadowMapper;
+    this->options = options;
     textureManager->loadTexture(TEXTURE_SEA);
     textureManager->loadTexture(TEXTURE_SKY);
 }
@@ -56,7 +57,11 @@ void Enviroment::drawFarSea(float ship_x, float ship_y, float ship_z) {
     glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
 
     // disegna KxK quads
-    glBegin(GL_QUADS);
+    if (options->areWireframesEnabled()){
+        glBegin(GL_LINE_STRIP);
+    } else {
+        glBegin(GL_QUADS);
+    }
     glNormal3f(0, 1, 0);       // normale verticale uguale x tutti
     for (int x = 0; x < K; x++) {
         for (int z = 0; z < K - 52; z++) {
@@ -133,7 +138,12 @@ void Enviroment::drawNearSea(float ship_x, float ship_y, float ship_z) {
     glTranslatef(ship_x, ship_y, ship_z);
 
     // disegna KxK quads
-    glBegin(GL_TRIANGLES);
+
+    if (options->areWireframesEnabled()){
+        glBegin(GL_LINE_STRIP);
+    } else {
+        glBegin(GL_TRIANGLES);
+    }
     glNormal3f(0, 1, 0);       // normale verticale uguale x tutti
     for (int x = 0; x < K; x++) {
         for (int z = 0; z < K; z++) {
@@ -167,8 +177,8 @@ void Enviroment::drawNearSea(float ship_x, float ship_y, float ship_z) {
             glVertex3d(x1, y10, z0);
             glVertex3d(x1, y11, z1);
 
-            glVertex3d(x0, y00, z0);
             glVertex3d(x1, y11, z1);
+            glVertex3d(x0, y00, z0);
             glVertex3d(x0, y01, z1);
 
         }

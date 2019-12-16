@@ -20,6 +20,7 @@ add_executable(ProgettoGrafica
         src/headers/HUD.h
         src/headers/Light.h
         src/headers/Mesh.h
+        src/headers/Options.h
         src/headers/point3.h
         src/headers/Ship.h
         src/headers/ShipMesh.h
@@ -38,6 +39,7 @@ add_executable(ProgettoGrafica
         src/Light.cpp
         src/main.cpp
         src/Mesh.cpp
+        src/Options.cpp
         src/Ship.cpp
         src/ShipMesh.cpp
         src/Texture.cpp

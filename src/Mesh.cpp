@@ -23,6 +23,13 @@
 #include "headers/Mesh.h"
 #include "headers/Utils.h"
 
+Mesh::Mesh(char* filename, Options *options) {
+    LoadFromObj(filename);
+    ComputeNormalsPerFace();
+    this->options = options;
+    //ComputeBoundingBox();
+}
+
 void Mesh::ComputeNormalsPerFace() {
     for (int i = 0; i < f.size(); i++) {
         f[i].ComputeNormal();
@@ -101,7 +108,11 @@ void Mesh::render() {
     }
 
     // mandiamo tutti i triangoli a schermo
-    glBegin(GL_TRIANGLES);
+    if (options->areWireframesEnabled()){
+        glBegin(GL_LINES);
+    } else {
+        glBegin(GL_QUADS);
+    }
     for (int i = 0; i < f.size(); i++) {
         f[i].n.SendAsNormal(); // flat shading
         (f[i].v[0])->p.SendAsVertex();

@@ -18,14 +18,16 @@
 #endif
 
 #include "headers/Buoy.h"
+#include "headers/Options.h"
 
-Buoy::Buoy(int id, float x, float z, TextureManager *textureManager){
-    m_mesh = new Mesh((char *) "assets/sphere.obj");
+Buoy::Buoy(int id, float x, float z, TextureManager *textureManager, Options *options){
+    m_mesh = new Mesh((char *) "assets/sphere.obj", options);
     this->active = true;
     m_coord_x = x;
     m_coord_z = z;
     this->id = id;
     this->textureManager = textureManager;
+    this->options = options;
     textureManager->loadTexture(TEXTURE_FLAG_ITALY);
 }
 
@@ -59,7 +61,11 @@ void Buoy::render() {
     // Asta della boa
     int base = 2;
     int height = 100;
-    glBegin(GL_QUADS);
+    if (options->areWireframesEnabled()){
+        glBegin(GL_LINES);
+    } else {
+        glBegin(GL_QUADS);
+    }
     glColor3f(1, 0, 0);
     // Parallelepipedo
     glVertex3f(-(base/2),0,(base/2));
@@ -99,7 +105,11 @@ void Buoy::render() {
     //glActiveTexture(GL_TEXTURE7);
     textureManager->enableTexture(TEXTURE_FLAG_ITALY);
     glEnable(GL_TEXTURE_2D);
-    glBegin(GL_QUADS);
+    if (options->areWireframesEnabled()){
+        glBegin(GL_LINES);
+    } else {
+        glBegin(GL_QUADS);
+    }
     glColor3f(1, 1, 1);
     // Bandierina
     float flag_height = 40;

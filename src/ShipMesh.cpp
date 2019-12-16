@@ -26,6 +26,13 @@
 #include "headers/ShipMesh.h"
 #include "headers/Utils.h"
 #include "../lib/ShadowMapper/ShadowMapper.h"
+#include "headers/Options.h"
+
+ShipMesh::ShipMesh(char *filename, TextureManager *textureManager, ShadowMapper *shadowMapper, Options *options):Mesh(filename, options) {
+    this->textureManager = textureManager;
+    this->shadowMapper = shadowMapper;
+    this->options = options;
+}
 
 void ShipMesh::initModel() {
     model_file = (char *) "assets/ship/fishing_ship.obj";
@@ -82,7 +89,11 @@ void ShipMesh::drawTriangles(bool texture_enabled, int gl_texture, int start, in
         setupTexture(gl_texture, bbmin, bbmax);
     }
     // mandiamo tutti i triangoli a schermo
-    glBegin(GL_TRIANGLES);
+    if (options->areWireframesEnabled()){
+        glBegin(GL_LINES);
+    } else {
+        glBegin(GL_TRIANGLES);
+    }
     for (int i = start; i <= end; i++) {
         if (!((i >= 15100 && i <= 15500) || (i >= 16600 && i <= 17000))) {
             // Disegno a parte le eliche e i timoni
@@ -106,7 +117,11 @@ void ShipMesh::drawHelixes(bool texture_enabled){
         setupTexture(TEXTURE_BOTTOM_BODY_DARK_RED_METAL, bbmin, bbmax);
     }
     // mandiamo tutti i triangoli a schermo
-    glBegin(GL_TRIANGLES);
+    if (options->areWireframesEnabled()){
+        glBegin(GL_LINES);
+    } else {
+        glBegin(GL_TRIANGLES);
+    }
     for (int i = 15100; i <= 15500; i++) {
         f[i].n.SendAsNormal(); // flat shading
         if (f[i].v[0]->p.coord[2] < 0){
@@ -139,7 +154,11 @@ void ShipMesh::drawRudders(bool texture_enabled){
         setupTexture(TEXTURE_BOTTOM_BODY_DARK_RED_METAL, bbmin, bbmax);
     }
     // mandiamo tutti i triangoli a schermo
-    glBegin(GL_TRIANGLES);
+    if (options->areWireframesEnabled()){
+        glBegin(GL_LINES);
+    } else {
+        glBegin(GL_TRIANGLES);
+    }
     for (int i = 16600; i <= 17000; i++) {
         f[i].n.SendAsNormal(); // flat shading
         if (f[i].v[0]->p.coord[2] < 0){
@@ -218,7 +237,11 @@ void ShipMesh::render(bool texture_enabled, float speed, float angle) {
         glEnable(GL_TEXTURE_2D);
         GLint genCoords = glGetUniformLocation(shadowMapper->defaultPass.program, "u_genCoords");
         glUniform1i(genCoords, 0);
-        glBegin(GL_QUADS);
+        if (options->areWireframesEnabled()){
+            glBegin(GL_LINES);
+        } else {
+            glBegin(GL_QUADS);
+        }
         glTexCoord2f(0.0, 0.0);
         glVertex3f(-1, 1, -0.3);
         glTexCoord2f(0.0, 1.0);
@@ -231,7 +254,11 @@ void ShipMesh::render(bool texture_enabled, float speed, float angle) {
         glPopMatrix();
         glPushMatrix();
         glTranslatef(-13, 3.6, -3.2);
-        glBegin(GL_QUADS);
+        if (options->areWireframesEnabled()){
+            glBegin(GL_LINES);
+        } else {
+            glBegin(GL_QUADS);
+        }
         glTexCoord2f(0.0, 0.0);
         glVertex3f(1, 1, -0.3);
         glTexCoord2f(0.0, 1.0);
