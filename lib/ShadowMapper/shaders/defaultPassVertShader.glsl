@@ -11,7 +11,10 @@ varying vec3 L;
 varying vec3 E;
 varying vec3 H;
 
+varying vec4 vertex;
+
 void main()	{
+	vertex = gl_Vertex;
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
     vec3 normal = gl_NormalMatrix * gl_Normal;
 	vec3 lightVector = gl_LightSource[0].position.xyz;// - gl_Vertex.xyz;\n"

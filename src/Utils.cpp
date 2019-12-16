@@ -65,7 +65,7 @@ void Utils::drawAxis(){
     glEnable(GL_LIGHTING);
 }
 
-void Utils::drawSphere(double r, int lats, int longs) {
+void Utils::drawSphere(double r, int lats, int longs, bool enableWireframe) {
     int i, j;
     for(i = 0; i <= lats; i++) {
         double lat0 = M_PI * (-0.5 + (double) (i - 1) / lats);
@@ -76,7 +76,11 @@ void Utils::drawSphere(double r, int lats, int longs) {
         double z1 = sin(lat1);
         double zr1 = cos(lat1);
 
-        glBegin(GL_QUAD_STRIP);
+        if (enableWireframe){
+            glBegin(GL_LINE_STRIP);
+        } else {
+            glBegin(GL_QUAD_STRIP);
+        }
         for(j = 0; j <= longs; j++) {
             double lng = 2 * M_PI * (double) (j - 1) / longs;
             double x = cos(lng);

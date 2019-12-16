@@ -12,6 +12,19 @@ varying vec3 L;
 varying vec3 E;
 varying vec3 H;
 
+varying vec4 vertex;
+uniform mat4 u_cameraViewMatrix;
+
+float getFogFactor(float d) {
+    const float FogMax = 20.0;
+    const float FogMin = 10.0;
+
+    if (d>=FogMax) return 1.0;
+    if (d<=FogMin) return 0.0;
+
+    return 1.0 - (FogMax - d) / (FogMax - FogMin);
+}
+
 void main() {
     float shadowFactor = 1.0;
     vec4 shadowCoordinateWdivide = v_shadowCoord/v_shadowCoord.w;
@@ -22,9 +35,9 @@ void main() {
     vec3 Eye    = normalize(E);
     vec3 Half   = normalize(H);
 
-    float Kd = max(dot(Normal, Light), 0.0);
-    float Ks = pow(max(dot(Half, Normal), 0.0), gl_FrontMaterial.shininess);
-    float Ka = 0.0;
+    float Kd = max(dot(Normal, Light), 0.5);
+    float Ks = pow(max(dot(Half, Normal), 1.0), gl_FrontMaterial.shininess);
+    float Ka = 0.5;
     float intensity = 0.2;
 
     vec4 diffuse  = Kd * gl_FrontLightProduct[1].diffuse*intensity;
@@ -36,4 +49,8 @@ void main() {
     } else {
         gl_FragColor = ambient + diffuse + specular + vec4(u_color.rgb*shadowFactor, u_color.a);
     }
+    float d = distance(u_cameraViewMatrix*vertex, vertex);
+    float alpha = getFogFactor(d);
+    vec4 FogColor = vec4(0.5, 0.5, 1.0, 1.0);
+    gl_FragColor = mix(gl_FragColor, FogColor, alpha);
 }

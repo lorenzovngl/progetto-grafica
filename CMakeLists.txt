@@ -4,7 +4,6 @@ project(ProgettoGrafica)
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(ProgettoGrafica
-        lib/ShadowMapper/my_shadow_mapping.c
         lib/ShadowMapper/helper_functions.h
         lib/ShadowMapper/helper_functions.c
         lib/ShadowMapper/ShadowMapper.cpp
@@ -14,6 +13,7 @@ add_executable(ProgettoGrafica
         src/headers/Camera.h
         src/headers/Controller.h
         src/headers/Enviroment.h
+        src/headers/Fog.h
         src/headers/Game.h
         src/headers/glm.h
         src/headers/GLText.h
@@ -32,6 +32,7 @@ add_executable(ProgettoGrafica
         src/Camera.cpp
         src/Controller.cpp
         src/Enviroment.cpp
+        src/Fog.cpp
         src/Game.cpp
         src/glm.cpp
         src/GLText.cpp

@@ -46,7 +46,7 @@ int Enviroment::getBuoysCount() {
 }
 
 void Enviroment::drawFarSea(float ship_x, float ship_y, float ship_z) {
-    const float S = 500; // size
+    const float S = 200; // size
     const float H = 0;   // altezza
     const int K = 100; //disegna K x K quads
     float scale_factor = 0.05;
@@ -57,18 +57,18 @@ void Enviroment::drawFarSea(float ship_x, float ship_y, float ship_z) {
     glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
 
     // disegna KxK quads
-    if (options->areWireframesEnabled()){
-        glBegin(GL_LINE_STRIP);
-    } else {
-        glBegin(GL_QUADS);
-    }
     glNormal3f(0, 1, 0);       // normale verticale uguale x tutti
     for (int x = 0; x < K; x++) {
-        for (int z = 0; z < K - 52; z++) {
+        for (int z = 0; z < K - 55; z++) {
             float x0 = -S + 2 * (x + 0) * S / K + ship_x;
             float x1 = -S + 2 * (x + 1) * S / K + ship_x;
             float z0 = -S + 2 * (z + 0) * S / K + ship_z;
             float z1 = -S + 2 * (z + 1) * S / K + ship_z;
+            if (options->areWireframesEnabled()){
+                glBegin(GL_LINE_LOOP);
+            } else {
+                glBegin(GL_QUADS);
+            }
             glTexCoord2f(x0, z0);
             glVertex3d(x0, H, z0);
             glTexCoord2f(x1, z0);
@@ -77,12 +77,18 @@ void Enviroment::drawFarSea(float ship_x, float ship_y, float ship_z) {
             glVertex3d(x1, H, z1);
             glTexCoord2f(x0, z1);
             glVertex3d(x0, H, z1);
+            glEnd();
         }
-        for (int z = K - 48; z < K; z++) {
+        for (int z = K - 45; z < K; z++) {
             float x0 = -S + 2 * (x + 0) * S / K + ship_x;
             float x1 = -S + 2 * (x + 1) * S / K + ship_x;
             float z0 = -S + 2 * (z + 0) * S / K + ship_z;
             float z1 = -S + 2 * (z + 1) * S / K + ship_z;
+            if (options->areWireframesEnabled()){
+                glBegin(GL_LINE_LOOP);
+            } else {
+                glBegin(GL_QUADS);
+            }
             glTexCoord2f(x0, z0);
             glVertex3d(x0, H, z0);
             glTexCoord2f(x1, z0);
@@ -91,14 +97,20 @@ void Enviroment::drawFarSea(float ship_x, float ship_y, float ship_z) {
             glVertex3d(x1, H, z1);
             glTexCoord2f(x0, z1);
             glVertex3d(x0, H, z1);
+            glEnd();
         }
     }
-    for (int x = 0; x < K - 52; x++) {
+    for (int x = 0; x < K - 55; x++) {
         for (int z = 0; z < K; z++) {
             float x0 = -S + 2 * (x + 0) * S / K + ship_x;
             float x1 = -S + 2 * (x + 1) * S / K + ship_x;
             float z0 = -S + 2 * (z + 0) * S / K + ship_z;
             float z1 = -S + 2 * (z + 1) * S / K + ship_z;
+            if (options->areWireframesEnabled()){
+                glBegin(GL_LINE_LOOP);
+            } else {
+                glBegin(GL_QUADS);
+            }
             glTexCoord2f(x0, z0);
             glVertex3d(x0, H, z0);
             glTexCoord2f(x1, z0);
@@ -107,14 +119,20 @@ void Enviroment::drawFarSea(float ship_x, float ship_y, float ship_z) {
             glVertex3d(x1, H, z1);
             glTexCoord2f(x0, z1);
             glVertex3d(x0, H, z1);
+            glEnd();
         }
     }
-    for (int x = K - 48; x < K; x++) {
+    for (int x = K - 45; x < K; x++) {
         for (int z = 0; z < K; z++) {
             float x0 = -S + 2 * (x + 0) * S / K + ship_x;
             float x1 = -S + 2 * (x + 1) * S / K + ship_x;
             float z0 = -S + 2 * (z + 0) * S / K + ship_z;
             float z1 = -S + 2 * (z + 1) * S / K + ship_z;
+            if (options->areWireframesEnabled()){
+                glBegin(GL_LINE_LOOP);
+            } else {
+                glBegin(GL_QUADS);
+            }
             glTexCoord2f(x0, z0);
             glVertex3d(x0, H, z0);
             glTexCoord2f(x1, z0);
@@ -123,9 +141,9 @@ void Enviroment::drawFarSea(float ship_x, float ship_y, float ship_z) {
             glVertex3d(x1, H, z1);
             glTexCoord2f(x0, z1);
             glVertex3d(x0, H, z1);
+            glEnd();
         }
     }
-    glEnd();
 }
 
 void Enviroment::drawNearSea(float ship_x, float ship_y, float ship_z) {
@@ -135,27 +153,22 @@ void Enviroment::drawNearSea(float ship_x, float ship_y, float ship_z) {
     const int K = 100; //disegna K x K quads
 
     glPushMatrix();
-    glTranslatef(ship_x, ship_y, ship_z);
+    glScalef(scale_factor, scale_factor, scale_factor);
+    //glTranslatef(ship_x/scale_factor, ship_y/scale_factor, ship_z/scale_factor);
 
     // disegna KxK quads
-
-    if (options->areWireframesEnabled()){
-        glBegin(GL_LINE_STRIP);
-    } else {
-        glBegin(GL_TRIANGLES);
-    }
     glNormal3f(0, 1, 0);       // normale verticale uguale x tutti
     for (int x = 0; x < K; x++) {
         for (int z = 0; z < K; z++) {
-            float x0 = (-S + 2 * (x + 0) * S / K)*scale_factor;
-            float x1 = (-S + 2 * (x + 1) * S / K)*scale_factor;
-            float z0 = (-S + 2 * (z + 0) * S / K)*scale_factor;
-            float z1 = (-S + 2 * (z + 1) * S / K)*scale_factor;
+            float x0 = (-S + 2 * (x + 0) * S / K) + ship_x/scale_factor;
+            float x1 = (-S + 2 * (x + 1) * S / K) + ship_x/scale_factor;
+            float z0 = (-S + 2 * (z + 0) * S / K) + ship_z/scale_factor;
+            float z1 = (-S + 2 * (z + 1) * S / K) + ship_z/scale_factor;
             float motion = (float) SDL_GetTicks()/500;
-            float y00 = (cos(x0 + motion) + sin(z0 + motion))*H*scale_factor;
-            float y01 = (cos(x0 + motion) + sin(z1 + motion))*H*scale_factor;
-            float y11 = (cos(x1 + motion) + sin(z1 + motion))*H*scale_factor;
-            float y10 = (cos(x1 + motion) + sin(z0 + motion))*H*scale_factor;
+            float y00 = (cos(x0 + motion) + sin(z0 + motion))*H;
+            float y01 = (cos(x0 + motion) + sin(z1 + motion))*H;
+            float y11 = (cos(x1 + motion) + sin(z1 + motion))*H;
+            float y10 = (cos(x1 + motion) + sin(z0 + motion))*H;
 
             // Blocco il movimento dei vertici del perimetro
             if (x == 0){
@@ -173,17 +186,28 @@ void Enviroment::drawNearSea(float ship_x, float ship_y, float ship_z) {
                 y11 = 0;
             }
 
+            if (options->areWireframesEnabled()){
+                glBegin(GL_LINE_LOOP);
+            } else {
+                glBegin(GL_TRIANGLES);
+            }
             glVertex3d(x0, y00, z0);
             glVertex3d(x1, y10, z0);
             glVertex3d(x1, y11, z1);
+            glEnd();
 
+            if (options->areWireframesEnabled()){
+                glBegin(GL_LINE_LOOP);
+            } else {
+                glBegin(GL_TRIANGLES);
+            }
             glVertex3d(x1, y11, z1);
             glVertex3d(x0, y00, z0);
             glVertex3d(x0, y01, z1);
+            glEnd();
 
         }
     }
-    glEnd();
     glPopMatrix();
 }
 
@@ -196,7 +220,7 @@ void Enviroment::drawSky() {
     glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
     glDisable(GL_LIGHTING);
 
-    Utils::drawSphere(100.0, 20, 20);
+    Utils::drawSphere(100.0, 20, 20, options->areWireframesEnabled());
 
     glEnable(GL_LIGHTING);
     glDisable(GL_TEXTURE_GEN_S);
@@ -220,7 +244,6 @@ void Enviroment::render(float ship_x, float ship_y, float ship_z, bool texture_e
     glUniform1i(colorOrTexture, 0);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //glColor4f(0, 0, 1,0.5);
     float color[4] = {0, 0, 1, 0.5};
     glUniform4fv(u_color, 1, color);
     drawNearSea(ship_x, ship_y, ship_z);

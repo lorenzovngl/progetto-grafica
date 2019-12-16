@@ -108,18 +108,18 @@ void Mesh::render() {
     }
 
     // mandiamo tutti i triangoli a schermo
-    if (options->areWireframesEnabled()){
-        glBegin(GL_LINES);
-    } else {
-        glBegin(GL_QUADS);
-    }
     for (int i = 0; i < f.size(); i++) {
+        if (options->areWireframesEnabled()){
+            glBegin(GL_LINE_LOOP);
+        } else {
+            glBegin(GL_TRIANGLES);
+        }
         f[i].n.SendAsNormal(); // flat shading
         (f[i].v[0])->p.SendAsVertex();
         (f[i].v[1])->p.SendAsVertex();
         (f[i].v[2])->p.SendAsVertex();
+        glEnd();
     }
-    glEnd();
     //displayBoundingBox();
 }
 

@@ -52,5 +52,5 @@ void Options::printMenu(){
     printf("F1 - Change camera\n"
            "F2 - Toggle wireframes\n"
            "F3 - Toggle shadows\n"
-           "F4 - Toggle advance rendering (shaders)\n\n");
+           "F4 - Toggle advance rendering (shaders)\n");
 }

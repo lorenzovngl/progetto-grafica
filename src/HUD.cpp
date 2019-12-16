@@ -81,7 +81,7 @@ void drawCircle(float cx, float cy, float radius, int slices){
     glEnd();
 }
 
-void HUD::display(int v_width, int v_height, float ship_cx, float ship_cy, Enviroment* enviroment){
+void HUD::display(int v_width, int v_height, float ship_cx, float ship_cy, Enviroment* enviroment, float fps){
     char string[56];
 
     Utils::setCoordToPixel(v_width, v_height);
@@ -98,6 +98,12 @@ void HUD::display(int v_width, int v_height, float ship_cx, float ship_cy, Envir
     sprintf(string, "Catched: %d/%d", game->getScore(), game->getScoreLimit());
     text->setText(string, 255,255,255);
     text->setPosition(20,80);
+    text->render();
+
+    text = new GLText(TEXTURE_TEXT_TIME,font);
+    sprintf(string, "FPS: %i", (int) fps);
+    text->setText(string, 255,255,255);
+    text->setPosition(450,550);
     text->render();
 
     // Map

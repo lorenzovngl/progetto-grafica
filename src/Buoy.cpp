@@ -62,7 +62,7 @@ void Buoy::render() {
     int base = 2;
     int height = 100;
     if (options->areWireframesEnabled()){
-        glBegin(GL_LINES);
+        glBegin(GL_LINE_LOOP);
     } else {
         glBegin(GL_QUADS);
     }
@@ -105,11 +105,6 @@ void Buoy::render() {
     //glActiveTexture(GL_TEXTURE7);
     textureManager->enableTexture(TEXTURE_FLAG_ITALY);
     glEnable(GL_TEXTURE_2D);
-    if (options->areWireframesEnabled()){
-        glBegin(GL_LINES);
-    } else {
-        glBegin(GL_QUADS);
-    }
     glColor3f(1, 1, 1);
     // Bandierina
     float flag_height = 40;
@@ -125,6 +120,11 @@ void Buoy::render() {
         for (int j = 0; j < pieces; j++){
             y0 = height - (flag_height / pieces * j);
             y1 = height - (flag_height / pieces * (j+1));
+            if (options->areWireframesEnabled()){
+                glBegin(GL_LINE_LOOP);
+            } else {
+                glBegin(GL_QUADS);
+            }
             if (i == 0){
                 glTexCoord2f(1/pieces*i, 1/pieces*i);
                 glVertex3f(x0, y0, z0);
@@ -140,8 +140,8 @@ void Buoy::render() {
             glVertex3f(sin(x1+motion)*speed, y1, z1);
             glTexCoord2f(1/pieces*(i+1), 1/pieces*i);
             glVertex3f(sin(x1+motion)*speed, y0, z1);
+            glEnd();
         }
     }
-    glEnd();
     glDisable(GL_TEXTURE_2D);
 }

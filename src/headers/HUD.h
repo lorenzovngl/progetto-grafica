@@ -13,7 +13,7 @@ private:
 public:
     HUD(Game*);
     void displayTime();
-    void display(int v_width, int v_height, float ship_cx, float ship_cy, Enviroment* enviroment);
+    void display(int v_width, int v_height, float ship_cx, float ship_cy, Enviroment* enviroment, float fps);
 };
 
 #endif

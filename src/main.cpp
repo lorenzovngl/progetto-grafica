@@ -18,8 +18,9 @@
 #endif
 
 extern "C" {
-    #include "../lib/ShadowMapper/helper_functions.h"
+#include "../lib/ShadowMapper/helper_functions.h"
 }
+
 #include "../lib/ShadowMapper/ShadowMapper.h"
 #include "headers/Ship.h"
 #include "headers/Enviroment.h"
@@ -29,6 +30,7 @@ extern "C" {
 #include "headers/Utils.h"
 #include "headers/TextureManager.h"
 #include "headers/Options.h"
+#include "headers/Fog.h"
 
 float viewAlpha = 20, viewBeta = 40; // angoli che definiscono la vista
 float eyeDist = 3.0; // distanza dell'occhio dall'origine
@@ -39,7 +41,7 @@ int nstep = 0; // numero di passi di FISICA fatti fin'ora
 const int PHYS_SAMPLING_STEP = 10; // numero di millisec che un passo di fisica simula
 
 // Frames Per Seconds
-const int fpsSampling = 3000; // lunghezza intervallo di calcolo fps
+const int fpsSampling = 500; // lunghezza intervallo di calcolo fps (ms)
 float fps = 0; // valore di fps dell'intervallo precedente
 int fpsNow = 0; // quanti fotogrammi ho disegnato fin'ora nell'intervallo attuale
 Uint32 timeLastInterval = 0; // quando e' cominciato l'ultimo intervallo
@@ -53,80 +55,6 @@ Game *game;
 ShadowMapper *shadowMapper;
 Options *options;
 
-void DrawGL(){
-
-    // These two instead are necessary for shadow mapping
-    static float vMatrixInverse[16];            // view Matrix inverse (it's the camera matrix).
-    static float lvpMatrix[16];                 // = light_pMatrix*light_vMatrix
-
-
-    glLoadMatrixf(camera->viewMatrix);
-    glLightfv(GL_LIGHT0,GL_POSITION,shadowMapper->lightDirection);    // Important: the ffp must recalculate internally lightDirectionEyeSpace based on vMatrix [=> every frame]
-
-    // view Matrix inverse (it's the camera matrix). Used twice below (and very important to keep in any case).
-    Helper_InvertMatrixFast(vMatrixInverse,camera->viewMatrix);    // We can use Helper_InvertMatrixFast(...) instead of Helper_InvertMatrix(...) here [No scaling inside and no projection matrix]
-
-
-    // Draw to Shadow Map------------------------------------------------------------------------------------------
-    {
-        Helper_GetLightViewProjectionMatrix(lvpMatrix,
-                                            vMatrixInverse,shadowMapper->pMatrixNearPlane,shadowMapper->pMatrixFarPlane,
-                                            shadowMapper->pMatrixFovyDeg,(scrW/scrH),shadowMapper->lightDirection,1.0f/(float)SHADOW_MAP_RESOLUTION);
-
-        // Draw to shadow map texture
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
-        glLoadIdentity();
-        glMatrixMode(GL_MODELVIEW);        // We'll set the combined light view-projection matrix in GL_MODELVIEW (do you know that it's the same?)
-        glBindFramebuffer(GL_FRAMEBUFFER,  shadowMapper->shadowPass.fbo);
-        glViewport(0, 0, SHADOW_MAP_RESOLUTION, SHADOW_MAP_RESOLUTION);
-        glClear(GL_DEPTH_BUFFER_BIT);
-        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-        glCullFace(GL_FRONT);
-        glEnable(GL_DEPTH_CLAMP);
-        glPushMatrix();
-        glLoadMatrixf(lvpMatrix); // we load both (light) projection and view matrices here (it's the same after all)
-        ship->render(false);
-        enviroment->renderBuoys();
-        glPopMatrix();
-        glDisable(GL_DEPTH_CLAMP);
-        glCullFace(GL_BACK);
-        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-        glBindFramebuffer(GL_FRAMEBUFFER,0);
-        glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
-        glMatrixMode(GL_MODELVIEW);
-    }
-
-
-    // Draw world
-    {
-        // biasedShadowMvpMatrix is used only in the DefaultPass:
-        static float bias[16] = {0.5,0,0,0, 0,0.5,0,0,  0,0,0.5,0,    0.5,0.5,0.5,1}; // Moving from unit cube in NDC [-1,1][-1,1][-1,1] to [0,1][0,1][0,1] (x and y are texCoords; z is the depth range, [0,1] by default in window coordinates)
-        static float biasedShadowMvpMatrix[16];     // multiplied per vMatrixInverse
-        Helper_MultMatrix(biasedShadowMvpMatrix,bias,lvpMatrix);
-        Helper_MultMatrix(biasedShadowMvpMatrix,biasedShadowMvpMatrix,vMatrixInverse);  // We do this, so that when in the vertex shader we multiply it with the camera mvMatrix, we get: biasedShadowMvpMatrix * mMatrix (using mMatrices directly in the shaders prevents the usage of double precision matrices: mvMatrices are good when converted to float to feed the shader, mMatrices are bad)
-
-        // Draw to world
-        glViewport(0, 0, scrW, scrH);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, shadowMapper->shadowPass.textureId);
-        glActiveTexture(GL_TEXTURE1);
-        glUseProgram(shadowMapper->defaultPass.program);
-        glUniform1i(glGetUniformLocation(shadowMapper->defaultPass.program, "u_texture"), 1);
-        glUniformMatrix4fv( shadowMapper->defaultPass.uniform_location_biasedShadowMvpMatrix, 1, GL_FALSE, biasedShadowMvpMatrix);
-        glDisable(GL_CULL_FACE);
-        ship->render(true);
-        enviroment->render(ship->px, ship->py, ship->pz, true);
-        glPopMatrix();
-        glUseProgram(0);
-        glBindTexture(GL_TEXTURE_2D,0);
-        glActiveTexture(GL_TEXTURE0);
-    }
-
-}
-
 /* Esegue il Rendering della scena */
 void rendering(SDL_Window *window) {
     // un frame in piu'!!!
@@ -137,7 +65,7 @@ void rendering(SDL_Window *window) {
     // settiamo il viewport
     glViewport(0, 0, scrW, scrH);
 
-    glClearColor(1,1,1,1);
+    glClearColor(1, 1, 1, 1);
 
     // settiamo matrice di vista
     glTranslatef(0, 0, -eyeDist);
@@ -148,10 +76,10 @@ void rendering(SDL_Window *window) {
     // settiamo la matrice di proiezione
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective( 70, //fovy,
-                    ((float)scrW) / scrH,//aspect Y/X,
-                    0.2,//distanza del NEAR CLIPPING PLANE in coordinate vista
-                    1000  //distanza del FAR CLIPPING PLANE in coordinate vista
+    gluPerspective(70, //fovy,
+                   ((float) scrW) / scrH,//aspect Y/X,
+                   0.2,//distanza del NEAR CLIPPING PLANE in coordinate vista
+                   1000  //distanza del FAR CLIPPING PLANE in coordinate vista
     );
 
     glMatrixMode(GL_MODELVIEW);
@@ -179,12 +107,90 @@ void rendering(SDL_Window *window) {
     // settiamo matrice di modellazione
 
     camera->set(*ship, eyeDist, viewBeta, viewAlpha);
-    DrawGL();
+
+    // These two instead are necessary for shadow mapping
+    static float vMatrixInverse[16];            // view Matrix inverse (it's the camera matrix).
+    static float lvpMatrix[16];                 // = light_pMatrix*light_vMatrix
+
+
+    glLoadMatrixf(camera->viewMatrix);
+    glLightfv(GL_LIGHT0, GL_POSITION,
+              shadowMapper->lightDirection);    // Important: the ffp must recalculate internally lightDirectionEyeSpace based on vMatrix [=> every frame]
+
+    // view Matrix inverse (it's the camera matrix). Used twice below (and very important to keep in any case).
+    Helper_InvertMatrixFast(vMatrixInverse,
+                            camera->viewMatrix);    // We can use Helper_InvertMatrixFast(...) instead of Helper_InvertMatrix(...) here [No scaling inside and no projection matrix]
+
+
+    // Draw to Shadow Map
+    Helper_GetLightViewProjectionMatrix(lvpMatrix,
+                                        vMatrixInverse, shadowMapper->pMatrixNearPlane, shadowMapper->pMatrixFarPlane,
+                                        shadowMapper->pMatrixFovyDeg, (scrW / scrH), shadowMapper->lightDirection,
+                                        1.0f / (float) SHADOW_MAP_RESOLUTION);
+
+    // Draw to shadow map texture
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glMatrixMode(
+            GL_MODELVIEW);        // We'll set the combined light view-projection matrix in GL_MODELVIEW (do you know that it's the same?)
+    glBindFramebuffer(GL_FRAMEBUFFER, shadowMapper->shadowPass.fbo);
+    glViewport(0, 0, SHADOW_MAP_RESOLUTION, SHADOW_MAP_RESOLUTION);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    glCullFace(GL_FRONT);
+    glEnable(GL_DEPTH_CLAMP);
+    glPushMatrix();
+    glLoadMatrixf(lvpMatrix); // we load both (light) projection and view matrices here (it's the same after all)
+    ship->render(false);
+    enviroment->renderBuoys();
+    glPopMatrix();
+    glDisable(GL_DEPTH_CLAMP);
+    glCullFace(GL_BACK);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+
+
+    // Draw world
+    // biasedShadowMvpMatrix is used only in the DefaultPass:
+    static float bias[16] = {0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5, 0, 0.5, 0.5, 0.5,
+                             1}; // Moving from unit cube in NDC [-1,1][-1,1][-1,1] to [0,1][0,1][0,1] (x and y are texCoords; z is the depth range, [0,1] by default in window coordinates)
+    static float biasedShadowMvpMatrix[16];     // multiplied per vMatrixInverse
+    Helper_MultMatrix(biasedShadowMvpMatrix, bias, lvpMatrix);
+    Helper_MultMatrix(biasedShadowMvpMatrix, biasedShadowMvpMatrix,
+                      vMatrixInverse);  // We do this, so that when in the vertex shader we multiply it with the camera mvMatrix, we get: biasedShadowMvpMatrix * mMatrix (using mMatrices directly in the shaders prevents the usage of double precision matrices: mvMatrices are good when converted to float to feed the shader, mMatrices are bad)
+
+    // Draw to world
+    glViewport(0, 0, scrW, scrH);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if (options->areShadersEnabled()) {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, shadowMapper->shadowPass.textureId);
+        glActiveTexture(GL_TEXTURE1);
+        glUseProgram(shadowMapper->defaultPass.program);
+        glUniform1i(glGetUniformLocation(shadowMapper->defaultPass.program, "u_texture"), 1);
+        glUniform4fv(glGetUniformLocation(shadowMapper->defaultPass.program, "u_cameraEye"), 1, camera->viewMatrix);
+        glUniformMatrix4fv(shadowMapper->defaultPass.uniform_location_biasedShadowMvpMatrix, 1, GL_FALSE,
+                           biasedShadowMvpMatrix);
+        glDisable(GL_CULL_FACE);
+    }
+    ship->render(true);
+    enviroment->render(ship->px, ship->py, ship->pz, true);
+    glPopMatrix();
+    if (options->areShadersEnabled()) {
+        glUseProgram(0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glActiveTexture(GL_TEXTURE0);
+    }
+
     enviroment->drawSky();
     enviroment->renderBuoys();
 
     game->detectCollision();
-    hud->display(scrW, scrH, ship->px, -ship->pz, enviroment);
+    hud->display(scrW, scrH, ship->px, -ship->pz, enviroment, fps);
 
     // attendiamo la fine della rasterizzazione di
     // tutte le primitive mandate
@@ -194,12 +200,12 @@ void rendering(SDL_Window *window) {
     SDL_GL_SwapWindow(window);
 }
 
-void redraw(){
+void redraw() {
     // ci automandiamo un messaggio che (s.o. permettendo)
     // ci fara' ridisegnare la finestra
     SDL_Event e;
-    e.type=SDL_WINDOWEVENT;
-    e.window.event=SDL_WINDOWEVENT_EXPOSED;
+    e.type = SDL_WINDOWEVENT;
+    e.window.event = SDL_WINDOWEVENT_EXPOSED;
     SDL_PushEvent(&e);
 }
 
@@ -215,10 +221,9 @@ int main(int argc, char *argv[]) {
     glutInit(&argc, argv);
 
 
-
-    int flags = IMG_INIT_JPG|IMG_INIT_PNG;
+    int flags = IMG_INIT_JPG | IMG_INIT_PNG;
     int initted = IMG_Init(flags);
-    if ((initted & flags) != flags){
+    if ((initted & flags) != flags) {
         printf("Failed to init SDL_IMG\n");
         return 1;
     }
@@ -232,9 +237,9 @@ int main(int argc, char *argv[]) {
     // facciamo una finestra di scrW x scrH pixels
     window = SDL_CreateWindow(argv[0], 0, 0, scrW, scrH, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     glutInitWindowSize(scrW, scrH);
-    glutInitDisplayMode(GLUT_RGBA|GLUT_DEPTH|GLUT_DOUBLE);
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
 
-    if (!glfwInit()){
+    if (!glfwInit()) {
         printf("Failed to init GLFW\n");
         return 1;
     }
@@ -245,7 +250,7 @@ int main(int argc, char *argv[]) {
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     int res = glewInit();
-    if (res != GLEW_OK){
+    if (res != GLEW_OK) {
         printf("Failed to init GLEW: %s\n", glewGetErrorString(res));
         return 1;
     }
@@ -280,6 +285,9 @@ int main(int argc, char *argv[]) {
     shadowMapper->resetLight();
     options->printMenu();
 
+    Fog* fog = new Fog();
+    fog->render();
+
     bool done = 0;
     while (!done) {
 
@@ -291,15 +299,15 @@ int main(int argc, char *argv[]) {
             switch (e.type) {
                 case SDL_KEYDOWN:
                     ship->controller.EatKey(e.key.keysym.sym, keymap, true);
-                    if (e.key.keysym.sym == SDLK_F1){
+                    if (e.key.keysym.sym == SDLK_F1) {
                         camera->change(*ship, eyeDist, viewBeta, viewAlpha);
-                    } else if (e.key.keysym.sym == SDLK_F2){
+                    } else if (e.key.keysym.sym == SDLK_F2) {
                         options->toggleWireframes();
-                    } else if (e.key.keysym.sym == SDLK_F2){
+                    } else if (e.key.keysym.sym == SDLK_F2) {
                         options->toggleShadows();
-                    } else if (e.key.keysym.sym == SDLK_F4){
+                    } else if (e.key.keysym.sym == SDLK_F4) {
                         options->toggleShaders();
-                    } else if (e.key.keysym.sym == SDLK_w || e.key.keysym.sym == SDLK_s){
+                    } else if (e.key.keysym.sym == SDLK_w || e.key.keysym.sym == SDLK_s) {
                         game->go();
                     }
                     break;
@@ -332,13 +340,13 @@ int main(int argc, char *argv[]) {
 
                 case SDL_MOUSEMOTION:
                     if (e.motion.state & SDL_BUTTON(1) &&
-                    (camera->getType() == CAMERA_MOUSE || camera->getType() == CAMERA_MOUSE_SHIP)) {
+                        (camera->getType() == CAMERA_MOUSE || camera->getType() == CAMERA_MOUSE_SHIP)) {
                         viewAlpha += e.motion.xrel;
                         viewBeta += e.motion.yrel;
                         //if (viewBeta<-90) viewBeta=-90;
                         //if (viewBeta < +5) viewBeta = +5; //per non andare sotto la macchina
                         if (viewBeta > +90) viewBeta = +90;
-                        shadowMapper->resetCamera(eyeDist, viewBeta*0.005, -viewAlpha*0.005);
+                        shadowMapper->resetCamera(eyeDist, viewBeta * 0.005, -viewAlpha * 0.005);
                         rendering(window);
                         //redraw(); // richiedi un ridisego
                     }
@@ -354,7 +362,7 @@ int main(int argc, char *argv[]) {
                         // allontano il punto di vista (zoom out)
                         eyeDist = eyeDist / 0.9;
                     };
-                    shadowMapper->resetCamera(eyeDist, viewBeta*0.005, -viewAlpha*0.005);
+                    shadowMapper->resetCamera(eyeDist, viewBeta * 0.005, -viewAlpha * 0.005);
                     rendering(window);
                     break;
 

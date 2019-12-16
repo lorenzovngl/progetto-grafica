@@ -238,7 +238,7 @@ void ShipMesh::render(bool texture_enabled, float speed, float angle) {
         GLint genCoords = glGetUniformLocation(shadowMapper->defaultPass.program, "u_genCoords");
         glUniform1i(genCoords, 0);
         if (options->areWireframesEnabled()){
-            glBegin(GL_LINES);
+            glBegin(GL_LINE_LOOP);
         } else {
             glBegin(GL_QUADS);
         }
@@ -255,7 +255,7 @@ void ShipMesh::render(bool texture_enabled, float speed, float angle) {
         glPushMatrix();
         glTranslatef(-13, 3.6, -3.2);
         if (options->areWireframesEnabled()){
-            glBegin(GL_LINES);
+            glBegin(GL_LINE_LOOP);
         } else {
             glBegin(GL_QUADS);
         }
