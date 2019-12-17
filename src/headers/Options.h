@@ -3,16 +3,19 @@
 
 class Options {
 private:
-    bool wireframesEnable;
-    bool shadowsEnable;
-    bool shadersEnable;
+    bool wireframesEnabled;
+    bool shadowsEnabled;
+    bool fogEnabled;
+    bool shadersEnabled;
 public:
     Options();
     bool areWireframesEnabled();
     bool areShadowsEnabled();
+    bool isFogEnabled();
     bool areShadersEnabled();
     void toggleWireframes();
     void toggleShadows();
+    void toggleFog();
     void toggleShaders();
     void printMenu();
 };

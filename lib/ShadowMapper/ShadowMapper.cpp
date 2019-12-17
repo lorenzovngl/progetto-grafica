@@ -376,6 +376,7 @@ void ShadowMapper::showShadowMask(int vpHeight, int vpWidth){
         glColor3f(1,1,1);
         glDisable(GL_LIGHTING);
         glEnable(GL_BLEND);
+        glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, shadowPass.textureId);
         glColor4f(1,1,1,0.9f);
         glBegin(GL_QUADS);
@@ -385,6 +386,7 @@ void ShadowMapper::showShadowMask(int vpHeight, int vpWidth){
         glTexCoord2f(0,1);glVertex2f(-1, -0.25/(vpWidth/vpHeight));
         glEnd();
         glBindTexture(GL_TEXTURE_2D,0);
+        glDisable(GL_TEXTURE_2D);
         glDisable(GL_BLEND);
         glEnable(GL_LIGHTING);
 

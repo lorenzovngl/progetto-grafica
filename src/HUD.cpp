@@ -68,20 +68,35 @@ void HUD::displayTime() {
     glPopMatrix();
 }
 
-void drawCircle(float cx, float cy, float radius, int slices){
+void drawRegularPolygon(float cx, float cy, float radius, int slices, float facing){
     float angle_step = 2*M_PI / slices;
     glBegin(GL_TRIANGLES);
     for (int i = 0; i < slices; i++){
-        float angle = angle_step * i;
+        float angle = angle_step * i + facing;
         glVertex2f(cx, cy);
         glVertex2f(cx + radius*cos(angle), cy + radius*sin(angle));
-        angle = angle_step * (i+1);
+        angle = angle_step * (i+1) + facing;
         glVertex2f(cx + radius*cos(angle), cy + radius*sin(angle));
     }
     glEnd();
 }
 
-void HUD::display(int v_width, int v_height, float ship_cx, float ship_cy, Enviroment* enviroment, float fps){
+void drawNavigator(float cx, float cy, float radius, float facing){
+    float angle_step = 2*M_PI / 3;
+    glBegin(GL_TRIANGLES);
+    for (int i = 0; i < 3; i++){
+        if (i != 1){
+            float angle = angle_step * i + facing;
+            glVertex2f(cx, cy);
+            glVertex2f(cx + radius*cos(angle), cy + radius*sin(angle));
+            angle = angle_step * (i+1) + facing;
+            glVertex2f(cx + radius*cos(angle), cy + radius*sin(angle));
+        }
+    }
+    glEnd();
+}
+
+void HUD::display(int v_width, int v_height, float ship_cx, float ship_cy, float ship_facing, Enviroment* enviroment, float fps){
     char string[56];
 
     Utils::setCoordToPixel(v_width, v_height);
@@ -115,18 +130,19 @@ void HUD::display(int v_width, int v_height, float ship_cx, float ship_cy, Envir
 
     // Ship
     glColor3f(1, 0, 0);
-    drawCircle(mapCenterX + ship_cx, mapCenterY + ship_cy, 5, 50);
+    float facing_radiants = ship_facing * M_PI/180;
+    drawNavigator(mapCenterX + ship_cx, mapCenterY + ship_cy, 7, facing_radiants + M_PI/2);
     // Buoys
     glColor3f(0, 1, 0);
     for (int i = 0; i < enviroment->getBuoysCount(); i++){
         Buoy* buoy = enviroment->getBuoy(i);
         if (buoy->isActive()){
-            drawCircle(mapCenterX + buoy->getCoordX(), mapCenterY - buoy->getCoordZ(), 3, 50);
+            drawRegularPolygon(mapCenterX + buoy->getCoordX(), mapCenterY - buoy->getCoordZ(), 3, 50, 0);
         }
     }
     // World
     glColor3f(0, 0, 1);
-    drawCircle(mapCenterX, mapCenterY, 50, 50);
+    drawRegularPolygon(mapCenterX, mapCenterY, 50, 50, 0);
 
     glEnable(GL_LIGHTING);
     glPopMatrix();

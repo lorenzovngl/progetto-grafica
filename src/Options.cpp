@@ -19,38 +19,48 @@
 #include "headers/Options.h"
 
 Options::Options() {
-    wireframesEnable = false;
-    shadowsEnable = true;
-    shadersEnable = true;
+    wireframesEnabled = false;
+    shadowsEnabled = true;
+    fogEnabled = false;
+    shadersEnabled = true;
 }
 
 bool Options::areWireframesEnabled(){
-    return wireframesEnable;
+    return wireframesEnabled;
 }
 
 bool Options::areShadowsEnabled(){
-    return shadowsEnable;
+    return shadowsEnabled;
+}
+
+bool Options::isFogEnabled(){
+    return fogEnabled;
 }
 
 bool Options::areShadersEnabled(){
-    return shadersEnable;
+    return shadersEnabled;
 }
 
 void Options::toggleWireframes(){
-    wireframesEnable = !wireframesEnable;
+    wireframesEnabled = !wireframesEnabled;
 }
 
 void Options::toggleShadows(){
-    shadowsEnable = !shadowsEnable;
+    shadowsEnabled = !shadowsEnabled;
+}
+
+void Options::toggleFog(){
+    fogEnabled = !fogEnabled;
 }
 
 void Options::toggleShaders(){
-    shadersEnable = !shadersEnable;
+    shadersEnabled = !shadersEnabled;
 }
 
 void Options::printMenu(){
     printf("F1 - Change camera\n"
            "F2 - Toggle wireframes\n"
            "F3 - Toggle shadows\n"
-           "F4 - Toggle advance rendering (shaders)\n");
+           "F4 - Toggle fog\n"
+           "F5 - Toggle advance rendering (shaders)\n");
 }

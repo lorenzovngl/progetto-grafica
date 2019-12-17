@@ -49,6 +49,7 @@ Uint32 timeLastInterval = 0; // quando e' cominciato l'ultimo intervallo
 SDL_Renderer *renderer;
 TextureManager *textureManager;
 Enviroment *enviroment;
+Fog *fog;
 Camera *camera;
 HUD *hud;
 Game *game;
@@ -114,13 +115,16 @@ void rendering(SDL_Window *window) {
 
 
     glLoadMatrixf(camera->viewMatrix);
-    glLightfv(GL_LIGHT0, GL_POSITION,
-              shadowMapper->lightDirection);    // Important: the ffp must recalculate internally lightDirectionEyeSpace based on vMatrix [=> every frame]
+    // Important: the ffp must recalculate internally lightDirectionEyeSpace based on vMatrix [=> every frame]
+    glLightfv(GL_LIGHT0, GL_POSITION, shadowMapper->lightDirection);
+
+    if (options->isFogEnabled()){
+        fog->render();
+    }
 
     // view Matrix inverse (it's the camera matrix). Used twice below (and very important to keep in any case).
-    Helper_InvertMatrixFast(vMatrixInverse,
-                            camera->viewMatrix);    // We can use Helper_InvertMatrixFast(...) instead of Helper_InvertMatrix(...) here [No scaling inside and no projection matrix]
-
+    // We can use Helper_InvertMatrixFast(...) instead of Helper_InvertMatrix(...) here [No scaling inside and no projection matrix]
+    Helper_InvertMatrixFast(vMatrixInverse, camera->viewMatrix);
 
     // Draw to Shadow Map
     Helper_GetLightViewProjectionMatrix(lvpMatrix,
@@ -132,8 +136,7 @@ void rendering(SDL_Window *window) {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-    glMatrixMode(
-            GL_MODELVIEW);        // We'll set the combined light view-projection matrix in GL_MODELVIEW (do you know that it's the same?)
+    glMatrixMode(GL_MODELVIEW);        // We'll set the combined light view-projection matrix in GL_MODELVIEW (do you know that it's the same?)
     glBindFramebuffer(GL_FRAMEBUFFER, shadowMapper->shadowPass.fbo);
     glViewport(0, 0, SHADOW_MAP_RESOLUTION, SHADOW_MAP_RESOLUTION);
     glClear(GL_DEPTH_BUFFER_BIT);
@@ -156,13 +159,19 @@ void rendering(SDL_Window *window) {
 
     // Draw world
     // biasedShadowMvpMatrix is used only in the DefaultPass:
-    static float bias[16] = {0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5, 0, 0.5, 0.5, 0.5,
-                             1}; // Moving from unit cube in NDC [-1,1][-1,1][-1,1] to [0,1][0,1][0,1] (x and y are texCoords; z is the depth range, [0,1] by default in window coordinates)
-    static float biasedShadowMvpMatrix[16];     // multiplied per vMatrixInverse
+    static float bias[16] = {0.5, 0,   0,   0,
+                             0,   0.5, 0,   0,
+                             0,   0,   0.5, 0,
+                             0.5, 0.5, 0.5, 1};
+    // Moving from unit cube in NDC [-1,1][-1,1][-1,1] to [0,1][0,1][0,1] (x and y are texCoords; z is the depth range,
+    // [0,1] by default in window coordinates)
+    static float biasedShadowMvpMatrix[16];
+    // multiplied per vMatrixInverse
     Helper_MultMatrix(biasedShadowMvpMatrix, bias, lvpMatrix);
-    Helper_MultMatrix(biasedShadowMvpMatrix, biasedShadowMvpMatrix,
-                      vMatrixInverse);  // We do this, so that when in the vertex shader we multiply it with the camera mvMatrix, we get: biasedShadowMvpMatrix * mMatrix (using mMatrices directly in the shaders prevents the usage of double precision matrices: mvMatrices are good when converted to float to feed the shader, mMatrices are bad)
-
+    // We do this, so that when in the vertex shader we multiply it with the camera mvMatrix,
+    // we get: biasedShadowMvpMatrix * mMatrix (using mMatrices directly in the shaders prevents the usage of double
+    // precision matrices: mvMatrices are good when converted to float to feed the shader, mMatrices are bad)
+    Helper_MultMatrix(biasedShadowMvpMatrix, biasedShadowMvpMatrix, vMatrixInverse);
     // Draw to world
     glViewport(0, 0, scrW, scrH);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -172,6 +181,7 @@ void rendering(SDL_Window *window) {
         glActiveTexture(GL_TEXTURE1);
         glUseProgram(shadowMapper->defaultPass.program);
         glUniform1i(glGetUniformLocation(shadowMapper->defaultPass.program, "u_texture"), 1);
+        glUniform1i(glGetUniformLocation(shadowMapper->defaultPass.program, "u_fogEnabled"), (options->isFogEnabled()) ? 1 : 0);
         glUniform4fv(glGetUniformLocation(shadowMapper->defaultPass.program, "u_cameraEye"), 1, camera->viewMatrix);
         glUniformMatrix4fv(shadowMapper->defaultPass.uniform_location_biasedShadowMvpMatrix, 1, GL_FALSE,
                            biasedShadowMvpMatrix);
@@ -179,18 +189,20 @@ void rendering(SDL_Window *window) {
     }
     ship->render(true);
     enviroment->render(ship->px, ship->py, ship->pz, true);
+    enviroment->drawSky();
+    enviroment->renderBuoys();
     glPopMatrix();
     if (options->areShadersEnabled()) {
         glUseProgram(0);
         glBindTexture(GL_TEXTURE_2D, 0);
         glActiveTexture(GL_TEXTURE0);
     }
+    glActiveTexture(GL_TEXTURE0);
+    shadowMapper->showShadowMask(scrH, scrW);
+    glActiveTexture(GL_TEXTURE1);
 
-    enviroment->drawSky();
-    enviroment->renderBuoys();
-
-    game->detectCollision();
-    hud->display(scrW, scrH, ship->px, -ship->pz, enviroment, fps);
+    //game->detectCollision();
+    //hud->display(scrW, scrH, ship->px, -ship->pz, ship->facing, enviroment, fps);
 
     // attendiamo la fine della rasterizzazione di
     // tutte le primitive mandate
@@ -274,6 +286,7 @@ int main(int argc, char *argv[]) {
 
     enviroment = new Enviroment(textureManager, shadowMapper, options);
     ship = new Ship(textureManager, shadowMapper, options);
+    fog = new Fog();
     game = new Game(ship, enviroment);
     camera = new Camera();
     hud = new HUD(game);
@@ -284,9 +297,6 @@ int main(int argc, char *argv[]) {
     camera->set(*ship, eyeDist, viewBeta, viewAlpha);
     shadowMapper->resetLight();
     options->printMenu();
-
-    Fog* fog = new Fog();
-    fog->render();
 
     bool done = 0;
     while (!done) {
@@ -303,9 +313,11 @@ int main(int argc, char *argv[]) {
                         camera->change(*ship, eyeDist, viewBeta, viewAlpha);
                     } else if (e.key.keysym.sym == SDLK_F2) {
                         options->toggleWireframes();
-                    } else if (e.key.keysym.sym == SDLK_F2) {
+                    } else if (e.key.keysym.sym == SDLK_F3) {
                         options->toggleShadows();
                     } else if (e.key.keysym.sym == SDLK_F4) {
+                        options->toggleFog();
+                    } else if (e.key.keysym.sym == SDLK_F5) {
                         options->toggleShaders();
                     } else if (e.key.keysym.sym == SDLK_w || e.key.keysym.sym == SDLK_s) {
                         game->go();
