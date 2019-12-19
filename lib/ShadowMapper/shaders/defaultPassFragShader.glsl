@@ -2,6 +2,7 @@ uniform sampler2D u_shadowMap;
 uniform sampler2D u_texture;
 uniform int u_colorOrTexture; // 0 = color, 1 = texture
 uniform int u_fogEnabled;
+uniform int u_isSea;
 uniform vec4 u_color;
 varying vec2 v_texCoord;
 uniform vec2 u_shadowDarkening; // .x = fDarkeningFactor [10.0-80.0], .y = min value clamp [0.0-1.0]
@@ -14,16 +15,39 @@ varying vec3 E;
 varying vec3 H;
 
 varying vec4 v_position;
+varying vec4 v_vertex;
 uniform mat4 u_cameraViewMatrix;
 
-float getFogFactor(float d) {
-    const float FogMax = 50.0;
-    const float FogMin = 5.0;
+float getFogFactor(float distance, float height) {
+    const float FogMaxDistance = 50.0;
+    const float FogMinDistance = 5.0;
+    const float FogMaxHeight = 10.0;
+    const float FogMinHeight = 0.0;
 
-    if (d>=FogMax) return 1.0;
-    if (d<=FogMin) return 0.0;
+    float alphaDistance;
+    float alphaHeight;
 
-    return 1.0 - (FogMax - d) / (FogMax - FogMin);
+    /*if (distance >= FogMaxDistance) return 1.0;
+    if (distance <= FogMinDistance) return 0.0;
+    if (height >= FogMaxHeight) return 0.0;
+    if (height <= FogMinHeight) return 0.0;
+
+    return 1.0 - (FogMaxDistance - distance) / (FogMaxDistance - FogMinDistance);
+    return (FogMaxHeight - height) / (FogMaxHeight - FogMinHeight);*/
+
+    if (height >= FogMaxHeight)
+        return 0.0;
+    else
+        alphaHeight = (FogMaxHeight - height) / (FogMaxHeight - FogMinHeight);
+
+    if (distance >= FogMaxDistance)
+        return alphaHeight;
+    else if (distance <= FogMinDistance)
+        return 0.0;
+    else
+        alphaDistance = 1.0 - (FogMaxDistance - distance) / (FogMaxDistance - FogMinDistance);
+
+    return alphaDistance;
 }
 
 void main() {
@@ -58,10 +82,9 @@ void main() {
         gl_FragColor = ambient + diffuse + specular + vec4(u_color.rgb*shadowFactor, u_color.a);
     }
     if (u_fogEnabled == 1){
-        float d = distance(u_cameraViewMatrix*v_position, v_position);
-        float alpha = getFogFactor(d);
-        vec4 FogColor = vec4(0.5, 0.5, 0.7, 1.0);
+        float distance = distance(u_cameraViewMatrix*v_position, v_position);
+        float alpha = getFogFactor(distance, v_vertex.y);
+        vec4 FogColor = vec4(1, 1, 1, 1.0);
         gl_FragColor = mix(gl_FragColor, FogColor, alpha);
     }
-    //gl_FragColor = vec4(v_shadowCoord.xyz, shadowTexCoord);
 }

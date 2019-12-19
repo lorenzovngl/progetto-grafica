@@ -26,9 +26,10 @@
 #include "../lib/ShadowMapper/ShadowMapper.h"
 
 Enviroment::Enviroment(TextureManager *textureManager, ShadowMapper *shadowMapper, Options *options) {
+    scale_factor = 0.05;
     srand(time(NULL));
     for (int i = 0; i < BUOYS_COUNT; i++) {
-        buoy[i] = new Buoy(i, rand() % 20 - 10, rand() % 20 - 10, textureManager, options);
+        buoy[i] = new Buoy(i, rand() % 20 - 10, rand() % 20 - 10, textureManager, shadowMapper, options);
     }
     this->textureManager = textureManager;
     this->shadowMapper = shadowMapper;
@@ -49,12 +50,17 @@ void Enviroment::drawFarSea(float ship_x, float ship_y, float ship_z) {
     const float S = 200; // size
     const float H = 0;   // altezza
     const int K = 100; //disegna K x K quads
-    float scale_factor = 0.05;
 
-    float s[4] = {(float) 0.05/scale_factor, 0, 0, 0};
-    float t[4] = {0, 0, (float) 0.05/scale_factor, 0};
+    float s[4] = {(float) 0.45, 0, 0, 0};
+    float t[4] = {0, 0, (float) 0.45, 0};
     glTexGenfv(GL_S, GL_OBJECT_PLANE, s);
     glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
+    GLint genCoords = glGetUniformLocation(shadowMapper->defaultPass.program, "u_genCoords");
+    GLint sPlane = glGetUniformLocation(shadowMapper->defaultPass.program, "u_sPlane");
+    GLint tPlane = glGetUniformLocation(shadowMapper->defaultPass.program, "u_tPlane");
+    glUniform1i(genCoords, 1);
+    glUniform4fv(sPlane, 1, s);
+    glUniform4fv(tPlane, 1, t);
 
     // disegna KxK quads
     glNormal3f(0, 1, 0);       // normale verticale uguale x tutti
@@ -147,7 +153,6 @@ void Enviroment::drawFarSea(float ship_x, float ship_y, float ship_z) {
 }
 
 void Enviroment::drawNearSea(float ship_x, float ship_y, float ship_z) {
-    float scale_factor = 0.05;
     const float S = 400; // size
     const float H = 0.2;   // altezza
     const int K = 100; //disegna K x K quads
@@ -155,6 +160,17 @@ void Enviroment::drawNearSea(float ship_x, float ship_y, float ship_z) {
     glPushMatrix();
     glScalef(scale_factor, scale_factor, scale_factor);
     //glTranslatef(ship_x/scale_factor, ship_y/scale_factor, ship_z/scale_factor);
+
+    float s[4] = {0.1, 0, 0, 0};
+    float t[4] = {0, 0, 0.1, 0};
+    glTexGenfv(GL_S, GL_OBJECT_PLANE, s);
+    glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
+    GLint genCoords = glGetUniformLocation(shadowMapper->defaultPass.program, "u_genCoords");
+    GLint sPlane = glGetUniformLocation(shadowMapper->defaultPass.program, "u_sPlane");
+    GLint tPlane = glGetUniformLocation(shadowMapper->defaultPass.program, "u_tPlane");
+    glUniform1i(genCoords, 1);
+    glUniform4fv(sPlane, 1, s);
+    glUniform4fv(tPlane, 1, t);
 
     // disegna KxK quads
     glNormal3f(0, 1, 0);       // normale verticale uguale x tutti
@@ -218,6 +234,8 @@ void Enviroment::drawSky() {
     glEnable(GL_TEXTURE_GEN_T);
     glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP); // Env map
     glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+    GLint genCoords = glGetUniformLocation(shadowMapper->defaultPass.program, "u_genCoords");
+    glUniform1i(genCoords, 2);
     glDisable(GL_LIGHTING);
 
     Utils::drawSphere(100.0, 20, 20, options->areWireframesEnabled());
@@ -241,7 +259,18 @@ void Enviroment::renderBuoys(){
 void Enviroment::render(float ship_x, float ship_y, float ship_z, bool texture_enabled) {
     GLint colorOrTexture = glGetUniformLocation(shadowMapper->defaultPass.program, "u_colorOrTexture");
     GLint u_color = glGetUniformLocation(shadowMapper->defaultPass.program, "u_color");
-    glUniform1i(colorOrTexture, 0);
+    glUniform1i(colorOrTexture, 1);
+    textureManager->enableTexture(TEXTURE_SEA);
+    glEnable(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+    glEnable(GL_TEXTURE_GEN_S);
+    glEnable(GL_TEXTURE_GEN_T);
+    // ulilizzo le coordinate OGGETTO
+    // cioe' le coordnate originali, PRIMA della moltiplicazione per la ModelView
+    // in modo che la texture sia "attaccata" all'oggetto, e non "proiettata" su esso
+    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     float color[4] = {0, 0, 1, 0.5};

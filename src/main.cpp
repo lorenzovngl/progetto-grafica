@@ -189,20 +189,20 @@ void rendering(SDL_Window *window) {
     }
     ship->render(true);
     enviroment->render(ship->px, ship->py, ship->pz, true);
-    enviroment->drawSky();
     enviroment->renderBuoys();
+    enviroment->drawSky();
     glPopMatrix();
     if (options->areShadersEnabled()) {
         glUseProgram(0);
         glBindTexture(GL_TEXTURE_2D, 0);
         glActiveTexture(GL_TEXTURE0);
     }
-    glActiveTexture(GL_TEXTURE0);
+    /*glActiveTexture(GL_TEXTURE0);
     shadowMapper->showShadowMask(scrH, scrW);
-    glActiveTexture(GL_TEXTURE1);
+    glActiveTexture(GL_TEXTURE1);*/
 
-    //game->detectCollision();
-    //hud->display(scrW, scrH, ship->px, -ship->pz, ship->facing, enviroment, fps);
+    game->detectCollision();
+    hud->display(scrW, scrH, ship->px, -ship->pz, ship->facing, enviroment, fps);
 
     // attendiamo la fine della rasterizzazione di
     // tutte le primitive mandate

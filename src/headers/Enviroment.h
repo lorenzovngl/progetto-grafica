@@ -14,6 +14,7 @@ private:
     ShadowMapper *shadowMapper;
     Options *options;
     Buoy *buoy[BUOYS_COUNT];
+    float scale_factor;
 public:
     Enviroment(TextureManager *textureManager, ShadowMapper *shadowMapper, Options *options);
     Buoy* getBuoy(int);

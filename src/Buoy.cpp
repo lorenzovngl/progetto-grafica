@@ -10,6 +10,7 @@
 #include <OpenGL/glu.h>
 #else
 
+#include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
@@ -19,14 +20,16 @@
 
 #include "headers/Buoy.h"
 #include "headers/Options.h"
+#include "../lib/ShadowMapper/ShadowMapper.h"
 
-Buoy::Buoy(int id, float x, float z, TextureManager *textureManager, Options *options){
+Buoy::Buoy(int id, float x, float z, TextureManager *textureManager, ShadowMapper *shadowMapper, Options *options){
     m_mesh = new Mesh((char *) "assets/sphere.obj", options);
     this->active = true;
     m_coord_x = x;
     m_coord_z = z;
     this->id = id;
     this->textureManager = textureManager;
+    this->shadowMapper = shadowMapper;
     this->options = options;
     textureManager->loadTexture(TEXTURE_FLAG_ITALY);
 }
@@ -66,7 +69,9 @@ void Buoy::render() {
     } else {
         glBegin(GL_QUADS);
     }
-    glColor3f(1, 0, 0);
+    GLint colorOrTexture = glGetUniformLocation(shadowMapper->defaultPass.program, "u_colorOrTexture");
+    glUniform1i(colorOrTexture, 0);
+    glColor3f(1, 1, 0);
     // Parallelepipedo
     glVertex3f(-(base/2),0,(base/2));
     glVertex3f(-(base/2),height,(base/2));

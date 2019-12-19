@@ -21,7 +21,7 @@
 Options::Options() {
     wireframesEnabled = false;
     shadowsEnabled = true;
-    fogEnabled = false;
+    fogEnabled = true;
     shadersEnabled = true;
 }
 

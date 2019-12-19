@@ -49,10 +49,17 @@ void ShipMesh::initModel() {
     glEnable(GL_LIGHT0);
     glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
     glEnable(GL_DEPTH_TEST);
+    textureManager->loadTexture(TEXTURE_ANTENNE_METAL);
+    textureManager->loadTexture(TEXTURE_BOTTOM_BODY_DARK_STRIPE);
+    textureManager->loadTexture(TEXTURE_BOTTOM_BODY_DARK_RED_METAL);
     textureManager->loadTexture(TEXTURE_DECK_WOODEN_FLOOR);
+    textureManager->loadTexture(TEXTURE_SHIP_CATWALK);
+    textureManager->loadTexture(TEXTURE_SUPERSTRUCTURE_BASE_STRIPE);
+    textureManager->loadTexture(TEXTURE_SUPERSTRUCTURE_GLASS);
+    textureManager->loadTexture(TEXTURE_SUPERSTRUCTURE_WHITE_METAL);
+    textureManager->loadTexture(TEXTURE_SUPERSTRUCTURE_WIRES);
     textureManager->loadTexture(TEXTURE_TOP_BODY_BLACK_METAL);
     textureManager->loadTexture(TEXTURE_TOP_BODY_WHITE_METAL);
-    textureManager->loadTexture(TEXTURE_BOTTOM_BODY_DARK_RED_METAL);
     textureManager->loadTexture(TEXTURE_MY_PHOTO);
 }
 

@@ -12,10 +12,12 @@ varying vec3 E;
 varying vec3 H;
 
 varying vec4 v_position;
+varying vec4 v_vertex;
 
 void main()    {
 	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 	v_position = gl_Position;
+	v_vertex = gl_Vertex;
 	vec3 normal = gl_NormalMatrix * gl_Normal;
 	vec3 lightVector = gl_LightSource[0].position.xyz;// - gl_Vertex.xyz;\n"
 	float nxDir = max(0.0, dot(normal, lightVector));
@@ -28,15 +30,15 @@ void main()    {
 		// Object linear
 		v_texCoord.x = dot(gl_Vertex * u_sPlane, u_sPlane);
 		v_texCoord.y = dot(gl_Vertex * u_tPlane, u_tPlane);
-	} /*else if (u_genCoords == 2){
+	} else if (u_genCoords == 2){
 		// Sphere map
-		vec3 u = normalize(vec3(gl_ModelViewMatrix * position));
-		vec3 n = normalize(gl_NormalMatrix);
+		vec3 u = normalize(vec3(gl_ModelViewMatrix * gl_Position));
+		vec3 n = normalize(gl_NormalMatrix * gl_Normal);
 		vec3 r = reflect(u, n);
-		float m = sqrt(r.x*r.x + r.y*r.y + (r.z+0.1)*(r.z+0.1));
-		v_texCoord.x = (r.x/m + 0.5)/1;
-		v_texCoord.y = (r.y/m + 0.5)/1;
-	}*/
+		float m = 2.*sqrt(pow(r.x, 2.) + pow(r.y, 2.) + pow(r.z+0.1, 2.));
+		v_texCoord.x = r.x/m + 0.5;
+		v_texCoord.y = r.y/m + 0.5;
+	}
 	vec4 eyePosition = gl_ModelViewMatrix * gl_Vertex;
 	vec4 eyeLightPos = gl_LightSource[1].position;
 	N = normalize(gl_NormalMatrix * gl_Normal);
