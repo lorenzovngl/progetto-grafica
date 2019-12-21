@@ -22,6 +22,7 @@ add_executable(ProgettoGrafica
         src/headers/Mesh.h
         src/headers/Options.h
         src/headers/point3.h
+        src/headers/ShaderParams.h
         src/headers/Ship.h
         src/headers/ShipMesh.h
         src/headers/Texture.h
@@ -41,6 +42,7 @@ add_executable(ProgettoGrafica
         src/main.cpp
         src/Mesh.cpp
         src/Options.cpp
+        src/ShaderParams.cpp
         src/Ship.cpp
         src/ShipMesh.cpp
         src/Texture.cpp

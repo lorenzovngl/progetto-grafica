@@ -10,13 +10,13 @@
 
 class Enviroment {
 private:
-    TextureManager *textureManager;
-    ShadowMapper *shadowMapper;
-    Options *options;
-    Buoy *buoy[BUOYS_COUNT];
+    TextureManager* textureManager;
+    ShadowMapper* shadowMapper;
+    Options* options;
+    Buoy* buoy[BUOYS_COUNT];
     float scale_factor;
 public:
-    Enviroment(TextureManager *textureManager, ShadowMapper *shadowMapper, Options *options);
+    Enviroment(TextureManager* textureManager, ShadowMapper* shadowMapper, ShaderParams* shaderParams, Options* options);
     Buoy* getBuoy(int);
     int getBuoysCount();
     void renderBuoys();

@@ -7,6 +7,7 @@
 #include "glm.h"
 #include "BoundingBox.h"
 #include "Options.h"
+#include "ShaderParams.h"
 
 class Vertex {
 public:
@@ -59,10 +60,12 @@ protected:
     GLboolean  facet_normal = GL_FALSE;	/* draw with facet normal? */
 
 private:
-    Options *options;
     void initModel();
+protected:
+    Options* options;
+    ShaderParams* mShaderParams;
 public:
-    Mesh(char *filename, Options *options);
+    Mesh(char *filename, ShaderParams* shaderParams, Options* options);
     void render(); // manda a schermo la mesh
     void Texturize();
     bool LoadFromObj(char *filename); //  carica la mesh da un file obj

@@ -4,17 +4,19 @@
 #include "Controller.h"
 #include "ShipMesh.h"
 #include "Options.h"
+#include "ShaderParams.h"
 
 class Ship {
 private:
     TextureManager *textureManager;
     ShadowMapper *shadowMapper;
+    ShaderParams *mShaderParams;
     Options *options;
     void DrawHeadlight(float x, float y, float z, int lightN) const;
     void enableTilt();
 public:
     Controller controller;
-    Ship(TextureManager *textureManager, ShadowMapper *shadowMapper, Options *options);
+    Ship(TextureManager *textureManager, ShadowMapper *shadowMapper, ShaderParams *shaderParams, Options *options);
     // Metodi
     void Init(); // inizializza variabili
     void render(bool texture_enabled); // disegna a schermo

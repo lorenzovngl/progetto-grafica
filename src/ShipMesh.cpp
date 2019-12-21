@@ -28,7 +28,8 @@
 #include "../lib/ShadowMapper/ShadowMapper.h"
 #include "headers/Options.h"
 
-ShipMesh::ShipMesh(char *filename, TextureManager *textureManager, ShadowMapper *shadowMapper, Options *options):Mesh(filename, options) {
+ShipMesh::ShipMesh(char *filename, TextureManager *textureManager, ShadowMapper *shadowMapper, ShaderParams* shaderParams, Options *options)
+:Mesh(filename, shaderParams, options) {
     this->textureManager = textureManager;
     this->shadowMapper = shadowMapper;
     this->options = options;
@@ -242,8 +243,7 @@ void ShipMesh::render(bool texture_enabled, float speed, float angle) {
         glPushMatrix();
         glTranslatef(-13, 3.6, 3.5);
         glEnable(GL_TEXTURE_2D);
-        GLint genCoords = glGetUniformLocation(shadowMapper->defaultPass.program, "u_genCoords");
-        glUniform1i(genCoords, 0);
+        mShaderParams->setParam(mShaderParams->genCoordsParam, EXPLICIT_COORDS);
         if (options->areWireframesEnabled()){
             glBegin(GL_LINE_LOOP);
         } else {

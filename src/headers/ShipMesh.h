@@ -18,7 +18,7 @@ private:
     void drawRudders(bool texture_enabled);
     void setupTexture(GLenum n_texture, Point3 min, Point3 max);
 public:
-    ShipMesh(char *filename, TextureManager *textureManager, ShadowMapper *shadowMapper, Options *options);
+    ShipMesh(char *filename, TextureManager *textureManager, ShadowMapper *shadowMapper, ShaderParams* shaderParams, Options *options);
     void render(bool texture_enabled, float speed, float facing);
 };
 

@@ -23,10 +23,11 @@
 #include "headers/Mesh.h"
 #include "headers/Utils.h"
 
-Mesh::Mesh(char* filename, Options *options) {
+Mesh::Mesh(char* filename, ShaderParams* shaderParams, Options *options) {
     LoadFromObj(filename);
     ComputeNormalsPerFace();
     this->options = options;
+    this->mShaderParams = shaderParams;
     //ComputeBoundingBox();
 }
 

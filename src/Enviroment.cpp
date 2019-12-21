@@ -25,11 +25,11 @@
 #include "headers/TextureManager.h"
 #include "../lib/ShadowMapper/ShadowMapper.h"
 
-Enviroment::Enviroment(TextureManager *textureManager, ShadowMapper *shadowMapper, Options *options) {
+Enviroment::Enviroment(TextureManager *textureManager, ShadowMapper *shadowMapper, ShaderParams *shaderParams, Options *options) {
     scale_factor = 0.05;
     srand(time(NULL));
     for (int i = 0; i < BUOYS_COUNT; i++) {
-        buoy[i] = new Buoy(i, rand() % 20 - 10, rand() % 20 - 10, textureManager, shadowMapper, options);
+        buoy[i] = new Buoy(i, rand() % 20 - 10, rand() % 20 - 10, textureManager, shadowMapper, shaderParams, options);
     }
     this->textureManager = textureManager;
     this->shadowMapper = shadowMapper;

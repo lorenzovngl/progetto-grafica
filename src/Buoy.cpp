@@ -22,14 +22,15 @@
 #include "headers/Options.h"
 #include "../lib/ShadowMapper/ShadowMapper.h"
 
-Buoy::Buoy(int id, float x, float z, TextureManager *textureManager, ShadowMapper *shadowMapper, Options *options){
-    m_mesh = new Mesh((char *) "assets/sphere.obj", options);
+Buoy::Buoy(int id, float x, float z, TextureManager *textureManager, ShadowMapper *shadowMapper, ShaderParams* shaderParams, Options *options){
+    m_mesh = new Mesh((char *) "assets/sphere.obj", shaderParams, options);
     this->active = true;
     m_coord_x = x;
     m_coord_z = z;
     this->id = id;
     this->textureManager = textureManager;
     this->shadowMapper = shadowMapper;
+    this->mShaderParams = shaderParams;
     this->options = options;
     textureManager->loadTexture(TEXTURE_FLAG_ITALY);
 }
@@ -69,9 +70,10 @@ void Buoy::render() {
     } else {
         glBegin(GL_QUADS);
     }
-    GLint colorOrTexture = glGetUniformLocation(shadowMapper->defaultPass.program, "u_colorOrTexture");
-    glUniform1i(colorOrTexture, 0);
-    glColor3f(1, 1, 0);
+    float color[4] = {1, 0, 0, 1};
+    mShaderParams->setParam(mShaderParams->colorOrTextureParam, COLOR_MODE);
+    mShaderParams->setParam(mShaderParams->colorParam, color);
+    glColor3f(1, 0, 0);
     // Parallelepipedo
     glVertex3f(-(base/2),0,(base/2));
     glVertex3f(-(base/2),height,(base/2));
@@ -101,6 +103,7 @@ void Buoy::render() {
     glEnd();
 
     // Boa
+    mShaderParams->setParam(mShaderParams->colorOrTextureParam, TEXTURE_MODE);
     m_mesh->render();
     m_mesh->ComputeBoundingBox(getCoordX(), 0, getCoordZ(), scaleFactor, 0);
 
@@ -112,6 +115,7 @@ void Buoy::render() {
     glEnable(GL_TEXTURE_2D);
     glColor3f(1, 1, 1);
     // Bandierina
+    mShaderParams->setParam(mShaderParams->genCoordsParam, EXPLICIT_COORDS);
     float flag_height = 40;
     float flag_width = 50;
     float pieces = 5;

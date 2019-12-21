@@ -28,9 +28,10 @@
 // var globale di tipo meshF
 ShipMesh *carlinga;
 
-Ship::Ship(TextureManager *textureManager, ShadowMapper *shadowMapper, Options *options) {
+Ship::Ship(TextureManager *textureManager, ShadowMapper* shadowMapper, ShaderParams* shaderParams, Options* options) {
     this->textureManager = textureManager;
     this->shadowMapper = shadowMapper;
+    this->mShaderParams = shaderParams;
     this->options = options;
     Init();
 }
@@ -95,7 +96,8 @@ void Ship::DoStep() {
 }
 
 void Ship::Init() {
-    carlinga = new ShipMesh((char *) "assets/ship/fishing_ship.obj", textureManager, shadowMapper, options);
+    carlinga = new ShipMesh((char *) "assets/ship/fishing_ship.obj", this->textureManager,
+            this->shadowMapper, this->mShaderParams, options);
     // inizializzo lo stato della macchina
     px = pz = facing = 0; // posizione e orientamento
     py = 0.0;

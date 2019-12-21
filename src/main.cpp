@@ -31,6 +31,7 @@ extern "C" {
 #include "headers/TextureManager.h"
 #include "headers/Options.h"
 #include "headers/Fog.h"
+#include "headers/ShaderParams.h"
 
 float viewAlpha = 20, viewBeta = 40; // angoli che definiscono la vista
 float eyeDist = 3.0; // distanza dell'occhio dall'origine
@@ -54,6 +55,7 @@ Camera *camera;
 HUD *hud;
 Game *game;
 ShadowMapper *shadowMapper;
+ShaderParams *shaderParams;
 Options *options;
 
 /* Esegue il Rendering della scena */
@@ -119,7 +121,7 @@ void rendering(SDL_Window *window) {
     glLightfv(GL_LIGHT0, GL_POSITION, shadowMapper->lightDirection);
 
     if (options->isFogEnabled()){
-        fog->render();
+        //fog->render();
     }
 
     // view Matrix inverse (it's the camera matrix). Used twice below (and very important to keep in any case).
@@ -282,10 +284,11 @@ int main(int argc, char *argv[]) {
 
     textureManager = new TextureManager();
     shadowMapper = new ShadowMapper();
+    shaderParams = new ShaderParams(shadowMapper);
     options = new Options();
 
-    enviroment = new Enviroment(textureManager, shadowMapper, options);
-    ship = new Ship(textureManager, shadowMapper, options);
+    enviroment = new Enviroment(textureManager, shadowMapper, shaderParams, options);
+    ship = new Ship(textureManager, shadowMapper, shaderParams, options);
     fog = new Fog();
     game = new Game(ship, enviroment);
     camera = new Camera();
