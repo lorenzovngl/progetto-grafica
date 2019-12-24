@@ -24,15 +24,17 @@
 #include "headers/Utils.h"
 #include "headers/ShipMesh.h"
 #include "../lib/ShadowMapper/ShadowMapper.h"
+#include "headers/Frontier.h"
 
 // var globale di tipo meshF
 ShipMesh *carlinga;
 
-Ship::Ship(TextureManager *textureManager, ShadowMapper* shadowMapper, ShaderParams* shaderParams, Options* options) {
+Ship::Ship(TextureManager *textureManager, ShadowMapper* shadowMapper, ShaderParams* shaderParams, Options* options, Frontier *frontier) {
     this->textureManager = textureManager;
     this->shadowMapper = shadowMapper;
     this->mShaderParams = shaderParams;
     this->options = options;
+    mFrontier = frontier;
     Init();
 }
 
@@ -62,6 +64,7 @@ void Ship::DoStep() {
     // gestione dello sterzo
     if (controller.key[Controller::LEFT]) sterzo += velSterzo;
     if (controller.key[Controller::RIGHT]) sterzo -= velSterzo;
+    float oldSterzo = sterzo;
     sterzo *= velRitornoSterzo; // ritorno a volante fermo
 
     if (controller.key[Controller::ACC]) vzm -= accMax;// accelerazione in avanti
@@ -74,6 +77,7 @@ void Ship::DoStep() {
 
     // l'orientamento della macchina segue quello dello sterzo
     // (a seconda della velocita' sulla z)
+    float oldFacing = facing;
     facing = facing - (vzm * grip) * sterzo;
 
     // rotazione mozzo ruote (a seconda della velocita' sulla z)
@@ -84,15 +88,19 @@ void Ship::DoStep() {
     mozzoP += da;
 
     // ritorno a vel coord mondo
+    float oldVx = vx, oldVy = vy, oldVz = vz;
     vx = +cosf * vxm + sinf * vzm;
     vy = vym;
     vz = -sinf * vxm + cosf * vzm;
 
-    // posizione = posizione + velocita * delta t (ma e' delta t costante)
-    px += vx;
-    py += vy;
-    pz += vz;
-    //printf("V: %f %f %f %f\n", vx, vy, vz, (abs(vx)+abs(vy)+abs(vz))*500);
+    if(mFrontier->isPointInBounds(px + vx, pz + vz)){
+        // posizione = posizione + velocita * delta t (ma e' delta t costante)
+        px += vx;
+        py += vy;
+        pz += vz;
+    } else {
+       vx = vy = vz = 0;
+    }
 }
 
 void Ship::Init() {

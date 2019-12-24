@@ -33,6 +33,7 @@ Enviroment::Enviroment(TextureManager *textureManager, ShadowMapper *shadowMappe
     }
     this->textureManager = textureManager;
     this->shadowMapper = shadowMapper;
+    mShaderParams = shaderParams;
     this->options = options;
     textureManager->loadTexture(TEXTURE_SEA);
     textureManager->loadTexture(TEXTURE_SKY);

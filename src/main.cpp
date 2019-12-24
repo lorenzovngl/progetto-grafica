@@ -32,6 +32,7 @@ extern "C" {
 #include "headers/Options.h"
 #include "headers/Fog.h"
 #include "headers/ShaderParams.h"
+#include "headers/Frontier.h"
 
 float viewAlpha = 20, viewBeta = 40; // angoli che definiscono la vista
 float eyeDist = 3.0; // distanza dell'occhio dall'origine
@@ -50,6 +51,7 @@ Uint32 timeLastInterval = 0; // quando e' cominciato l'ultimo intervallo
 SDL_Renderer *renderer;
 TextureManager *textureManager;
 Enviroment *enviroment;
+Frontier *frontier;
 Fog *fog;
 Camera *camera;
 HUD *hud;
@@ -203,6 +205,7 @@ void rendering(SDL_Window *window) {
     shadowMapper->showShadowMask(scrH, scrW);
     glActiveTexture(GL_TEXTURE1);*/
 
+    frontier->render();
     game->detectCollision();
     hud->display(scrW, scrH, ship->px, -ship->pz, ship->facing, enviroment, fps);
 
@@ -288,7 +291,8 @@ int main(int argc, char *argv[]) {
     options = new Options();
 
     enviroment = new Enviroment(textureManager, shadowMapper, shaderParams, options);
-    ship = new Ship(textureManager, shadowMapper, shaderParams, options);
+    frontier = new Frontier(shaderParams, options);
+    ship = new Ship(textureManager, shadowMapper, shaderParams, options, frontier);
     fog = new Fog();
     game = new Game(ship, enviroment);
     camera = new Camera();

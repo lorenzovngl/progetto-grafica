@@ -10,19 +10,28 @@
 
 class Enviroment {
 private:
-    TextureManager* textureManager;
-    ShadowMapper* shadowMapper;
-    Options* options;
-    Buoy* buoy[BUOYS_COUNT];
+    TextureManager *textureManager;
+    ShadowMapper *shadowMapper;
+    ShaderParams *mShaderParams;
+    Options *options;
+    Buoy *buoy[BUOYS_COUNT];
     float scale_factor;
 public:
-    Enviroment(TextureManager* textureManager, ShadowMapper* shadowMapper, ShaderParams* shaderParams, Options* options);
-    Buoy* getBuoy(int);
+    Enviroment(TextureManager *textureManager, ShadowMapper *shadowMapper, ShaderParams *shaderParams,
+               Options *options);
+
+    Buoy *getBuoy(int);
+
     int getBuoysCount();
+
     void renderBuoys();
+
     void drawNearSea(float, float, float);
+
     void drawFarSea(float, float, float);
+
     void drawSky();
+
     void render(float, float, float, bool texture_enabled);
 };
 

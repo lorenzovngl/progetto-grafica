@@ -123,6 +123,8 @@ void HUD::display(int v_width, int v_height, float ship_cx, float ship_cy, float
 
     // Map
     glDisable(GL_LIGHTING);
+    glPushMatrix();
+    glScalef(0.8, 0.8, 0.8);
     float mapWidth = 100;
     float mapCenterX = v_width-mapWidth*2;
     float mapCenterY = 70;
@@ -142,7 +144,7 @@ void HUD::display(int v_width, int v_height, float ship_cx, float ship_cy, float
     }
     // World
     glColor3f(0, 0, 1);
-    drawRegularPolygon(mapCenterX, mapCenterY, 50, 50, 0);
+    drawRegularPolygon(mapCenterX, mapCenterY, 65, 50, 0);
 
     glEnable(GL_LIGHTING);
     glPopMatrix();

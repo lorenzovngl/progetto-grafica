@@ -14,6 +14,7 @@ add_executable(ProgettoGrafica
         src/headers/Controller.h
         src/headers/Enviroment.h
         src/headers/Fog.h
+        src/headers/Frontier.h
         src/headers/Game.h
         src/headers/glm.h
         src/headers/GLText.h
@@ -34,6 +35,7 @@ add_executable(ProgettoGrafica
         src/Controller.cpp
         src/Enviroment.cpp
         src/Fog.cpp
+        src/Frontier.cpp
         src/Game.cpp
         src/glm.cpp
         src/GLText.cpp

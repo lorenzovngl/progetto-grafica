@@ -5,6 +5,7 @@
 #include "ShipMesh.h"
 #include "Options.h"
 #include "ShaderParams.h"
+#include "Frontier.h"
 
 class Ship {
 private:
@@ -12,11 +13,12 @@ private:
     ShadowMapper *shadowMapper;
     ShaderParams *mShaderParams;
     Options *options;
+    Frontier *mFrontier;
     void DrawHeadlight(float x, float y, float z, int lightN) const;
     void enableTilt();
 public:
     Controller controller;
-    Ship(TextureManager *textureManager, ShadowMapper *shadowMapper, ShaderParams *shaderParams, Options *options);
+    Ship(TextureManager *textureManager, ShadowMapper *shadowMapper, ShaderParams *shaderParams, Options *options, Frontier *frontier);
     // Metodi
     void Init(); // inizializza variabili
     void render(bool texture_enabled); // disegna a schermo
