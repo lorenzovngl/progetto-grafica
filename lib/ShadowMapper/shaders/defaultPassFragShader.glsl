@@ -20,20 +20,12 @@ uniform mat4 u_cameraViewMatrix;
 
 float getFogFactor(float distance, float height) {
     const float FogMaxDistance = 50.0;
-    const float FogMinDistance = 5.0;
+    const float FogMinDistance = 30.0;
     const float FogMaxHeight = 10.0;
     const float FogMinHeight = 0.0;
 
     float alphaDistance;
     float alphaHeight;
-
-    /*if (distance >= FogMaxDistance) return 1.0;
-    if (distance <= FogMinDistance) return 0.0;
-    if (height >= FogMaxHeight) return 0.0;
-    if (height <= FogMinHeight) return 0.0;
-
-    return 1.0 - (FogMaxDistance - distance) / (FogMaxDistance - FogMinDistance);
-    return (FogMaxHeight - height) / (FogMaxHeight - FogMinHeight);*/
 
     if (height >= FogMaxHeight)
         return 0.0;
@@ -80,6 +72,9 @@ void main() {
         gl_FragColor = ambient + diffuse + specular + vec4(texture2D(u_texture, v_texCoord).rgb*shadowFactor, 1);
     } else {
         gl_FragColor = ambient + diffuse + specular + vec4(u_color.rgb*shadowFactor, u_color.a);
+    }
+    if (v_vertex.y < 0.4){
+        gl_FragColor = mix(gl_FragColor, vec4(0, 0, 1, 1), 0.5);
     }
     if (u_fogEnabled == 1){
         float distance = distance(u_cameraViewMatrix*v_position, v_position);

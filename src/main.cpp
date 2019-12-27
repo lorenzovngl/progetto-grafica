@@ -34,9 +34,12 @@ extern "C" {
 #include "headers/ShaderParams.h"
 #include "headers/Frontier.h"
 
+
+int viewportWidth = 1024;
+int viewportHeight = 768;
+
 float viewAlpha = 20, viewBeta = 40; // angoli che definiscono la vista
 float eyeDist = 3.0; // distanza dell'occhio dall'origine
-int scrH = 700, scrW = 700; // altezza e larghezza viewport (in pixels)
 
 Ship *ship;
 int nstep = 0; // numero di passi di FISICA fatti fin'ora
@@ -68,7 +71,7 @@ void rendering(SDL_Window *window) {
     glLineWidth(1);
 
     // settiamo il viewport
-    glViewport(0, 0, scrW, scrH);
+    glViewport(0, 0, viewportWidth, viewportHeight);
 
     glClearColor(1, 1, 1, 1);
 
@@ -82,7 +85,7 @@ void rendering(SDL_Window *window) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(70, //fovy,
-                   ((float) scrW) / scrH,//aspect Y/X,
+                   (float) viewportWidth / (float) viewportHeight,//aspect Y/X,
                    0.2,//distanza del NEAR CLIPPING PLANE in coordinate vista
                    1000  //distanza del FAR CLIPPING PLANE in coordinate vista
     );
@@ -130,10 +133,17 @@ void rendering(SDL_Window *window) {
     // We can use Helper_InvertMatrixFast(...) instead of Helper_InvertMatrix(...) here [No scaling inside and no projection matrix]
     Helper_InvertMatrixFast(vMatrixInverse, camera->viewMatrix);
 
+    /*for (int i = 0; i < 4; i++){
+        printf("%f %f %f %f\n", camera->viewMatrix[i*4], camera->viewMatrix[i*4+1],
+               camera->viewMatrix[i*4+2], camera->viewMatrix[i*4+3]);
+    }
+    printf("\n");*/
+
     // Draw to Shadow Map
     Helper_GetLightViewProjectionMatrix(lvpMatrix,
                                         vMatrixInverse, shadowMapper->pMatrixNearPlane, shadowMapper->pMatrixFarPlane,
-                                        shadowMapper->pMatrixFovyDeg, (scrW / scrH), shadowMapper->lightDirection,
+                                        shadowMapper->pMatrixFovyDeg, (float) viewportWidth / (float) viewportHeight,
+                                        shadowMapper->lightDirection,
                                         1.0f / (float) SHADOW_MAP_RESOLUTION);
 
     // Draw to shadow map texture
@@ -177,7 +187,7 @@ void rendering(SDL_Window *window) {
     // precision matrices: mvMatrices are good when converted to float to feed the shader, mMatrices are bad)
     Helper_MultMatrix(biasedShadowMvpMatrix, biasedShadowMvpMatrix, vMatrixInverse);
     // Draw to world
-    glViewport(0, 0, scrW, scrH);
+    glViewport(0, 0, viewportWidth, viewportHeight);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if (options->areShadersEnabled()) {
         glActiveTexture(GL_TEXTURE0);
@@ -207,7 +217,12 @@ void rendering(SDL_Window *window) {
 
     frontier->render();
     game->detectCollision();
-    hud->display(scrW, scrH, ship->px, -ship->pz, ship->facing, enviroment, fps);
+    hud->display(viewportWidth, viewportHeight, ship->px, -ship->pz, ship->facing, enviroment, fps);
+    if (game->getGameTime() == 0){
+        hud->displayStartGameMessage(viewportWidth, viewportHeight);
+    } else if (game->isFinished()){
+        hud->displayEndGameMessage(viewportWidth, viewportHeight);
+    }
 
     // attendiamo la fine della rasterizzazione di
     // tutte le primitive mandate
@@ -252,8 +267,9 @@ int main(int argc, char *argv[]) {
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
     // facciamo una finestra di scrW x scrH pixels
-    window = SDL_CreateWindow(argv[0], 0, 0, scrW, scrH, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
-    glutInitWindowSize(scrW, scrH);
+    window = SDL_CreateWindow(argv[0], 0, 0, viewportWidth, viewportHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    SDL_SetWindowTitle(window, (char*) "Ship Game in OpenGL");
+    glutInitWindowSize(viewportWidth, viewportHeight);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
 
     if (!glfwInit()) {
@@ -299,7 +315,7 @@ int main(int argc, char *argv[]) {
     hud = new HUD(game);
 
     shadowMapper->InitGL();
-    shadowMapper->ResizeGL(scrW, scrH);
+    shadowMapper->ResizeGL(viewportWidth, viewportHeight);
     shadowMapper->resetCamera(eyeDist, viewBeta, viewAlpha);
     camera->set(*ship, eyeDist, viewBeta, viewAlpha);
     shadowMapper->resetLight();
@@ -345,9 +361,8 @@ int main(int argc, char *argv[]) {
                         if (e.window.windowID == windowID) {
                             switch (e.window.event) {
                                 case SDL_WINDOWEVENT_SIZE_CHANGED: {
-                                    scrW = e.window.data1;
-                                    scrH = e.window.data2;
-                                    glViewport(0, 0, scrW, scrH);
+                                    viewportWidth = e.window.data1;
+                                    viewportHeight = e.window.data2;
                                     rendering(window);
                                     //redraw(); // richiedi ridisegno
                                     break;

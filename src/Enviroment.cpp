@@ -24,12 +24,15 @@
 #include "headers/Texture.h"
 #include "headers/TextureManager.h"
 #include "../lib/ShadowMapper/ShadowMapper.h"
+#include "headers/Frontier.h"
 
 Enviroment::Enviroment(TextureManager *textureManager, ShadowMapper *shadowMapper, ShaderParams *shaderParams, Options *options) {
     scale_factor = 0.05;
     srand(time(NULL));
     for (int i = 0; i < BUOYS_COUNT; i++) {
-        buoy[i] = new Buoy(i, rand() % 20 - 10, rand() % 20 - 10, textureManager, shadowMapper, shaderParams, options);
+        float cx = (float) (rand() % FRONTIER_LIMIT) - FRONTIER_LIMIT/2;
+        float cy = (float) (rand() % FRONTIER_LIMIT) - FRONTIER_LIMIT/2;
+        buoy[i] = new Buoy(i, cx, cy, textureManager, shadowMapper, shaderParams, options);
     }
     this->textureManager = textureManager;
     this->shadowMapper = shadowMapper;

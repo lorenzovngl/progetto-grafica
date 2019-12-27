@@ -6,7 +6,7 @@
 #include "../../lib/ShadowMapper/ShadowMapper.h"
 #include "Options.h"
 
-#define BUOYS_COUNT 20
+#define BUOYS_COUNT 50
 
 class Enviroment {
 private:

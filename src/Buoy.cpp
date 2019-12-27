@@ -21,6 +21,7 @@
 #include "headers/Buoy.h"
 #include "headers/Options.h"
 #include "../lib/ShadowMapper/ShadowMapper.h"
+#include "headers/Utils.h"
 
 Buoy::Buoy(int id, float x, float z, TextureManager *textureManager, ShadowMapper *shadowMapper, ShaderParams* shaderParams, Options *options){
     m_mesh = new Mesh((char *) "assets/sphere.obj", shaderParams, options);
@@ -104,7 +105,7 @@ void Buoy::render() {
 
     // Boa
     mShaderParams->setParam(mShaderParams->colorOrTextureParam, TEXTURE_MODE);
-    m_mesh->render();
+    Utils::drawSphere(20, 20, 20, options->areWireframesEnabled());
     m_mesh->ComputeBoundingBox(getCoordX(), 0, getCoordZ(), scaleFactor, 0);
 
     // Simulo direzione del vento
