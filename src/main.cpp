@@ -62,6 +62,8 @@ Game *game;
 ShadowMapper *shadowMapper;
 ShaderParams *shaderParams;
 Options *options;
+bool inputModeEnabled = false;
+char userInputBuffer[10];
 
 /* Esegue il Rendering della scena */
 void rendering(SDL_Window *window) {
@@ -201,6 +203,11 @@ void rendering(SDL_Window *window) {
                            biasedShadowMvpMatrix);
         glDisable(GL_CULL_FACE);
     }
+    if (game->isPaused || game->getGameTime() == 0 || game->isFinished()){
+        shaderParams->setParam(shaderParams->overlay, 1);
+    } else {
+        shaderParams->setParam(shaderParams->overlay, 0);
+    }
     ship->render(true);
     enviroment->render(ship->px, ship->py, ship->pz, true);
     enviroment->renderBuoys();
@@ -218,10 +225,16 @@ void rendering(SDL_Window *window) {
     frontier->render();
     game->detectCollision();
     hud->display(viewportWidth, viewportHeight, ship->px, -ship->pz, ship->facing, enviroment, fps);
-    if (game->getGameTime() == 0){
+    if (inputModeEnabled){
+        hud->askNumberOfBuoys(viewportWidth, viewportHeight);
+    } else if (hud->isCommandsListVisibile){
+        hud->displayCommands(viewportWidth, viewportHeight);
+    } else if (game->getGameTime() == 0){
         hud->displayStartGameMessage(viewportWidth, viewportHeight);
     } else if (game->isFinished()){
         hud->displayEndGameMessage(viewportWidth, viewportHeight);
+    } else if (game->isPaused){
+        hud->displayPauseMessage(viewportWidth, viewportHeight);
     }
 
     // attendiamo la fine della rasterizzazione di
@@ -246,7 +259,7 @@ int main(int argc, char *argv[]) {
     SDL_GLContext mainContext;
     Uint32 windowID;
     SDL_Joystick *joystick;
-    static int keymap[Controller::NKEYS] = {SDLK_a, SDLK_d, SDLK_w, SDLK_s};
+    static int keymap[Controller::NKEYS] = {SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN};
 
     // inizializzazione di SDL
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
@@ -319,7 +332,6 @@ int main(int argc, char *argv[]) {
     shadowMapper->resetCamera(eyeDist, viewBeta, viewAlpha);
     camera->set(*ship, eyeDist, viewBeta, viewAlpha);
     shadowMapper->resetLight();
-    options->printMenu();
 
     bool done = 0;
     while (!done) {
@@ -331,19 +343,45 @@ int main(int argc, char *argv[]) {
             // se si: processa evento
             switch (e.type) {
                 case SDL_KEYDOWN:
-                    ship->controller.EatKey(e.key.keysym.sym, keymap, true);
-                    if (e.key.keysym.sym == SDLK_F1) {
-                        camera->change(*ship, eyeDist, viewBeta, viewAlpha);
-                    } else if (e.key.keysym.sym == SDLK_F2) {
-                        options->toggleWireframes();
-                    } else if (e.key.keysym.sym == SDLK_F3) {
-                        options->toggleShadows();
-                    } else if (e.key.keysym.sym == SDLK_F4) {
-                        options->toggleFog();
-                    } else if (e.key.keysym.sym == SDLK_F5) {
-                        options->toggleShaders();
-                    } else if (e.key.keysym.sym == SDLK_w || e.key.keysym.sym == SDLK_s) {
-                        game->go();
+                    if (!inputModeEnabled) {
+                        ship->controller.EatKey(e.key.keysym.sym, keymap, true);
+                        if (e.key.keysym.sym == SDLK_F1) {
+                            camera->change(*ship, eyeDist, viewBeta, viewAlpha);
+                        } else if (e.key.keysym.sym == SDLK_F2) {
+                            options->toggleWireframes();
+                        } else if (e.key.keysym.sym == SDLK_F3) {
+                            options->toggleShadows();
+                        } else if (e.key.keysym.sym == SDLK_F4) {
+                            options->toggleFog();
+                        } else if (e.key.keysym.sym == SDLK_F5) {
+                            options->toggleShaders();
+                        } else if (e.key.keysym.sym == SDLK_b) {
+                            printf("Input mode\n");
+                            inputModeEnabled = true;
+                        } else if (e.key.keysym.sym == SDLK_c) {
+                            hud->toggleCommandsList();
+                        } else if (e.key.keysym.sym == SDLK_p && !hud->isCommandsListVisibile) {
+                            game->togglePause();
+                        } else if (e.key.keysym.sym == SDLK_UP || e.key.keysym.sym == SDLK_DOWN) {
+                            game->go();
+                        } else if (e.key.keysym.sym == SDLK_n) {
+                            game->reset();
+                        }
+                    } else {
+                        if (e.key.keysym.sym != SDLK_RETURN){
+                            const char alpha[] = "0123456789";
+                            if(e.key.keysym.sym >= SDLK_0 && e.key.keysym.sym <= SDLK_9){
+                                strncat(userInputBuffer, &alpha[e.key.keysym.sym - SDLK_0], 1);
+                            } else if (e.key.keysym.sym == SDLK_BACKSPACE){
+                                userInputBuffer[strlen(userInputBuffer)-1] = '\0';
+                            }
+                            //printf("%s, %d\n", userInputBuffer, (int) strlen(userInputBuffer));
+                        } else {
+                            char *pEnd;
+                            enviroment->buoysCount = strtol(userInputBuffer, &pEnd, 10);
+                            printf("Bouys count set to %d\n", enviroment->buoysCount);
+                            inputModeEnabled = false;
+                        }
                     }
                     break;
                 case SDL_KEYUP:
@@ -459,7 +497,9 @@ int main(int argc, char *argv[]) {
             // finche' il tempo simulato e' rimasto indietro rispetto
             // al tempo reale...
             while (nstep * PHYS_SAMPLING_STEP < timeNow) {
-                ship->DoStep();
+                if (!game->isPaused){
+                    ship->DoStep();
+                }
                 nstep++;
                 doneSomething = true;
                 timeNow = SDL_GetTicks();

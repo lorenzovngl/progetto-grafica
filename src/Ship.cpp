@@ -135,6 +135,11 @@ void Ship::Init() {
     grip = 0.45; // quanto il facing macchina si adegua velocemente allo sterzo
 }
 
+void Ship::reset(){
+    px = py = pz = 0;
+    vx = vy = vz = 0;
+}
+
 // attiva una luce di openGL per simulare un faro della macchina
 void Ship::DrawHeadlight(float x, float y, float z, int lightN) const {
     int usedLight = GL_LIGHT1 + lightN;

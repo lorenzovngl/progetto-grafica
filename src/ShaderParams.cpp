@@ -24,6 +24,7 @@ ShaderParams::ShaderParams(ShadowMapper *shadowMapper) {
     strcpy(colorParam, "u_color");
     strcpy(colorOrTextureParam, "u_colorOrTexture");
     strcpy(genCoordsParam, "u_genCoords");
+    strcpy(overlay, "u_overlay");
 }
 
 void ShaderParams::setParam(char *param, int value) {

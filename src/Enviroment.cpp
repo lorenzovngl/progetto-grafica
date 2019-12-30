@@ -28,8 +28,9 @@
 
 Enviroment::Enviroment(TextureManager *textureManager, ShadowMapper *shadowMapper, ShaderParams *shaderParams, Options *options) {
     scale_factor = 0.05;
+    buoysCount = 50;
     srand(time(NULL));
-    for (int i = 0; i < BUOYS_COUNT; i++) {
+    for (int i = 0; i < buoysCount; i++) {
         float cx = (float) (rand() % FRONTIER_LIMIT) - FRONTIER_LIMIT/2;
         float cy = (float) (rand() % FRONTIER_LIMIT) - FRONTIER_LIMIT/2;
         buoy[i] = new Buoy(i, cx, cy, textureManager, shadowMapper, shaderParams, options);
@@ -47,7 +48,7 @@ Buoy* Enviroment::getBuoy(int i) {
 }
 
 int Enviroment::getBuoysCount() {
-    return BUOYS_COUNT;
+    return buoysCount;
 }
 
 void Enviroment::drawFarSea(float ship_x, float ship_y, float ship_z) {
@@ -251,7 +252,7 @@ void Enviroment::drawSky() {
 }
 
 void Enviroment::renderBuoys(){
-    for (int i = 0; i < BUOYS_COUNT; i++) {
+    for (int i = 0; i < buoysCount; i++) {
         if (buoy[i]->isActive()){
             glPushMatrix();
             buoy[i]->render();
@@ -283,4 +284,12 @@ void Enviroment::render(float ship_x, float ship_y, float ship_z, bool texture_e
     drawFarSea(ship_x, ship_y, ship_z);
     glUniform1i(colorOrTexture, 1);
     glDisable(GL_BLEND);
+}
+
+void Enviroment::reset(){
+    for (int i = 0; i < buoysCount; i++) {
+        float cx = (float) (rand() % FRONTIER_LIMIT) - FRONTIER_LIMIT/2;
+        float cy = (float) (rand() % FRONTIER_LIMIT) - FRONTIER_LIMIT/2;
+        buoy[i] = new Buoy(i, cx, cy, textureManager, shadowMapper, mShaderParams, options);
+    }
 }

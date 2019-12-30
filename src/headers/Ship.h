@@ -21,6 +21,7 @@ public:
     Ship(TextureManager *textureManager, ShadowMapper *shadowMapper, ShaderParams *shaderParams, Options *options, Frontier *frontier);
     // Metodi
     void Init(); // inizializza variabili
+    void reset();
     void render(bool texture_enabled); // disegna a schermo
     void DoStep(); // computa un passo del motore fisico
     ShipMesh* getMesh();

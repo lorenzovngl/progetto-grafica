@@ -6,7 +6,7 @@
 #include "../../lib/ShadowMapper/ShadowMapper.h"
 #include "Options.h"
 
-#define BUOYS_COUNT 50
+#define BUOYS_COUNT_MAX 500
 
 class Enviroment {
 private:
@@ -14,9 +14,11 @@ private:
     ShadowMapper *shadowMapper;
     ShaderParams *mShaderParams;
     Options *options;
-    Buoy *buoy[BUOYS_COUNT];
+    Buoy *buoy[BUOYS_COUNT_MAX];
     float scale_factor;
 public:
+    int buoysCount;
+
     Enviroment(TextureManager *textureManager, ShadowMapper *shadowMapper, ShaderParams *shaderParams,
                Options *options);
 
@@ -33,6 +35,8 @@ public:
     void drawSky();
 
     void render(float, float, float, bool texture_enabled);
+
+    void reset();
 };
 
 

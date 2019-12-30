@@ -2,7 +2,7 @@ uniform sampler2D u_shadowMap;
 uniform sampler2D u_texture;
 uniform int u_colorOrTexture; // 0 = color, 1 = texture
 uniform int u_fogEnabled;
-uniform int u_isSea;
+uniform int u_overlay;
 uniform vec4 u_color;
 varying vec2 v_texCoord;
 uniform vec2 u_shadowDarkening; // .x = fDarkeningFactor [10.0-80.0], .y = min value clamp [0.0-1.0]
@@ -81,5 +81,8 @@ void main() {
         float alpha = getFogFactor(distance, v_vertex.y);
         vec4 FogColor = vec4(1, 1, 1, 1.0);
         gl_FragColor = mix(gl_FragColor, FogColor, alpha);
+    }
+    if (u_overlay == 1){
+        gl_FragColor = mix(gl_FragColor, vec4(1, 1, 1, 1), 0.5);
     }
 }

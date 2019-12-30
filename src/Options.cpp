@@ -56,11 +56,3 @@ void Options::toggleFog(){
 void Options::toggleShaders(){
     shadersEnabled = !shadersEnabled;
 }
-
-void Options::printMenu(){
-    printf("F1 - Change camera\n"
-           "F2 - Toggle wireframes\n"
-           "F3 - Toggle shadows\n"
-           "F4 - Toggle fog\n"
-           "F5 - Toggle advance rendering (shaders)\n");
-}

@@ -20,60 +20,97 @@
 #include "headers/Game.h"
 
 Game::Game(Ship *ship, Enviroment *enviroment) {
-    game_start_time = 0;
-    game_end_time = 0;
-    score = 0;
-    score_limit = enviroment->getBuoysCount();
-    this->ship = ship;
-    this->enviroment = enviroment;
+    mStartTime = 0;
+    mEndTime = 0;
+    mScore = 0;
+    mScoreLimit = enviroment->getBuoysCount();
+    this->mShip = ship;
+    this->mEnviroment = enviroment;
+    isPaused = false;
+    mStartPauseTime = 0;
 }
 
 int Game::getGameTime() {
-    if (game_end_time != 0){
-        return game_end_time;
-    } else if (game_start_time != 0){
-        return SDL_GetTicks() - game_start_time;
+    if (mEndTime != 0) {
+        return mEndTime;
+    } else if (isPaused) {
+        return mStartPauseTime - mStartTime;
+    } else if (mStartTime != 0) {
+        return SDL_GetTicks() - mStartTime;
     } else {
         return 0;
     }
 }
 
 int Game::getScore() {
-    return score;
+    return mScore;
 }
 
-int Game::getScoreLimit(){
-    return score_limit;
+int Game::getScoreLimit() {
+    return mScoreLimit;
 }
 
-void Game::detectCollision(){
-    ShipMesh* shipMesh = ship->getMesh();
-    Mesh* buoyMesh;
-    for (int i = 0; i < enviroment->getBuoysCount() && !isFinished(); i++){
-        buoyMesh = enviroment->getBuoy(i)->getMesh();
-        if (enviroment->getBuoy(i)->isActive() &&
-            BoundingBox::isCollision(shipMesh->w_bounding_box, buoyMesh->w_bounding_box)){
-            enviroment->getBuoy(i)->disable();
-            score++;
+void Game::detectCollision() {
+    ShipMesh *shipMesh = mShip->getMesh();
+    Mesh *buoyMesh;
+    for (int i = 0; i < mEnviroment->getBuoysCount() && !isFinished(); i++) {
+        buoyMesh = mEnviroment->getBuoy(i)->getMesh();
+        if (mEnviroment->getBuoy(i)->isActive() &&
+            BoundingBox::isCollision(shipMesh->w_bounding_box, buoyMesh->w_bounding_box)) {
+            mEnviroment->getBuoy(i)->disable();
+            mScore++;
         }
     }
 }
 
-void Game::go(){
-    if (game_start_time == 0){
-        game_start_time = SDL_GetTicks();
+void Game::go() {
+    if (mStartTime == 0) {
+        mStartTime = SDL_GetTicks();
     }
 }
 
-bool Game::isFinished(){
+void Game::reset() {
+    mStartTime = 0;
+    mEndTime = 0;
+    mScore = 0;
+    mShip->reset();
+    mEnviroment->reset();
+}
+
+bool Game::isFinished() {
     bool isFinished = true;
-    for (int i = 0; i < enviroment->getBuoysCount(); i++){
-        if (enviroment->getBuoy(i)->isActive()){
+    for (int i = 0; i < mEnviroment->getBuoysCount(); i++) {
+        if (mEnviroment->getBuoy(i)->isActive()) {
             isFinished = false;
         }
     }
-    if (isFinished){
-        game_end_time = getGameTime();
+    if (isFinished) {
+        mEndTime = getGameTime();
     }
     return isFinished;
+}
+
+void Game::togglePause() {
+    if (!isPaused) {
+        pause();
+    } else {
+        resume();
+    }
+}
+
+void Game::pause() {
+    if (!isPaused && mStartTime != 0 && !isFinished()) {
+        isPaused = true;
+        // Memorizzo il tempo di pausa
+        mStartPauseTime = SDL_GetTicks();
+    }
+}
+
+void Game::resume() {
+    if (isPaused && mStartTime != 0 && !isFinished()) {
+        isPaused = false;
+        // Resetto il tempo di inizio ma ci sommo il tempo trascorso
+        // tra l'ultimo startTime e l'ultimo startPauseTime
+        mStartTime += SDL_GetTicks() - mStartPauseTime;
+    }
 }

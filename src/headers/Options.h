@@ -17,7 +17,6 @@ public:
     void toggleShadows();
     void toggleFog();
     void toggleShaders();
-    void printMenu();
 };
 
 
