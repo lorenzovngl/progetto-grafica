@@ -30,7 +30,7 @@ public:
 
     void toggleCommandsList();
 
-    void askNumberOfBuoys(int v_width, int v_height);
+    void askNumberOfBuoys(int v_width, int v_height, char *input);
 };
 
 #endif

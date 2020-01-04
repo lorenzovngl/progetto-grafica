@@ -28,7 +28,7 @@
 
 Enviroment::Enviroment(TextureManager *textureManager, ShadowMapper *shadowMapper, ShaderParams *shaderParams, Options *options) {
     scale_factor = 0.05;
-    buoysCount = 50;
+    buoysCount = DEFAULT_BUOYS_COUNT;
     srand(time(NULL));
     for (int i = 0; i < buoysCount; i++) {
         float cx = (float) (rand() % FRONTIER_LIMIT) - FRONTIER_LIMIT/2;

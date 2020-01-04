@@ -226,7 +226,7 @@ void rendering(SDL_Window *window) {
     game->detectCollision();
     hud->display(viewportWidth, viewportHeight, ship->px, -ship->pz, ship->facing, enviroment, fps);
     if (inputModeEnabled){
-        hud->askNumberOfBuoys(viewportWidth, viewportHeight);
+        hud->askNumberOfBuoys(viewportWidth, viewportHeight, userInputBuffer);
     } else if (hud->isCommandsListVisibile){
         hud->displayCommands(viewportWidth, viewportHeight);
     } else if (game->getGameTime() == 0){
@@ -333,6 +333,8 @@ int main(int argc, char *argv[]) {
     camera->set(*ship, eyeDist, viewBeta, viewAlpha);
     shadowMapper->resetLight();
 
+    sprintf(userInputBuffer, "%d", DEFAULT_BUOYS_COUNT);
+
     bool done = 0;
     while (!done) {
 
@@ -368,19 +370,26 @@ int main(int argc, char *argv[]) {
                             game->reset();
                         }
                     } else {
+                        char *pEnd;
                         if (e.key.keysym.sym != SDLK_RETURN){
-                            const char alpha[] = "0123456789";
-                            if(e.key.keysym.sym >= SDLK_0 && e.key.keysym.sym <= SDLK_9){
-                                strncat(userInputBuffer, &alpha[e.key.keysym.sym - SDLK_0], 1);
+                            const char keyboard[] = "0123456789";
+                            const char keypad[] = "1234567890";
+                            if (e.key.keysym.sym >= SDLK_0 && e.key.keysym.sym <= SDLK_9){
+                                strncat(userInputBuffer, &keyboard[e.key.keysym.sym - SDLK_0], 1);
+                            } else if (e.key.keysym.sym >= SDLK_KP_1 && e.key.keysym.sym <= SDLK_KP_0){
+                                strncat(userInputBuffer, &keypad[e.key.keysym.sym - SDLK_KP_1], 1);
                             } else if (e.key.keysym.sym == SDLK_BACKSPACE){
-                                userInputBuffer[strlen(userInputBuffer)-1] = '\0';
+                                printf("%d\n", strlen(userInputBuffer) > 1);
+                                if (strlen(userInputBuffer) > 0){
+                                    userInputBuffer[strlen(userInputBuffer)-1] = '\0';
+                                }
                             }
-                            //printf("%s, %d\n", userInputBuffer, (int) strlen(userInputBuffer));
-                        } else {
-                            char *pEnd;
-                            enviroment->buoysCount = strtol(userInputBuffer, &pEnd, 10);
+                            printf("%s, %d\n", userInputBuffer, (int) strlen(userInputBuffer));
+                        } else if (strtol(userInputBuffer, &pEnd, 10) >= 1 && strtol(userInputBuffer, &pEnd, 10) <= 100){
+                            enviroment->buoysCount = (int) strtol(userInputBuffer, &pEnd, 10);
                             printf("Bouys count set to %d\n", enviroment->buoysCount);
                             inputModeEnabled = false;
+                            game->reset();
                         }
                     }
                     break;

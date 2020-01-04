@@ -75,6 +75,8 @@ void Game::reset() {
     mScore = 0;
     mShip->reset();
     mEnviroment->reset();
+    mScoreLimit = mEnviroment->getBuoysCount();
+    isPaused = false;
 }
 
 bool Game::isFinished() {

@@ -136,6 +136,7 @@ void Ship::Init() {
 }
 
 void Ship::reset(){
+    facing = 0;
     px = py = pz = 0;
     vx = vy = vz = 0;
 }

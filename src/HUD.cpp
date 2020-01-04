@@ -160,6 +160,12 @@ void HUD::displayStartGameMessage(int v_width, int v_height){
         text->render();
     }
 
+    text = new GLText(TEXTURE_TEXT, mFont18);
+    text->setText((char*) "Press B to change the number of buoys to catch.", 255, 255, 255);
+    text->setPosition(v_width/2,v_height/1.5 - 270);
+    text->setAlignment(ALIGN_CENTER);
+    text->render();
+
     text = new GLText(TEXTURE_TEXT, mFont40);
     text->setText((char*) "Time starts when you move the ship.", 255,255,255);
     text->setPosition(v_width/2,v_height/4);
@@ -170,7 +176,7 @@ void HUD::displayStartGameMessage(int v_width, int v_height){
 }
 
 void HUD::displayEndGameMessage(int v_width, int v_height){
-    char buffer[2][100];
+    char buffer[100];
 
     glPushMatrix();
     glLoadIdentity();
@@ -179,35 +185,38 @@ void HUD::displayEndGameMessage(int v_width, int v_height){
     int millis = game->getGameTime();
     int sec = millis/1000;
     int min = sec/60;
-    sprintf(buffer[0], "Game finished, your time is: %02d:%02d:%03d.", min, sec - min * 60, millis - sec * 1000 - min * 60);
-    sprintf(buffer[1], "Press N to play a new game.");
+    sprintf(buffer, "Game finished, your time is: %02d:%02d:%03d.", min, sec - min * 60, millis - sec * 1000 - min * 60);
     GLText *text = new GLText(TEXTURE_TEXT, mFont40);
-    for (int i = 0; i < 2; i++){
-        text->setText(buffer[i], 255, 255, 255);
-        text->setPosition(v_width/2,v_height/1.5 - 50 * i);
-        text->setAlignment(ALIGN_CENTER);
-        text->render();
-    }
+    text->setText(buffer, 255, 255, 255);
+    text->setPosition(v_width/2,v_height/1.5);
+    text->setAlignment(ALIGN_CENTER);
+    text->render();
+
+    text = new GLText(TEXTURE_TEXT, mFont25);
+    text->setText((char*) "Press N to start a new game.", 255, 255, 255);
+    text->setPosition(v_width/2,v_height/1.5 - 50);
+    text->setAlignment(ALIGN_CENTER);
+    text->render();
 
     glPopMatrix();
 }
 
 void HUD::displayPauseMessage(int v_width, int v_height){
-    char buffer[2][100];
-
     glPushMatrix();
     glLoadIdentity();
     Utils::setCoordToPixel(v_width, v_height);
 
-    sprintf(buffer[0], "Game paused");
-    sprintf(buffer[1], "Press P to resume.");
     GLText *text = new GLText(TEXTURE_TEXT, mFont40);
-    for (int i = 0; i < 2; i++){
-        text->setText(buffer[i], 255, 255, 255);
-        text->setPosition(v_width/2,v_height/1.5 - 50 * i);
-        text->setAlignment(ALIGN_CENTER);
-        text->render();
-    }
+    text->setText((char*) "Game paused", 255, 255, 255);
+    text->setPosition(v_width/2,v_height/1.5);
+    text->setAlignment(ALIGN_CENTER);
+    text->render();
+
+    text = new GLText(TEXTURE_TEXT, mFont25);
+    text->setText((char*) "Press P to resume, N to start a new game.", 255, 255, 255);
+    text->setPosition(v_width/2,v_height/1.5 - 50);
+    text->setAlignment(ALIGN_CENTER);
+    text->render();
 
     glPopMatrix();
 }
@@ -248,19 +257,23 @@ void HUD::toggleCommandsList(){
     isCommandsListVisibile = !isCommandsListVisibile;
 }
 
-void HUD::askNumberOfBuoys(int v_width, int v_height) {
-    char buffer[100];
+void HUD::askNumberOfBuoys(int v_width, int v_height, char *input) {
+    char buffer[3][100];
 
     glPushMatrix();
     glLoadIdentity();
     Utils::setCoordToPixel(v_width, v_height);
 
-    sprintf(buffer, "Please insert the number of bouys you want to play with, then press Enter");
+    sprintf(buffer[0], "Please insert the number of bouys you want");
+    sprintf(buffer[1], "to play with (from 1 to %d), then press Enter.", BUOYS_COUNT_MAX);
+    sprintf(buffer[2], "%s_", input);
     GLText *text = new GLText(TEXTURE_TEXT, mFont40);
-    text->setText(buffer, 255, 255, 255);
-    text->setPosition(v_width/2,v_height/1.5 - 50);
-    text->setAlignment(ALIGN_CENTER);
-    text->render();
+    for (int i = 0; i < 3; i++){
+        text->setText(buffer[i], 255, 255, 255);
+        text->setPosition(v_width/2,v_height/1.5 - 50 * i);
+        text->setAlignment(ALIGN_CENTER);
+        text->render();
+    }
 
     glPopMatrix();
 }
