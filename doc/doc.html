@@ -1,19 +1,95 @@
 <html>
 <head>
-    <title>Note sul progetto</title>
+    <title>Open Sailing</title>
+    <style type="text/css">
+        img {
+            height: 300px;
+        }
+    </style>
 </head>
 <body>
-<h1>Progetto di grafica</h1>
+<h1>Open Sailing</h1>
 Autore: Lorenzo Vainigli</br>
 Corso di Grafica a.a. 2017/18, Laurea Magistrale in Informatica</br>
 Università di Bologna
 <h2>Indice</h2>
 <ul>
-    <li>Introduzione</li>
-    <li>Librerie utilizzate</li>
-    <li>Programmazione del gioco</li>
+    <a href="#intro">
+        <li>Introduzione</li>
+    </a>
+    <a href="#librerie">
+        <li>Librerie utilizzate</li>
+    </a>
+    <a href="#svolgimento">
+        <li>Svolgimento del progetto</li>
+    </a>
+    <ul>
+        <li>Modello della barca</li>
+        <li>Ambiente di gioco</li>
+    </ul>
+    <a href="#funzioni-obbligatorie">
     <li>Funzioni grafiche obbligatorie</li>
+    </a>
+    <a href="#come-si-gioca">
     <li>Come si gioca</li>
+    </a>
 </ul>
+<a id="intro">
+    <h2>Introduzione</h2>
+</a>
+<p>
+    Open Sailing è un piccolo gioco realizzato con le librerie SDL2 e OpenGL. L'utente si trova al comando di
+    un'imbarcazione nel mezzo al mare ed è circondato da numerose boe a cui sono fissate delle bandiere. Il suo obiettivo è
+    raccogliere tutte le boe nel minor tempo possibile.
+</p>
+<a id="librerie">
+    <h2>Librerie utilizzate</h2>
+</a>
+<p>
+    Questo gioco è stato programmato in linguaggio C/C++ utilizzando SDL2, OpenGL e le librerie di supporto GLU, GLUT, GLEW e GLFW.
+</p>
+<a id="svolgimento">
+    <h2>Svolgimento del progetto</h2>
+</a>
+<p>
+    Il lavoro è iniziato partendo dal codice di <i>progettoCar3</i>. In un primo momento è stato effettuato un refactoring
+    del codice per renderlo object-oriented, per poi procedere all'implementazione di nuove funzioni.
+</p>
+<h3>Modello della barca</h3>
+<p>
+    Il modello della barca comandata dall'utente è memorizzato in un file OBJ e viene caricato e renderizzato con le stesse
+    modalità del modello della macchina che vi era in precedenza. Tale modello è stato scaricato da
+    <a href="http://www.cadnav.com/3d-models/model-37131.html">questa pagina</a>.
+</p>
+<h4>Texturing</h4>
+<p>
+    Nel pacchetto del modello sono presenti le immagini da utilizzare come texture e il file OBJ contiene le coordinate per
+    applicarle al modello. Tuttavia, ritenendo troppo oneroso implementare una funzione per il parsing delle coordinate
+    texture presenti nel file OBJ, ho optato per una soluzione più comoda: il file <i>textures.dat</i> in
+    <i>project/assets/ship/</i> contiene una mappa, costruita manualmente da me, tra identificativo della faccia e
+    numero della texture da applicare ad essa. Il calcolo delle coordinate texture è effettuato dal programma secondo
+    la modalità <i>OBJECT LINEAR</i>.</br>
+    Con qualche imprecisione, è stato replicato l'aspetto originale della barca.
+</p>
+<h5>Foto personale</h5>
+<p>
+    Come richiesto dalle specifiche, sulle fiancate della barca è stata apposta una mia foto personale.
+</p>
+<a href="foto_su_mesh.png">
+    <img src="foto_su_mesh.png">
+</a>
+<h3>Ambiente di gioco</h3>
+<p>
+    La topologia dell'ambiente di gioco, ovvero il mare su cui naviga la barca e il cielo, è rimasta sostanzialmente
+    invariata rispetto al progetto di partenza: il mare è un piano suddiviso in poligoni bidimensionali e il cielo è una
+    sfera.
+</p>
+<h4>Mare</h4>
+<a id="funzioni-obbligatorie">
+    <h2>Funzioni grafiche obbligatorie</h2>
+</a>
+<a id="come-si-gioca">
+    <h2>Come si gioca</h2>
+</a>
 </body>
 </html>
