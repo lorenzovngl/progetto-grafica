@@ -16,16 +16,27 @@ private:
     Enviroment *mEnviroment;
 public:
     bool isPaused;
-    Game(Ship*, Enviroment*);
+
+    Game(Ship *, Enviroment *);
+
     int getGameTime();
+
     int getScore();
+
     int getScoreLimit();
+
     void detectCollision();
+
     void go();
+
     void reset();
+
     bool isFinished();
+
     void togglePause();
+
     void pause();
+
     void resume();
 };
 

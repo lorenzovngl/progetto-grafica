@@ -6,6 +6,7 @@ private:
     GLfloat color[4];
 public:
     Fog();
+
     void render();
 };
 

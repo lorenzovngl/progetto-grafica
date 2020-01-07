@@ -29,7 +29,9 @@ private:
     Texture *textures[COUNT_TEXTURES];
 public:
     bool loadTexture(int id);
+
     void enableTexture(int id);
+
     void printActiveTexture();
 };
 

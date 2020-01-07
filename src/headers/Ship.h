@@ -14,31 +14,35 @@ private:
     ShaderParams *mShaderParams;
     Options *options;
     Frontier *mFrontier;
-    void DrawHeadlight(float x, float y, float z, int lightN) const;
+
     void enableTilt();
+
 public:
     Controller controller;
-    Ship(TextureManager *textureManager, ShadowMapper *shadowMapper, ShaderParams *shaderParams, Options *options, Frontier *frontier);
+
+    Ship(TextureManager *textureManager, ShadowMapper *shadowMapper, ShaderParams *shaderParams, Options *options,
+         Frontier *frontier);
+
     // Metodi
     void Init(); // inizializza variabili
     void reset();
+
     void render(bool texture_enabled); // disegna a schermo
     void DoStep(); // computa un passo del motore fisico
-    ShipMesh* getMesh();
+    ShipMesh *getMesh();
 
     // STATO DELLA BARCA
     // (DoStep fa evolvere queste variabili nel tempo)
     float px, py, pz, facing; // posizione e orientamento
-    float mozzoA, mozzoP, sterzo; // stato interno
+    float sterzo; // stato interno
     float vx, vy, vz; // velocita' attuale
 
     float tilt_angle_x, tilt_angle_z;       //Angoli di inclinazione
 
-    // STATS DELLA MACCHINA
+    // STATISTICHE DELLA BARCA
     // (di solito rimangono costanti)
-    float velSterzo, velRitornoSterzo, accMax, attrito,
-            raggioRuotaA, raggioRuotaP, grip,
-            attritoX, attritoY, attritoZ; // attriti
+    float velSterzo, velRitornoSterzo, accMax,
+            grip, attritoX, attritoY, attritoZ;
 };
 
 #endif

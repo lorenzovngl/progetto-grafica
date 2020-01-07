@@ -18,15 +18,18 @@
 
 class ShaderParams {
 private:
-    ShadowMapper* mShadowMapper;
+    ShadowMapper *mShadowMapper;
 public:
     char colorParam[20];
     char colorOrTextureParam[20];
     char genCoordsParam[20];
     char overlay[20];
-    ShaderParams(ShadowMapper* shadowMapper);
-    void setParam(char* param, int value);
-    void setParam(char* param, float value[]);
+
+    ShaderParams(ShadowMapper *shadowMapper);
+
+    void setParam(char *param, int value);
+
+    void setParam(char *param, float value[]);
 };
 
 

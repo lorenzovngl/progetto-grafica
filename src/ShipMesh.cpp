@@ -20,7 +20,6 @@
 
 #include "../lib/GCGraLib2/GCGraLib2.h"
 #include "headers/Mesh.h"
-#include "headers/texture.h"
 #include "headers/glm.h"
 #include "headers/Texture.h"
 #include "headers/ShipMesh.h"

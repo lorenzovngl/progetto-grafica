@@ -8,22 +8,29 @@
 
 class Buoy {
 private:
-    Mesh* m_mesh;
-    TextureManager* textureManager;
-    ShadowMapper* shadowMapper;
-    ShaderParams* mShaderParams;
+    Mesh *m_mesh;
+    TextureManager *textureManager;
+    ShadowMapper *shadowMapper;
+    ShaderParams *mShaderParams;
     Options *options;
     bool active;
     float m_coord_x;
     float m_coord_z;
     int id;
 public:
-    Buoy(int, float, float, TextureManager *textureManager, ShadowMapper *shadowMapper, ShaderParams* shaderParams, Options *options);
-    Mesh* getMesh();
+    Buoy(int, float, float, TextureManager *textureManager, ShadowMapper *shadowMapper, ShaderParams *shaderParams,
+         Options *options);
+
+    Mesh *getMesh();
+
     float getCoordX();
+
     float getCoordZ();
+
     void render();
+
     bool isActive();
+
     void disable();
 };
 

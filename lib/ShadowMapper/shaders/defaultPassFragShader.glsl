@@ -73,9 +73,6 @@ void main() {
     } else {
         gl_FragColor = ambient + diffuse + specular + vec4(u_color.rgb*shadowFactor, u_color.a);
     }
-    if (v_vertex.y < 0.4){
-        gl_FragColor = mix(gl_FragColor, vec4(0, 0, 1, 1), 0.5);
-    }
     if (u_fogEnabled == 1){
         float distance = distance(u_cameraViewMatrix*v_position, v_position);
         float alpha = getFogFactor(distance, v_vertex.y);

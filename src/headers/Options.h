@@ -9,13 +9,21 @@ private:
     bool shadersEnabled;
 public:
     Options();
+
     bool areWireframesEnabled();
+
     bool areShadowsEnabled();
+
     bool isFogEnabled();
+
     bool areShadersEnabled();
+
     void toggleWireframes();
+
     void toggleShadows();
+
     void toggleFog();
+
     void toggleShaders();
 };
 

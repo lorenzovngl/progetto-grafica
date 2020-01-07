@@ -35,7 +35,7 @@ public:
 
     void drawSky();
 
-    void render(float, float, float, bool texture_enabled);
+    void renderSea(float, float, float, bool texture_enabled);
 
     void reset();
 };

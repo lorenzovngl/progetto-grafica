@@ -18,9 +18,13 @@ public:
     float cameraPos[3];
     float targetPos[3];
     float viewMatrix[16];
+
     Camera();
+
     int getType();
+
     void change(Ship, float, float, float);
+
     void set(Ship, float, float, float);
 };
 

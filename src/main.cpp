@@ -127,19 +127,9 @@ void rendering(SDL_Window *window) {
     // Important: the ffp must recalculate internally lightDirectionEyeSpace based on vMatrix [=> every frame]
     glLightfv(GL_LIGHT0, GL_POSITION, shadowMapper->lightDirection);
 
-    if (options->isFogEnabled()){
-        //fog->render();
-    }
-
     // view Matrix inverse (it's the camera matrix). Used twice below (and very important to keep in any case).
     // We can use Helper_InvertMatrixFast(...) instead of Helper_InvertMatrix(...) here [No scaling inside and no projection matrix]
     Helper_InvertMatrixFast(vMatrixInverse, camera->viewMatrix);
-
-    /*for (int i = 0; i < 4; i++){
-        printf("%f %f %f %f\n", camera->viewMatrix[i*4], camera->viewMatrix[i*4+1],
-               camera->viewMatrix[i*4+2], camera->viewMatrix[i*4+3]);
-    }
-    printf("\n");*/
 
     // Draw to Shadow Map
     Helper_GetLightViewProjectionMatrix(lvpMatrix,
@@ -209,7 +199,7 @@ void rendering(SDL_Window *window) {
         shaderParams->setParam(shaderParams->overlay, 0);
     }
     ship->render(true);
-    enviroment->render(ship->px, ship->py, ship->pz, true);
+    enviroment->renderSea(ship->px, ship->py, ship->pz, true);
     enviroment->renderBuoys();
     enviroment->drawSky();
     glPopMatrix();
@@ -218,9 +208,6 @@ void rendering(SDL_Window *window) {
         glBindTexture(GL_TEXTURE_2D, 0);
         glActiveTexture(GL_TEXTURE0);
     }
-    /*glActiveTexture(GL_TEXTURE0);
-    shadowMapper->showShadowMask(scrH, scrW);
-    glActiveTexture(GL_TEXTURE1);*/
 
     frontier->render();
     game->detectCollision();
@@ -237,11 +224,7 @@ void rendering(SDL_Window *window) {
         hud->displayPauseMessage(viewportWidth, viewportHeight);
     }
 
-    // attendiamo la fine della rasterizzazione di
-    // tutte le primitive mandate
-
     glFinish();
-    // ho finito: buffer di lavoro diventa visibile
     SDL_GL_SwapWindow(window);
 }
 
@@ -307,7 +290,6 @@ int main(int argc, char *argv[]) {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHT1);
     glEnable(GL_NORMALIZE); // rinormalizza le normali prima di usarle
     glFrontFace(GL_CW); // consideriamo Front Facing le facce ClockWise
     glEnable(GL_COLOR_MATERIAL);
@@ -379,15 +361,12 @@ int main(int argc, char *argv[]) {
                             } else if (e.key.keysym.sym >= SDLK_KP_1 && e.key.keysym.sym <= SDLK_KP_0){
                                 strncat(userInputBuffer, &keypad[e.key.keysym.sym - SDLK_KP_1], 1);
                             } else if (e.key.keysym.sym == SDLK_BACKSPACE){
-                                printf("%d\n", strlen(userInputBuffer) > 1);
                                 if (strlen(userInputBuffer) > 0){
                                     userInputBuffer[strlen(userInputBuffer)-1] = '\0';
                                 }
                             }
-                            printf("%s, %d\n", userInputBuffer, (int) strlen(userInputBuffer));
                         } else if (strtol(userInputBuffer, &pEnd, 10) >= 1 && strtol(userInputBuffer, &pEnd, 10) <= 100){
                             enviroment->buoysCount = (int) strtol(userInputBuffer, &pEnd, 10);
-                            printf("Bouys count set to %d\n", enviroment->buoysCount);
                             inputModeEnabled = false;
                             game->reset();
                         }
@@ -526,6 +505,7 @@ int main(int argc, char *argv[]) {
             }
         }
     }
+    shadowMapper->DestroyGL();
     SDL_GL_DeleteContext(mainContext);
     SDL_DestroyWindow(window);
     IMG_Quit();

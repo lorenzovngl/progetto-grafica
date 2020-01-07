@@ -6,9 +6,13 @@ private:
     int m_textbind;
 public:
     char *filename;
+
     Texture(int);
+
     bool loadTexture();
+
     int getBind();
+
     static void printActiveTexture();
 };
 

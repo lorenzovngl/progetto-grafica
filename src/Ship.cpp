@@ -75,20 +75,11 @@ void Ship::DoStep() {
     vym *= attritoY;
     vzm *= attritoZ;
 
-    // l'orientamento della macchina segue quello dello sterzo
+    // l'orientamento segue quello dello sterzo
     // (a seconda della velocita' sulla z)
-    float oldFacing = facing;
     facing = facing - (vzm * grip) * sterzo;
 
-    // rotazione mozzo ruote (a seconda della velocita' sulla z)
-    float da; //delta angolo
-    da = (360.0 * vzm) / (2.0 * M_PI * raggioRuotaA);
-    mozzoA += da;
-    da = (360.0 * vzm) / (2.0 * M_PI * raggioRuotaP);
-    mozzoP += da;
-
     // ritorno a vel coord mondo
-    float oldVx = vx, oldVy = vy, oldVz = vz;
     vx = +cosf * vxm + sinf * vzm;
     vy = vym;
     vz = -sinf * vxm + cosf * vzm;
@@ -106,11 +97,11 @@ void Ship::DoStep() {
 void Ship::Init() {
     carlinga = new ShipMesh((char *) "assets/ship/fishing_ship.obj", this->textureManager,
             this->shadowMapper, this->mShaderParams, options);
-    // inizializzo lo stato della macchina
+    // inizializzo lo stato
     px = pz = facing = 0; // posizione e orientamento
     py = 0.0;
 
-    mozzoA = mozzoP = sterzo = 0;   // stato
+    sterzo = 0;   // stato
     vx = vy = vz = 0;      // velocita' attuale
     // inizializzo la struttura di controllo
     controller.Init();
@@ -123,47 +114,19 @@ void Ship::Init() {
     // attriti: percentuale di velocita' che viene mantenuta
     // 1 = no attrito
     // <<1 = attrito grande
-    attritoZ = 0.991;  // piccolo attrito sulla Z (nel senso di rotolamento delle ruote)
-    attritoX = 0.8;  // grande attrito sulla X (per non fare slittare la macchina)
+    attritoZ = 0.991;  // piccolo attrito sulla Z
+    attritoX = 0.8;  // grande attrito sulla X
     attritoY = 1.0;  // attrito sulla y nullo
 
     // Nota: vel max = accMax*attritoZ / (1-attritoZ)
 
-    raggioRuotaA = 0.25;
-    raggioRuotaP = 0.35;
-
-    grip = 0.45; // quanto il facing macchina si adegua velocemente allo sterzo
+    grip = 0.45; // quanto il facing si adegua velocemente allo sterzo
 }
 
 void Ship::reset(){
     facing = 0;
     px = py = pz = 0;
     vx = vy = vz = 0;
-}
-
-// attiva una luce di openGL per simulare un faro della macchina
-void Ship::DrawHeadlight(float x, float y, float z, int lightN) const {
-    int usedLight = GL_LIGHT1 + lightN;
-
-    glEnable(usedLight);
-
-    float col0[4] = {0.8, 0.8, 0.0, 1};
-    glLightfv(usedLight, GL_DIFFUSE, col0);
-
-    float col1[4] = {0.5, 0.5, 0.0, 1};
-    glLightfv(usedLight, GL_AMBIENT, col1);
-
-    float tmpPos[4] = {x, y, z, 1}; // ultima comp=1 => luce posizionale
-    glLightfv(usedLight, GL_POSITION, tmpPos);
-
-    float tmpDir[4] = {0, 0, -1, 0}; // ultima comp=1 => luce posizionale
-    glLightfv(usedLight, GL_SPOT_DIRECTION, tmpDir);
-
-    glLightf(usedLight, GL_SPOT_CUTOFF, 30);
-    glLightf(usedLight, GL_SPOT_EXPONENT, 5);
-
-    glLightf(usedLight, GL_CONSTANT_ATTENUATION, 0);
-    glLightf(usedLight, GL_LINEAR_ATTENUATION, 1);
 }
 
 void Ship::enableTilt(){
@@ -204,25 +167,15 @@ void Ship::enableTilt(){
 // disegna a schermo
 void Ship::render(bool texture_enabled) {
     // sono nello spazio mondo
-
-    //Utils::drawAxis(); // disegno assi spazio mondo
     glPushMatrix();
 
     glTranslatef(px, py, pz);
     glRotatef(facing, 0, 1, 0);
 
-    //Utils::drawAxis();
-
-    // sono nello spazio MACCHINA
-    //Utils::drawAxis(); // disegno assi spazio macchina
-
-//  DrawHeadlight(-0.3,0,-1, 0); // accendi faro sinistro
-//  DrawHeadlight(+0.3,0,-1, 1); // accendi faro destro
-
-    // disegna la carliga con una mesh
-    //glPushMatrix();
+    // sono nello spazio del modello
     glScalef(0.05, 0.05, 0.05); // patch: riscaliamo la mesh di 1/10
 
+    // TODO: Cambiano colore alle boe, gestire
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

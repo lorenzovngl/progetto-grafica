@@ -164,10 +164,13 @@ void Enviroment::drawNearSea(float ship_x, float ship_y, float ship_z) {
 
     glPushMatrix();
     glScalef(scale_factor, scale_factor, scale_factor);
-    //glTranslatef(ship_x/scale_factor, ship_y/scale_factor, ship_z/scale_factor);
 
     float s[4] = {0.1, 0, 0, 0};
     float t[4] = {0, 0, 0.1, 0};
+    if (!options->areShadersEnabled()){
+        s[0] = 0.02;
+        t[2] = 0.02;
+    }
     glTexGenfv(GL_S, GL_OBJECT_PLANE, s);
     glTexGenfv(GL_T, GL_OBJECT_PLANE, t);
     GLint genCoords = glGetUniformLocation(shadowMapper->defaultPass.program, "u_genCoords");
@@ -209,24 +212,25 @@ void Enviroment::drawNearSea(float ship_x, float ship_y, float ship_z) {
 
             if (options->areWireframesEnabled()){
                 glBegin(GL_LINE_LOOP);
-            } else {
+            } else if (options->areShadersEnabled()){
                 glBegin(GL_TRIANGLES);
-            }
-            glVertex3d(x0, y00, z0);
-            glVertex3d(x1, y10, z0);
-            glVertex3d(x1, y11, z1);
-            glEnd();
+                glVertex3d(x1, y11, z1);
+                glVertex3d(x0, y00, z0);
+                glVertex3d(x0, y01, z1);
 
-            if (options->areWireframesEnabled()){
-                glBegin(GL_LINE_LOOP);
+                glVertex3d(x0, y00, z0);
+                glVertex3d(x1, y10, z0);
+                glVertex3d(x1, y11, z1);
             } else {
-                glBegin(GL_TRIANGLES);
+                // Quando lo shader non è attivo viene utilizzata questa modalità di disegno perché l'altra
+                // genera problemi con le ombre.
+                glBegin(GL_QUADS);
+                glVertex3d(x0, y00, z0);
+                glVertex3d(x1, y10, z0);
+                glVertex3d(x1, y11, z1);
+                glVertex3d(x0, y01, z1);
             }
-            glVertex3d(x1, y11, z1);
-            glVertex3d(x0, y00, z0);
-            glVertex3d(x0, y01, z1);
             glEnd();
-
         }
     }
     glPopMatrix();
@@ -261,7 +265,7 @@ void Enviroment::renderBuoys(){
     }
 }
 
-void Enviroment::render(float ship_x, float ship_y, float ship_z, bool texture_enabled) {
+void Enviroment::renderSea(float ship_x, float ship_y, float ship_z, bool texture_enabled) {
     GLint colorOrTexture = glGetUniformLocation(shadowMapper->defaultPass.program, "u_colorOrTexture");
     GLint u_color = glGetUniformLocation(shadowMapper->defaultPass.program, "u_color");
     glUniform1i(colorOrTexture, 1);
@@ -271,9 +275,6 @@ void Enviroment::render(float ship_x, float ship_y, float ship_z, bool texture_e
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
     glEnable(GL_TEXTURE_GEN_S);
     glEnable(GL_TEXTURE_GEN_T);
-    // ulilizzo le coordinate OGGETTO
-    // cioe' le coordnate originali, PRIMA della moltiplicazione per la ModelView
-    // in modo che la texture sia "attaccata" all'oggetto, e non "proiettata" su esso
     glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
     glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
     glEnable(GL_BLEND);
@@ -284,6 +285,9 @@ void Enviroment::render(float ship_x, float ship_y, float ship_z, bool texture_e
     drawFarSea(ship_x, ship_y, ship_z);
     glUniform1i(colorOrTexture, 1);
     glDisable(GL_BLEND);
+    glDisable(GL_TEXTURE_GEN_T);
+    glDisable(GL_TEXTURE_GEN_S);
+    glDisable(GL_TEXTURE_2D);
 }
 
 void Enviroment::reset(){

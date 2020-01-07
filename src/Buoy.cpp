@@ -61,8 +61,8 @@ void Buoy::render() {
     float motion = (float) SDL_GetTicks()/500 + this->id;
     const float H = 0.05;
     glTranslatef(getCoordX(), sin(motion)*H - H/2, getCoordZ());
-    //Utils::drawAxis();
     glScalef(scaleFactor, scaleFactor, scaleFactor);
+
     // Asta della boa
     int base = 2;
     int height = 100;
@@ -104,17 +104,17 @@ void Buoy::render() {
     glEnd();
 
     // Boa
-    mShaderParams->setParam(mShaderParams->colorOrTextureParam, TEXTURE_MODE);
     Utils::drawSphere(20, 20, 20, options->areWireframesEnabled());
     m_mesh->ComputeBoundingBox(getCoordX(), 0, getCoordZ(), scaleFactor, 0);
 
     // Simulo direzione del vento
     glRotatef(45, 0, 1, 0);
 
-    //glActiveTexture(GL_TEXTURE7);
+    mShaderParams->setParam(mShaderParams->colorOrTextureParam, TEXTURE_MODE);
     textureManager->enableTexture(TEXTURE_FLAG_ITALY);
     glEnable(GL_TEXTURE_2D);
     glColor3f(1, 1, 1);
+
     // Bandierina
     mShaderParams->setParam(mShaderParams->genCoordsParam, EXPLICIT_COORDS);
     float flag_height = 40;
