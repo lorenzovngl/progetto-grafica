@@ -1,0 +1,44 @@
+# Mappa i poligoni del modello con le texture
+
+# A - B -> T
+# A = Primo triangolo dell'intervallo
+# B = Ultimo triangolo dell'intervallo
+# T = Indice della texture definito in /src/headers/Texture.h
+
+# Eliche - disegnate a parte
+# 15100 - 15500 -> 4
+# 34001 - 34250 -> 4
+
+# Timoni - disegnati a parte
+# 16600 - 17000 -> 4
+# 35800 - 36250 -> 4
+
+# Parte più bassa dello scafo
+15501 - 16599 -> 4
+17651 - 17900 -> 4
+34251 - 35500 -> 4
+
+# Pavimentazione in legno
+17001 - 17450 -> 5
+
+# Parte intermedia dello scafo
+17451 - 17650 -> 11
+
+# Unknown
+#17901 - 18699
+
+# Parte superiore dello scafo
+18700 - 20000 -> 12
+
+# Componenti vari: scalini, oggetti posizionati sul ponte, ecc
+20001 - 34000 -> 6
+
+# Ringhiere
+37000 - 43000 -> 9
+45001 - 52000 -> 9
+
+#Oblò
+50801 - 51000 -> 8
+
+56000 - 60000 -> 12
+
