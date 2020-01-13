@@ -5,6 +5,10 @@
         img {
             height: 300px;
         }
+
+        figcaption {
+            font-size: small;
+        }
     </style>
 </head>
 <body>
@@ -76,7 +80,10 @@ Università di Bologna
     Come richiesto dalle specifiche, sulle fiancate della barca è stata apposta una mia foto personale.
 </p>
 <a href="foto_su_mesh.png">
-    <img src="foto_su_mesh.png">
+    <figure>
+        <img src="foto_su_mesh.png">
+        <figcaption>Foto personale applicata sulle fiancate della barca. Click per ingrandire.</figcaption>
+    </figure>
 </a>
 <h3>Ambiente di gioco</h3>
 <p>
@@ -90,6 +97,45 @@ Università di Bologna
 </a>
 <a id="come-si-gioca">
     <h2>Come si gioca</h2>
+</a>
+<p>
+    Lo scopo del gioco è raccogliere tutte le boe nel minor tempo possibile.</br>
+    Appena avviata l'applicazione l'utente viene mostrata la seguente schermata:
+</p>
+<a href="schermata_iniziale.png">
+    <figure>
+        <img src="schermata_iniziale.png">
+        <figcaption>Schermata iniziale. Click per ingrandire.</figcaption>
+    </figure>
+</a>
+<p>
+    Nella finestra vengono mostrate le informazioni relative allo scopo del gioco, ai comandi, l'indicazione di premere
+    <i>B</i> se si vuole cambiare il numero di boe (l'utente può inserire un numero arbiatrario tra 1 e 100 compresi)
+    e l'azione da fare per iniziare il gioco e contestualmente attivare il cronometro: muovere la barca.</br>
+    Sul HUD (Heads Up Display), in basso a destra, viene mostrata una mappa del mondo di gioco in cui la freccia rossa rappresenta la barca,
+    la sua posizione e il suo orientamento. I punti verdi sono le boe che rimangono da catturare.
+    In alto a sinistra si trovano i pulsanti da premere per i relativi comandi (pausa e lista dei comandi), mentre sempre
+    in alto ma sulla destra sono mostrati gli FPS.</br>
+    In basso a sinistra è presente il contatore delle boe catturate.</br>
+    Durante il gioco la schermata appare in questo modo:
+</p>
+<a href="in_game.png">
+    <figure>
+        <img src="in_game.png">
+        <figcaption>Schermata di gioco in-game. Click per ingrandire.</figcaption>
+    </figure>
+</a>
+<p>
+    Durante il gioco il giocatore può mettere in pausa e riprendere in un istante successivo.
+    <i>Il gioco non possiede un sistema di salvataggio e quindi quando si chiude l'applicazione tutti i salvataggi andranno persi.</i>
+    Una volta che l'utente avrà raccolto tutte le boe il gioco termina mostrando il tempo complessivo; da questa schermata
+    si può premere <i>N</i> avviando una nuova sessione di gioco.
+</p>
+<a href="gioco_finito.png">
+    <figure>
+        <img src="gioco_finito.png">
+        <figcaption>Schermata di riepilogo a conclusione del gioco. Click per ingrandire.</figcaption>
+    </figure>
 </a>
 </body>
 </html>
