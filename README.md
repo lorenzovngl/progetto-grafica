@@ -1,4 +1,4 @@
-# Open Sailing
+# Open Sailing - A Ship Game in OpenGL
 *Autore: Lorenzo Vainigli*
 
 *Corso di Grafica a.a. 2017/18, Laurea Magistrale in Informatica*
@@ -9,4 +9,4 @@ Open Sailing è un piccolo gioco realizzato con le librerie SDL2 e OpenGL. L'ute
 un'imbarcazione nel mezzo al mare ed è circondato da numerose boe a cui sono fissate delle bandiere. Il suo obiettivo è
 raccogliere tutte le boe nel minor tempo possibile.
 
-![In-game screenshot](doc/in_game.png)
+![In-game screenshot](doc/images/in_game.png)
