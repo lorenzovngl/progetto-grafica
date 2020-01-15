@@ -9,6 +9,11 @@
             line-height: 1.5;
         }
 
+        canvas {
+            display: block;
+            margin: auto;
+        }
+
         img {
             display: block;
             margin: auto;
@@ -55,11 +60,14 @@
         <li>Ombre e shaders</li>
         <li>Trasparenze</li>
     </ul>
-    <a href="#funzioni-obbligatorie">
-    <li>Funzioni grafiche obbligatorie</li>
+    <a href="#richieste-obbligatorie">
+        <li>Richieste grafiche obbligatorie</li>
+    </a>
+    <a href="#ciclo-di-vita">
+        <li>Ciclo di vita dell'applicazione</li>
     </a>
     <a href="#come-si-gioca">
-    <li>Come si gioca</li>
+        <li>Come si gioca</li>
     </a>
 </ul>
 <a id="intro">
@@ -198,8 +206,48 @@
     Questa parte, che compone le zone che vanno dagli estremi del mare di prossimità al limite del mondo di gioco (definito
     dalla sfera che crea il cielo) è composta da quadrati non animati e non suddivisi in triangoli.
 </p>
-<a id="funzioni-obbligatorie">
-    <h2>Funzioni grafiche obbligatorie</h2>
+<a id="richieste-obbligatorie">
+    <h2>Richieste grafiche obbligatorie</h2>
+</a>
+<p>
+<li>
+    <i>Geometria 3D e vista (gli oggetti devono essere visualizzati in proiezione prospettica)</i>: il gioco è ambientato
+    in un mondo tridimensionale, mentre la mappa sullo schermo è stata realizzata in due dimensioni, come opportuno.
+</li>
+<li>
+    <i>Input utente (si gestisca l'interazione 3D usando sia la tastiera che il mouse e opzionalmente un joypad)</i>:
+    Il gioco gestisce l'input utente da tastiera per muovere la barca, mentre l'input per il joypad non è stato cambiato
+    rispetto a <i>progettoCar3</i>.
+</li>
+<li>
+    <i>Illuminazione e sfumatura (gli oggetti 3D devono essere illuminati da almeno una luce)</i>: è presente una fonte luminosa che imita
+    la luce solare. Il modello di illuminazione disponibile nella modalità di rendering avanzato è il <i>modello di Phong</i>.
+</li>
+<li>
+    <i>Texture mapping, sia dando le coordinate texture, che generandole in modo automatico (almeno due oggetti 3D
+        devono avere una texture applicata e almeno una deve essere una foto personale)</i>: Ad eccezione delle boe (esclusa la
+    bandierina) tutti gli elementi della scena hanno delle texture applicate. La barca, il mare e il cielo hanno coordinate
+    texture generate in modo automatico; le bandierine delle boe hanno coordinate texture inserite manualmente.
+</li>
+<li>
+    <i>Navigazione nella scena (il giocatore deve avere un indicatore visuale (mappa) di dov'e' e dove puo' andare)</i>:
+    la mappa in basso a destra offre una panoramica di tutto l'ambiente di gioco.
+</li>
+<li>
+    <i>Pannello di controllo su schermo (si preveda un pannello di controllo in cui usando testo e grafica 2D si visualizzino
+        le funzioni utente, lo scoreboard, ecc.)</i>: TODO
+</li>
+<li>
+    <i>Advanced rendering (opzionale) (da menu' si preveda l'attivazione/disattivazione di almeno una tecnica di resa avanzata
+        realizzabile in opengl come per esempio: ombre, trasparenze, riflessioni, bump-mapping, ecc.)</i>: Il rendering
+    avanzato è attivo di default ma l'utente può abilitarlo o disabilitarlo in qualsiasi momento. Il rendering avanzato
+    attiva le ombre e le riflessioni (queste ultime usando il <i>modello di Phong</i>).
+</li>
+</p>
+<a id="ciclo-di-vita">
+    <h2>Ciclo di vita dell'applicazione</h2>
+    <canvas id="lifecycle" width="700" height="500">
+    </canvas>
 </a>
 <a id="come-si-gioca">
     <h2>Come si gioca</h2>
@@ -243,5 +291,6 @@
         <figcaption>Schermata di riepilogo a conclusione del gioco. Click per ingrandire.</figcaption>
     </figure>
 </a>
+<script src="doc.js"></script>
 </body>
 </html>
