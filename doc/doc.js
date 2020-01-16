@@ -70,7 +70,7 @@ ctx.beginPath();
 ctx.arc(c.x + 340, c.y + 150, 100, 0.3 * Math.PI, 0.7 * Math.PI);
 ctx.stroke();
 ctx.fillText("Visualizzazione", c.x + 405, c.y + 180);
-ctx.fillText("dello scoreboard", c.x + 400, c.y + 200);
+ctx.fillText("dello leaderboard", c.x + 400, c.y + 200);
 ctx.beginPath();
 ctx.arc(c.x + 410, c.y + 220, state_radius, 0, 2 * Math.PI);
 ctx.stroke();

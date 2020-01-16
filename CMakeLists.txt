@@ -19,6 +19,7 @@ add_executable(ProgettoGrafica
         project/src/headers/glm.h
         project/src/headers/GLText.h
         project/src/headers/HUD.h
+        project/src/headers/Leaderboard.h
         project/src/headers/Mesh.h
         project/src/headers/Options.h
         project/src/headers/point3.h
@@ -39,6 +40,7 @@ add_executable(ProgettoGrafica
         project/src/glm.cpp
         project/src/GLText.cpp
         project/src/HUD.cpp
+        project/src/Leaderboard.cpp
         project/src/main.cpp
         project/src/Mesh.cpp
         project/src/Options.cpp

@@ -4,6 +4,7 @@
 #include "Ship.h"
 #include "Buoy.h"
 #include "Enviroment.h"
+#include "Leaderboard.h"
 
 class Game {
 private:
@@ -14,10 +15,14 @@ private:
     int mScoreLimit;
     Ship *mShip;
     Enviroment *mEnviroment;
+    Leaderboard *mLeaderboard;
+    bool insertedInLeaderboard;
 public:
     bool isPaused;
 
-    Game(Ship *, Enviroment *);
+    Game(Ship *ship, Enviroment *enviroment);
+
+    Leaderboard *getLeaderboard();
 
     int getGameTime();
 

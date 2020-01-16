@@ -27,8 +27,8 @@ LIBS = -lGL -lGLU -lglut -lSDL2 -lSDL2_image -lSDL2_ttf -lGLEW -lglfw -lm
 endif
 endif
 
-OBJ = out/helper_functions.o out/ShadowMapper.o out/main.o out/BoundingBox.o out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/Fog.o out/Frontier.o out/Game.o out/glm.o out/GLText.o out/HUD.o out/Mesh.o out/Options.o out/ShaderParams.o out/Ship.o out/ShipMesh.o out/Texture.o out/TextureManager.o out/Utils.o 
-LINKOBJ = out/helper_functions.o out/ShadowMapper.o out/main.o out/BoundingBox.o out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/Fog.o out/Frontier.o out/Game.o out/glm.o out/GLText.o out/HUD.o out/Mesh.o out/Options.o out/ShaderParams.o out/Ship.o out/ShipMesh.o out/Texture.o out/TextureManager.o out/Utils.o 
+OBJ = out/helper_functions.o out/ShadowMapper.o out/main.o out/BoundingBox.o out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/Fog.o out/Frontier.o out/Game.o out/glm.o out/GLText.o out/HUD.o out/Leaderboard.o out/Mesh.o out/Options.o out/ShaderParams.o out/Ship.o out/ShipMesh.o out/Texture.o out/TextureManager.o out/Utils.o 
+LINKOBJ = out/helper_functions.o out/ShadowMapper.o out/main.o out/BoundingBox.o out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/Fog.o out/Frontier.o out/Game.o out/glm.o out/GLText.o out/HUD.o out/Leaderboard.o out/Mesh.o out/Options.o out/ShaderParams.o out/Ship.o out/ShipMesh.o out/Texture.o out/TextureManager.o out/Utils.o 
 
 RM = rm -f
 
@@ -81,6 +81,9 @@ out/GLText.o: src/headers/GLText.h src/GLText.cpp
 
 out/HUD.o: src/headers/HUD.h src/HUD.cpp
 	$(CPP) -c -Wno-deprecated $(FRMPATH) src/HUD.cpp -o out/HUD.o
+
+out/Leaderboard.o: src/headers/Leaderboard.h src/Leaderboard.cpp
+	$(CPP) -c -Wno-deprecated $(FRMPATH) src/Leaderboard.cpp -o out/Leaderboard.o
 
 out/Mesh.o: src/headers/Mesh.h src/Mesh.cpp
 	$(CPP) -c -Wno-deprecated $(FRMPATH) src/Mesh.cpp -o out/Mesh.o

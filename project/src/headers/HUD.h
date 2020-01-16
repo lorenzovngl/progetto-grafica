@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL_ttf.h>
 #include "Game.h"
+#include "Leaderboard.h"
 
 #define TEXTURE_TEXT 20
 
@@ -12,8 +13,12 @@ private:
     TTF_Font *mFont25;
     TTF_Font *mFont40;
     Game *game;
+
+    void displayLeaderboardColumn(int col, Leaderboard::LBItem **items, int v_width, int v_height);
+
 public:
     bool isCommandsListVisibile;
+    bool isLeaderboardVisible;
 
     HUD(Game *);
 
@@ -28,7 +33,11 @@ public:
 
     void displayCommands(int v_width, int v_height);
 
+    void displayLeaderboard(Leaderboard *leaderboard, int v_width, int v_height);
+
     void toggleCommandsList();
+
+    void toggleLeaderboard();
 
     void askNumberOfBuoys(int v_width, int v_height, char *input);
 };

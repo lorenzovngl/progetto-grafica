@@ -24,10 +24,17 @@ Game::Game(Ship *ship, Enviroment *enviroment) {
     mEndTime = 0;
     mScore = 0;
     mScoreLimit = enviroment->getBuoysCount();
-    this->mShip = ship;
-    this->mEnviroment = enviroment;
+    mShip = ship;
+    mEnviroment = enviroment;
+    mLeaderboard = new Leaderboard((char*) "Lorenzo");
+    mLeaderboard->setNumBuoys(enviroment->getBuoysCount());
+    insertedInLeaderboard = false;
     isPaused = false;
     mStartPauseTime = 0;
+}
+
+Leaderboard *Game::getLeaderboard() {
+    return mLeaderboard;
 }
 
 int Game::getGameTime() {
@@ -76,7 +83,9 @@ void Game::reset() {
     mShip->reset();
     mEnviroment->reset();
     mScoreLimit = mEnviroment->getBuoysCount();
+    mLeaderboard->setNumBuoys(mEnviroment->getBuoysCount());
     isPaused = false;
+    insertedInLeaderboard = false;
 }
 
 bool Game::isFinished() {
@@ -88,6 +97,10 @@ bool Game::isFinished() {
     }
     if (isFinished) {
         mEndTime = getGameTime();
+        if (!insertedInLeaderboard){
+            mLeaderboard->insert(mEndTime);
+            insertedInLeaderboard = true;
+        }
     }
     return isFinished;
 }

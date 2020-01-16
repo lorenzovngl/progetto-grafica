@@ -32,6 +32,7 @@ extern "C" {
 #include "headers/Fog.h"
 #include "headers/ShaderParams.h"
 #include "headers/Frontier.h"
+#include "headers/Leaderboard.h"
 
 
 int viewportWidth = 1024;
@@ -215,6 +216,8 @@ void rendering(SDL_Window *window) {
         hud->askNumberOfBuoys(viewportWidth, viewportHeight, userInputBuffer);
     } else if (hud->isCommandsListVisibile){
         hud->displayCommands(viewportWidth, viewportHeight);
+    }  else if (hud->isLeaderboardVisible){
+        hud->displayLeaderboard(game->getLeaderboard(), viewportWidth, viewportHeight);
     } else if (game->getGameTime() == 0){
         hud->displayStartGameMessage(viewportWidth, viewportHeight);
     } else if (game->isFinished()){
@@ -343,6 +346,8 @@ int main(int argc, char *argv[]) {
                             inputModeEnabled = true;
                         } else if (e.key.keysym.sym == SDLK_c) {
                             hud->toggleCommandsList();
+                        } else if (e.key.keysym.sym == SDLK_l) {
+                            hud->toggleLeaderboard();
                         } else if (e.key.keysym.sym == SDLK_p && !hud->isCommandsListVisibile) {
                             game->togglePause();
                         } else if (e.key.keysym.sym == SDLK_UP || e.key.keysym.sym == SDLK_DOWN) {

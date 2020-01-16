@@ -38,6 +38,7 @@ HUD::HUD(Game *p_game) {
         fprintf(stderr, "Couldn't load font\n");
     }
     isCommandsListVisibile = false;
+    isLeaderboardVisible = false;
 }
 
 void drawRegularPolygon(float cx, float cy, float radius, int slices, float facing){
@@ -248,6 +249,113 @@ void HUD::displayCommands(int v_width, int v_height){
     glPopMatrix();
 }
 
+void HUD::displayLeaderboardColumn(int col, Leaderboard::LBItem** items, int v_width, int v_height){
+    char buffer[200];
+    GLText *text = new GLText(TEXTURE_TEXT, mFont18);
+    int i = 0;
+    int padding;
+    while (i < LEADERBOARD_LENGHT){
+        if (items[i] != nullptr) {
+            int millis, sec, min;
+            switch (col){
+                case 0:         // Posizione
+                    sprintf(buffer, "%d.", i+1);
+                    padding = 0;
+                    break;
+                case 1:         // Nome
+                    sprintf(buffer, "%s", items[i]->name);
+                    padding = 40;
+                    break;
+                case 2:         // Numero di boe
+                    sprintf(buffer, "%d", items[i]->numBuoys);
+                    padding = 150;
+                    break;
+                case 3:         // Tempo
+                    millis = items[i]->time;
+                    sec = millis / 1000;
+                    min = sec / 60;
+                    sprintf(buffer, "%02d:%02d:%03d", min, sec - min * 60, millis - sec * 1000 - min * 60);
+                    padding = 220;
+                    break;
+                case 4:         // Tempo / boe
+                    millis = items[i]->time / items[i]->numBuoys;
+                    sec = millis / 1000;
+                    min = sec / 60;
+                    sprintf(buffer, "%02d:%02d:%03d", min, sec - min * 60, millis - sec * 1000 - min * 60);
+                    padding = 340;
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            sprintf(buffer, "--");
+        }
+        text->setText(buffer, 255, 255, 255);
+        if (i < floor(LEADERBOARD_LENGHT/2)){
+            text->setPosition(v_width/2 - 450 + padding,v_height/1.5 - 30 * i);
+        } else {
+            text->setPosition(v_width/2 + 50 + padding,v_height/1.5 - 30 * (i - floor(LEADERBOARD_LENGHT/2)));
+        }
+        text->setAlignment(ALIGN_LEFT);
+        text->render();
+        i++;
+    }
+}
+
+void HUD::displayLeaderboard(Leaderboard *leaderboard, int v_width, int v_height) {
+    printf("Display leaders\n");
+    Leaderboard::LBItem** items;
+
+    glPushMatrix();
+    glLoadIdentity();
+    Utils::setCoordToPixel(v_width, v_height);
+
+    items = leaderboard->read();
+    GLText *text = new GLText(TEXTURE_TEXT, mFont18);
+    // Posizione
+    text->setText((char*) "Pos", 255, 255, 255);
+    text->setPosition(v_width/2 - 450, v_height/1.5 + 40);
+    text->setAlignment(ALIGN_LEFT);
+    text->render();
+    text->setPosition(v_width/2 + 50, v_height/1.5 + 40);
+    text->render();
+    displayLeaderboardColumn(0, items, v_width, v_height);
+    // Nome
+    text->setText((char*) "Name", 255, 255, 255);
+    text->setPosition(v_width/2 - 410, v_height/1.5 + 40);
+    text->setAlignment(ALIGN_LEFT);
+    text->render();
+    text->setPosition(v_width/2 + 90, v_height/1.5 + 40);
+    text->render();
+    displayLeaderboardColumn(1, items, v_width, v_height);
+    // Numero di boe
+    text->setText((char*) "Buoys", 255, 255, 255);
+    text->setPosition(v_width/2 - 300, v_height/1.5 + 40);
+    text->setAlignment(ALIGN_LEFT);
+    text->render();
+    text->setPosition(v_width/2 + 200, v_height/1.5 + 40);
+    text->render();
+    displayLeaderboardColumn(2, items, v_width, v_height);
+    // Tempo
+    text->setText((char*) "Time", 255, 255, 255);
+    text->setPosition(v_width/2 - 230, v_height/1.5 + 40);
+    text->setAlignment(ALIGN_LEFT);
+    text->render();
+    text->setPosition(v_width/2 + 270, v_height/1.5 + 40);
+    text->render();
+    displayLeaderboardColumn(3, items, v_width, v_height);
+    // Tempo / boe
+    text->setText((char*) "Time/buoys", 255, 255, 255);
+    text->setPosition(v_width/2 - 110, v_height/1.5 + 40);
+    text->setAlignment(ALIGN_LEFT);
+    text->render();
+    text->setPosition(v_width/2 + 390, v_height/1.5 + 40);
+    text->render();
+    displayLeaderboardColumn(4, items, v_width, v_height);
+
+    glPopMatrix();
+}
+
 void HUD::toggleCommandsList(){
     if (isCommandsListVisibile){
         game->resume();
@@ -255,6 +363,15 @@ void HUD::toggleCommandsList(){
         game->pause();
     }
     isCommandsListVisibile = !isCommandsListVisibile;
+}
+
+void HUD::toggleLeaderboard(){
+    if (isLeaderboardVisible){
+        game->resume();
+    } else {
+        game->pause();
+    }
+    isLeaderboardVisible = !isLeaderboardVisible;
 }
 
 void HUD::askNumberOfBuoys(int v_width, int v_height, char *input) {
