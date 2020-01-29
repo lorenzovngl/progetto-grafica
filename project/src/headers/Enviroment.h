@@ -6,7 +6,7 @@
 #include "../../lib/ShadowMapper/ShadowMapper.h"
 #include "Options.h"
 
-#define DEFAULT_BUOYS_COUNT 50
+#define DEFAULT_BUOYS_COUNT 10
 #define BUOYS_COUNT_MAX 100
 
 class Enviroment {

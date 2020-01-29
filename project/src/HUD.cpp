@@ -34,11 +34,14 @@ HUD::HUD(Game *p_game) {
     mFont18 = TTF_OpenFont("assets/fonts/FreeSans.ttf", 18);
     mFont25 = TTF_OpenFont("assets/fonts/FreeSans.ttf", 25);
     mFont40 = TTF_OpenFont("assets/fonts/FreeSans.ttf", 40);
+    mFont100 = TTF_OpenFont("assets/fonts/FreeSans.ttf", 100);
     if (mFont18 == NULL || mFont25 == NULL || mFont40 == NULL) {
         fprintf(stderr, "Couldn't load font\n");
     }
     isCommandsListVisibile = false;
     isLeaderboardVisible = false;
+    bAskBuoys = false;
+    bAskUsername = true;
 }
 
 void drawRegularPolygon(float cx, float cy, float radius, int slices, float facing){
@@ -77,7 +80,7 @@ void HUD::display(int v_width, int v_height, float ship_cx, float ship_cy, float
     Utils::setCoordToPixel(v_width, v_height);
 
     GLText *text = new GLText(TEXTURE_TEXT, mFont18);
-    sprintf(string, "P - pause    C - Commands list");
+    sprintf(string, "P - pause    C - Commands list    L - Leaderboard");
     text->setText(string, 255,255,255);
     text->setPosition(20,v_height-10);
     text->setAlignment(ALIGN_LEFT);
@@ -93,7 +96,7 @@ void HUD::display(int v_width, int v_height, float ship_cx, float ship_cy, float
     int millis = game->getGameTime();
     int sec = millis/1000;
     int min = sec/60;
-    sprintf(string, "Time: %02d:%02d:%03d", min, sec-min*60, millis-sec*1000-min*60);
+    sprintf(string, "%s    %02d:%02d:%03d", game->getLeaderboard()->getUsename(), min, sec-min*60, millis-sec*1000-min*60);
     text->setText(string, 255,255,255);
     text->setPosition(v_width/2,v_height/8*7);
     text->setAlignment(ALIGN_CENTER);
@@ -129,6 +132,50 @@ void HUD::display(int v_width, int v_height, float ship_cx, float ship_cy, float
     drawRegularPolygon(mapCenterX, mapCenterY, 65, 50, 0);
 
     glEnable(GL_LIGHTING);
+    glPopMatrix();
+}
+
+void HUD::askUsername(int v_width, int v_height, char *input) {
+    char buffer[3][100];
+
+    glPushMatrix();
+    glLoadIdentity();
+    Utils::setCoordToPixel(v_width, v_height);
+
+    GLText *text = new GLText(TEXTURE_TEXT, mFont100);
+    text->setText((char*) "Open Sailing", 255, 255, 255);
+    text->setPosition(v_width/2,v_height/1.1);
+    text->setAlignment(ALIGN_CENTER);
+    text->render();
+
+    text = new GLText(TEXTURE_TEXT, mFont25);
+    text->setText((char*) "A Ship Game in OpenGL", 255, 255, 255);
+    text->setPosition(v_width/2,v_height/1.1 - 130);
+    text->setAlignment(ALIGN_CENTER);
+    text->render();
+
+    sprintf(buffer[0], "Author: Lorenzo Vainigli");
+    sprintf(buffer[1], "Corso di Grafica, Laurea Magistrale in Informatica");
+    sprintf(buffer[2], "Universita' di Bologna, A.A. 2017/18");
+    text = new GLText(TEXTURE_TEXT, mFont18);
+    for (int i = 0; i < 3; i++){
+        text->setText(buffer[i], 255, 255, 255);
+        text->setPosition(v_width/2,v_height/1.1 - 200 - 25 * i);
+        text->setAlignment(ALIGN_CENTER);
+        text->render();
+    }
+
+    sprintf(buffer[0], "Please insert your name,");
+    sprintf(buffer[1], "then press Enter.");
+    sprintf(buffer[2], "%s_", input);
+    text = new GLText(TEXTURE_TEXT, mFont40);
+    for (int i = 0; i < 3; i++){
+        text->setText(buffer[i], 255, 255, 255);
+        text->setPosition(v_width/2,v_height/2.5 - 50 * i);
+        text->setAlignment(ALIGN_CENTER);
+        text->render();
+    }
+
     glPopMatrix();
 }
 
@@ -303,7 +350,6 @@ void HUD::displayLeaderboardColumn(int col, Leaderboard::LBItem** items, int v_w
 }
 
 void HUD::displayLeaderboard(Leaderboard *leaderboard, int v_width, int v_height) {
-    printf("Display leaders\n");
     Leaderboard::LBItem** items;
 
     glPushMatrix();

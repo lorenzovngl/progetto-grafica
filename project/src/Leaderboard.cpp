@@ -19,6 +19,14 @@
 #include "headers/Leaderboard.h"
 
 Leaderboard::Leaderboard(char *username){
+    setUsename(username);
+}
+
+char *Leaderboard::getUsename() {
+    return mUsername;
+}
+
+void Leaderboard::setUsename(char *username) {
     strcpy(mUsername, username);
 }
 
@@ -36,7 +44,6 @@ Leaderboard::LBItem** Leaderboard::read(){
         int sec = millis/1000;
         int min = sec/60;
         items[i] = new LBItem(name, num, score);
-        printf("%s\t%d\t%02d:%02d:%03d\n", items[i]->name, items[i]->numBuoys, min, sec-min*60, millis-sec*1000-min*60);
         i++;
     };
     while (i < LEADERBOARD_LENGHT){

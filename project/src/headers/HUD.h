@@ -12,6 +12,7 @@ private:
     TTF_Font *mFont18;
     TTF_Font *mFont25;
     TTF_Font *mFont40;
+    TTF_Font *mFont100;
     Game *game;
 
     void displayLeaderboardColumn(int col, Leaderboard::LBItem **items, int v_width, int v_height);
@@ -19,13 +20,17 @@ private:
 public:
     bool isCommandsListVisibile;
     bool isLeaderboardVisible;
+    bool bAskUsername;
+    bool bAskBuoys;
 
     HUD(Game *);
 
     void display(int v_width, int v_height, float ship_cx, float ship_cy, float ship_facing, Enviroment *enviroment,
                  float fps);
 
-    void displayStartGameMessage(int v_width, int v_height);
+    void askUsername(int v_width, int v_height, char *input);
+
+    void displayStartGameMessage(int v_idth, int v_height);
 
     void displayEndGameMessage(int v_width, int v_height);
 

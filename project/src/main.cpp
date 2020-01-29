@@ -63,7 +63,8 @@ ShadowMapper *shadowMapper;
 ShaderParams *shaderParams;
 Options *options;
 bool inputModeEnabled = false;
-char userInputBuffer[10];
+char usenameInputBuffer[50];
+char buoysCountInputBuffer[10];
 
 /* Esegue il Rendering della scena */
 void rendering(SDL_Window *window) {
@@ -211,9 +212,13 @@ void rendering(SDL_Window *window) {
 
     frontier->render();
     game->detectCollision();
-    hud->display(viewportWidth, viewportHeight, ship->px, -ship->pz, ship->facing, enviroment, fps);
-    if (inputModeEnabled){
-        hud->askNumberOfBuoys(viewportWidth, viewportHeight, userInputBuffer);
+    if (!hud->bAskUsername){
+        hud->display(viewportWidth, viewportHeight, ship->px, -ship->pz, ship->facing, enviroment, fps);
+    }
+    if (hud->bAskUsername){
+        hud->askUsername(viewportWidth, viewportHeight, usenameInputBuffer);
+    } else if (hud->bAskBuoys){
+        hud->askNumberOfBuoys(viewportWidth, viewportHeight, buoysCountInputBuffer);
     } else if (hud->isCommandsListVisibile){
         hud->displayCommands(viewportWidth, viewportHeight);
     }  else if (hud->isLeaderboardVisible){
@@ -317,7 +322,12 @@ int main(int argc, char *argv[]) {
     camera->set(*ship, eyeDist, viewBeta, viewAlpha);
     shadowMapper->resetLight();
 
-    sprintf(userInputBuffer, "%d", DEFAULT_BUOYS_COUNT);
+    strcpy(usenameInputBuffer, "Lorenzo");
+    sprintf(buoysCountInputBuffer, "%d", DEFAULT_BUOYS_COUNT);
+    // Appena avviato il programma chiede l'inserimento dell'username
+    inputModeEnabled = true;
+
+    bool shiftButtonActive = true;           // Per gestire le maiuscole durante l'inserimento dell'username
 
     bool done = 0;
     while (!done) {
@@ -357,26 +367,56 @@ int main(int argc, char *argv[]) {
                         }
                     } else {
                         char *pEnd;
-                        if (e.key.keysym.sym != SDLK_RETURN){
-                            const char keyboard[] = "0123456789";
-                            const char keypad[] = "1234567890";
-                            if (e.key.keysym.sym >= SDLK_0 && e.key.keysym.sym <= SDLK_9){
-                                strncat(userInputBuffer, &keyboard[e.key.keysym.sym - SDLK_0], 1);
-                            } else if (e.key.keysym.sym >= SDLK_KP_1 && e.key.keysym.sym <= SDLK_KP_0){
-                                strncat(userInputBuffer, &keypad[e.key.keysym.sym - SDLK_KP_1], 1);
-                            } else if (e.key.keysym.sym == SDLK_BACKSPACE){
-                                if (strlen(userInputBuffer) > 0){
-                                    userInputBuffer[strlen(userInputBuffer)-1] = '\0';
+                        if (hud->bAskUsername && (e.key.keysym.sym == SDLK_LSHIFT || e.key.keysym.sym == SDLK_RSHIFT)){
+                            // Gestisce inserimento maiuscole per il nome utente
+                            shiftButtonActive = true;
+                        }
+                        if (e.key.keysym.sym != SDLK_RETURN) {
+                            if (hud->bAskUsername){
+                                const char keyboardM[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                                const char keyboard[] = "abcdefghijklmnopqrstuvwxyz";
+                                if (e.key.keysym.sym >= SDLK_a && e.key.keysym.sym <= SDLK_z) {
+                                    if (shiftButtonActive){
+                                        strncat(usenameInputBuffer, &keyboardM[e.key.keysym.sym - SDLK_a], 1);
+                                    } else {
+                                        strncat(usenameInputBuffer, &keyboard[e.key.keysym.sym - SDLK_a], 1);
+                                    }
+                                } else if (e.key.keysym.sym == SDLK_BACKSPACE) {
+                                    if (strlen(usenameInputBuffer) > 0) {
+                                        usenameInputBuffer[strlen(usenameInputBuffer) - 1] = '\0';
+                                    }
+                                }
+                            } else {
+                                const char keyboard[] = "0123456789";
+                                const char keypad[] = "1234567890";
+                                if (e.key.keysym.sym >= SDLK_0 && e.key.keysym.sym <= SDLK_9) {
+                                    strncat(buoysCountInputBuffer, &keyboard[e.key.keysym.sym - SDLK_0], 1);
+                                } else if (e.key.keysym.sym >= SDLK_KP_1 && e.key.keysym.sym <= SDLK_KP_0) {
+                                    strncat(buoysCountInputBuffer, &keypad[e.key.keysym.sym - SDLK_KP_1], 1);
+                                } else if (e.key.keysym.sym == SDLK_BACKSPACE) {
+                                    if (strlen(buoysCountInputBuffer) > 0) {
+                                        buoysCountInputBuffer[strlen(buoysCountInputBuffer) - 1] = '\0';
+                                    }
                                 }
                             }
-                        } else if (strtol(userInputBuffer, &pEnd, 10) >= 1 && strtol(userInputBuffer, &pEnd, 10) <= 100){
-                            enviroment->buoysCount = (int) strtol(userInputBuffer, &pEnd, 10);
+                        } else if (hud->bAskUsername) {
+                            game->getLeaderboard()->setUsename(usenameInputBuffer);
+                            hud->bAskUsername = false;
+                            inputModeEnabled = false;
+                        } else if (hud->bAskBuoys && strtol(buoysCountInputBuffer, &pEnd, 10) >= 1 &&
+                                   strtol(buoysCountInputBuffer, &pEnd, 10) <= 100){
+                            enviroment->buoysCount = (int) strtol(buoysCountInputBuffer, &pEnd, 10);
+                            hud->bAskBuoys = false;
                             inputModeEnabled = false;
                             game->reset();
                         }
                     }
                     break;
                 case SDL_KEYUP:
+                    if (hud->bAskUsername && (e.key.keysym.sym == SDLK_LSHIFT || e.key.keysym.sym == SDLK_RSHIFT)){
+                        // Gestisce inserimento maiuscole per il nome utente
+                        shiftButtonActive = false;
+                    }
                     ship->controller.EatKey(e.key.keysym.sym, keymap, false);
                     break;
                 case SDL_QUIT:

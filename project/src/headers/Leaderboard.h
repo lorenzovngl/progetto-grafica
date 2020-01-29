@@ -13,16 +13,26 @@ public:
         char name[50];
         int numBuoys;
         int time;
-        LBItem(char *pname, int pnum, int ptime){
+
+        LBItem(char *pname, int pnum, int ptime) {
             strcpy(name, pname);
             numBuoys = pnum;
             time = ptime;
         }
     };
-    LBItem* items[LEADERBOARD_LENGHT];
+
+    LBItem *items[LEADERBOARD_LENGHT];
+
     Leaderboard(char *username);
+
+    char *getUsename();
+
+    void setUsename(char *username);
+
     void setNumBuoys(int num);
-    LBItem** read();
+
+    LBItem **read();
+
     void insert(int timeScore);
 };
 
