@@ -122,112 +122,122 @@ void rendering(SDL_Window *window) {
     // These two instead are necessary for shadow mapping
     static float vMatrixInverse[16];            // view Matrix inverse (it's the camera matrix).
     static float lvpMatrix[16];                 // = light_pMatrix*light_vMatrix
-
+    static float biasedShadowMvpMatrix[16];
 
     glLoadMatrixf(camera->viewMatrix);
     // Important: the ffp must recalculate internally lightDirectionEyeSpace based on vMatrix [=> every frame]
     glLightfv(GL_LIGHT0, GL_POSITION, shadowMapper->lightDirection);
 
-    // view Matrix inverse (it's the camera matrix). Used twice below (and very important to keep in any case).
-    // We can use Helper_InvertMatrixFast(...) instead of Helper_InvertMatrix(...) here [No scaling inside and no projection matrix]
-    Helper_InvertMatrixFast(vMatrixInverse, camera->viewMatrix);
+    if (options->areShadersEnabled()) {
 
-    // Draw to Shadow Map
-    Helper_GetLightViewProjectionMatrix(lvpMatrix,
-                                        vMatrixInverse, shadowMapper->pMatrixNearPlane, shadowMapper->pMatrixFarPlane,
-                                        shadowMapper->pMatrixFovyDeg, (float) viewportWidth / (float) viewportHeight,
-                                        shadowMapper->lightDirection,
-                                        1.0f / (float) SHADOW_MAP_RESOLUTION);
+        // view Matrix inverse (it's the camera matrix). Used twice below (and very important to keep in any case).
+        // We can use Helper_InvertMatrixFast(...) instead of Helper_InvertMatrix(...) here [No scaling inside and no projection matrix]
+        Helper_InvertMatrixFast(vMatrixInverse, camera->viewMatrix);
 
-    // Draw to shadow map texture
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);        // We'll set the combined light view-projection matrix in GL_MODELVIEW (do you know that it's the same?)
-    glBindFramebuffer(GL_FRAMEBUFFER, shadowMapper->shadowPass.fbo);
-    glViewport(0, 0, SHADOW_MAP_RESOLUTION, SHADOW_MAP_RESOLUTION);
-    glClear(GL_DEPTH_BUFFER_BIT);
-    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-    glCullFace(GL_FRONT);
-    glEnable(GL_DEPTH_CLAMP);
-    glPushMatrix();
-    glLoadMatrixf(lvpMatrix); // we load both (light) projection and view matrices here (it's the same after all)
-    ship->render(false);
-    enviroment->renderBuoys();
-    glPopMatrix();
-    glDisable(GL_DEPTH_CLAMP);
-    glCullFace(GL_BACK);
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
+        // Draw to Shadow Map
+        Helper_GetLightViewProjectionMatrix(lvpMatrix,
+                                            vMatrixInverse, shadowMapper->pMatrixNearPlane,
+                                            shadowMapper->pMatrixFarPlane,
+                                            shadowMapper->pMatrixFovyDeg,
+                                            (float) viewportWidth / (float) viewportHeight,
+                                            shadowMapper->lightDirection,
+                                            1.0f / (float) SHADOW_MAP_RESOLUTION);
 
+        // Draw to shadow map texture
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
+        glMatrixMode(
+                GL_MODELVIEW);        // We'll set the combined light view-projection matrix in GL_MODELVIEW (do you know that it's the same?)
+        glBindFramebuffer(GL_FRAMEBUFFER, shadowMapper->shadowPass.fbo);
+        glViewport(0, 0, SHADOW_MAP_RESOLUTION, SHADOW_MAP_RESOLUTION);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+        glCullFace(GL_FRONT);
+        glEnable(GL_DEPTH_CLAMP);
+        glPushMatrix();
+        glLoadMatrixf(lvpMatrix); // we load both (light) projection and view matrices here (it's the same after all)
+        ship->render(false);
+        enviroment->renderBuoys();
+        glPopMatrix();
+        glDisable(GL_DEPTH_CLAMP);
+        glCullFace(GL_BACK);
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
 
-    // Draw world
-    // biasedShadowMvpMatrix is used only in the DefaultPass:
-    static float bias[16] = {0.5, 0,   0,   0,
-                             0,   0.5, 0,   0,
-                             0,   0,   0.5, 0,
-                             0.5, 0.5, 0.5, 1};
-    // Moving from unit cube in NDC [-1,1][-1,1][-1,1] to [0,1][0,1][0,1] (x and y are texCoords; z is the depth range,
-    // [0,1] by default in window coordinates)
-    static float biasedShadowMvpMatrix[16];
-    // multiplied per vMatrixInverse
-    Helper_MultMatrix(biasedShadowMvpMatrix, bias, lvpMatrix);
-    // We do this, so that when in the vertex shader we multiply it with the camera mvMatrix,
-    // we get: biasedShadowMvpMatrix * mMatrix (using mMatrices directly in the shaders prevents the usage of double
-    // precision matrices: mvMatrices are good when converted to float to feed the shader, mMatrices are bad)
-    Helper_MultMatrix(biasedShadowMvpMatrix, biasedShadowMvpMatrix, vMatrixInverse);
-    // Draw to world
+        // Draw world
+        // biasedShadowMvpMatrix is used only in the DefaultPass:
+        static float bias[16] = {0.5, 0, 0, 0,
+                                 0, 0.5, 0, 0,
+                                 0, 0, 0.5, 0,
+                                 0.5, 0.5, 0.5, 1};
+        // Moving from unit cube in NDC [-1,1][-1,1][-1,1] to [0,1][0,1][0,1] (x and y are texCoords; z is the depth range,
+        // [0,1] by default in window coordinates)
+        // multiplied per vMatrixInverse
+        Helper_MultMatrix(biasedShadowMvpMatrix, bias, lvpMatrix);
+        // We do this, so that when in the vertex shader we multiply it with the camera mvMatrix,
+        // we get: biasedShadowMvpMatrix * mMatrix (using mMatrices directly in the shaders prevents the usage of double
+        // precision matrices: mvMatrices are good when converted to float to feed the shader, mMatrices are bad)
+        Helper_MultMatrix(biasedShadowMvpMatrix, biasedShadowMvpMatrix, vMatrixInverse);
+    }
+
     glViewport(0, 0, viewportWidth, viewportHeight);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     if (options->areShadersEnabled()) {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, shadowMapper->shadowPass.textureId);
         glActiveTexture(GL_TEXTURE1);
         glUseProgram(shadowMapper->defaultPass.program);
         glUniform1i(glGetUniformLocation(shadowMapper->defaultPass.program, "u_texture"), 1);
-        glUniform1i(glGetUniformLocation(shadowMapper->defaultPass.program, "u_fogEnabled"), (options->isFogEnabled()) ? 1 : 0);
+        glUniform1i(glGetUniformLocation(shadowMapper->defaultPass.program, "u_fogEnabled"),
+                    (options->isFogEnabled()) ? 1 : 0);
         glUniform4fv(glGetUniformLocation(shadowMapper->defaultPass.program, "u_cameraEye"), 1, camera->viewMatrix);
         glUniformMatrix4fv(shadowMapper->defaultPass.uniform_location_biasedShadowMvpMatrix, 1, GL_FALSE,
                            biasedShadowMvpMatrix);
         glDisable(GL_CULL_FACE);
-    }
-    if (game->isPaused || game->getGameTime() == 0 || game->isFinished()){
-        shaderParams->setParam(shaderParams->overlay, 1);
-    } else {
-        shaderParams->setParam(shaderParams->overlay, 0);
-    }
-    ship->render(true);
-    enviroment->renderSea(ship->px, ship->py, ship->pz, true);
-    enviroment->renderBuoys();
-    enviroment->drawSky();
-    glPopMatrix();
-    if (options->areShadersEnabled()) {
+        if (game->isPaused || game->getGameTime() == 0 || game->isFinished()){
+            shaderParams->setParam(shaderParams->overlay, 1);
+        } else {
+            shaderParams->setParam(shaderParams->overlay, 0);
+        }
+        ship->render(true);
+        enviroment->renderSea(ship->px, ship->py, ship->pz, true);
+        enviroment->renderBuoys();
+        enviroment->drawSky();
+        glPopMatrix();
         glUseProgram(0);
         glBindTexture(GL_TEXTURE_2D, 0);
         glActiveTexture(GL_TEXTURE0);
+    } else {
+        ship->render(true);
+        enviroment->renderSea(ship->px, ship->py, ship->pz, true);
+        enviroment->renderBuoys();
+        enviroment->drawSky();
+        glPopMatrix();
     }
 
     frontier->render();
     game->detectCollision();
-    if (!hud->bAskUsername){
+    if (!hud->bAskUsername) {
         hud->display(viewportWidth, viewportHeight, ship->px, -ship->pz, ship->facing, enviroment, fps);
     }
-    if (hud->bAskUsername){
+    if (hud->bAskUsername) {
         hud->askUsername(viewportWidth, viewportHeight, usenameInputBuffer);
-    } else if (hud->bAskBuoys){
+    } else if (hud->bAskBuoys) {
         hud->askNumberOfBuoys(viewportWidth, viewportHeight, buoysCountInputBuffer);
-    } else if (hud->isCommandsListVisibile){
+    } else if (hud->isCommandsListVisibile) {
         hud->displayCommands(viewportWidth, viewportHeight);
-    }  else if (hud->isLeaderboardVisible){
+    } else if (hud->isLeaderboardVisible) {
         hud->displayLeaderboard(game->getLeaderboard(), viewportWidth, viewportHeight);
-    } else if (game->getGameTime() == 0){
+    } else if (game->getGameTime() == 0) {
         hud->displayStartGameMessage(viewportWidth, viewportHeight);
-    } else if (game->isFinished()){
+    } else if (game->isFinished()) {
         hud->displayEndGameMessage(viewportWidth, viewportHeight);
-    } else if (game->isPaused){
+    } else if (game->isPaused) {
         hud->displayPauseMessage(viewportWidth, viewportHeight);
     }
 
@@ -271,7 +281,7 @@ int main(int argc, char *argv[]) {
 
     // facciamo una finestra di scrW x scrH pixels
     window = SDL_CreateWindow(argv[0], 0, 0, viewportWidth, viewportHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
-    SDL_SetWindowTitle(window, (char*) "Open Sailing");
+    SDL_SetWindowTitle(window, (char *) "Open Sailing");
     glutInitWindowSize(viewportWidth, viewportHeight);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
 
@@ -367,16 +377,16 @@ int main(int argc, char *argv[]) {
                         }
                     } else {
                         char *pEnd;
-                        if (hud->bAskUsername && (e.key.keysym.sym == SDLK_LSHIFT || e.key.keysym.sym == SDLK_RSHIFT)){
+                        if (hud->bAskUsername && (e.key.keysym.sym == SDLK_LSHIFT || e.key.keysym.sym == SDLK_RSHIFT)) {
                             // Gestisce inserimento maiuscole per il nome utente
                             shiftButtonActive = true;
                         }
                         if (e.key.keysym.sym != SDLK_RETURN) {
-                            if (hud->bAskUsername){
+                            if (hud->bAskUsername) {
                                 const char keyboardM[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
                                 const char keyboard[] = "abcdefghijklmnopqrstuvwxyz";
                                 if (e.key.keysym.sym >= SDLK_a && e.key.keysym.sym <= SDLK_z) {
-                                    if (shiftButtonActive){
+                                    if (shiftButtonActive) {
                                         strncat(usenameInputBuffer, &keyboardM[e.key.keysym.sym - SDLK_a], 1);
                                     } else {
                                         strncat(usenameInputBuffer, &keyboard[e.key.keysym.sym - SDLK_a], 1);
@@ -404,7 +414,7 @@ int main(int argc, char *argv[]) {
                             hud->bAskUsername = false;
                             inputModeEnabled = false;
                         } else if (hud->bAskBuoys && strtol(buoysCountInputBuffer, &pEnd, 10) >= 1 &&
-                                   strtol(buoysCountInputBuffer, &pEnd, 10) <= 100){
+                                   strtol(buoysCountInputBuffer, &pEnd, 10) <= 100) {
                             enviroment->buoysCount = (int) strtol(buoysCountInputBuffer, &pEnd, 10);
                             hud->bAskBuoys = false;
                             inputModeEnabled = false;
@@ -413,7 +423,7 @@ int main(int argc, char *argv[]) {
                     }
                     break;
                 case SDL_KEYUP:
-                    if (hud->bAskUsername && (e.key.keysym.sym == SDLK_LSHIFT || e.key.keysym.sym == SDLK_RSHIFT)){
+                    if (hud->bAskUsername && (e.key.keysym.sym == SDLK_LSHIFT || e.key.keysym.sym == SDLK_RSHIFT)) {
                         // Gestisce inserimento maiuscole per il nome utente
                         shiftButtonActive = false;
                     }
@@ -529,7 +539,7 @@ int main(int argc, char *argv[]) {
             // finche' il tempo simulato e' rimasto indietro rispetto
             // al tempo reale...
             while (nstep * PHYS_SAMPLING_STEP < timeNow) {
-                if (!game->isPaused){
+                if (!game->isPaused) {
                     ship->DoStep();
                 }
                 nstep++;

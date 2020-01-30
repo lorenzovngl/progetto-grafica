@@ -28,7 +28,7 @@ Frontier::Frontier(ShaderParams *shaderParams, Options *options){
 
 void Frontier::render(){
     mShaderParams->setParam(mShaderParams->colorOrTextureParam, COLOR_MODE);
-    float color[4] = {1, 1, 0, 1};
+    float color[4] = {1, 1, 1, 1};
     mShaderParams->setParam(mShaderParams->colorParam, color);
     int count = 100;
     float radius = 65;

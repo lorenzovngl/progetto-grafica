@@ -169,6 +169,8 @@ void Ship::render(bool texture_enabled) {
     // sono nello spazio mondo
     glPushMatrix();
 
+    mShaderParams->setParam(mShaderParams->colorOrTextureParam, TEXTURE_MODE);
+
     glTranslatef(px, py, pz);
     glRotatef(facing, 0, 1, 0);
 
