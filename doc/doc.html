@@ -32,8 +32,8 @@
 <h3 style="margin-top: 0">A Ship Game in OpenGL</h3>
 <p>
     <i>Autore: Lorenzo Vainigli<br/>
-        Corso di Grafica a.a. 2017/18, Laurea Magistrale in Informatica<br/>
-        Università di Bologna</i>
+        Corso di Grafica, Laurea Magistrale in Informatica<br/>
+        Università di Bologna, A.A. 2017/18</i>
 </p>
 <h2>Indice</h2>
 <ul>
@@ -68,6 +68,9 @@
     </a>
     <a href="#come-si-gioca">
         <li>Come si gioca</li>
+    </a>
+    <a href="#problemi-conosciuti">
+        <li>Problemi conosciuti</li>
     </a>
 </ul>
 <a id="intro">
@@ -206,6 +209,39 @@
     Questa parte, che compone le zone che vanno dagli estremi del mare di prossimità al limite del mondo di gioco (definito
     dalla sfera che crea il cielo) è composta da quadrati non animati e non suddivisi in triangoli.
 </p>
+<h4>Ombre e shaders</h4>
+<p>
+    La gestione delle ombre in quest'applicazione è delegata agli shader e non è banale. <br/>
+    In un primo momento il rendering delle ombre è stato implementato secondo l'algoritmo presente nel file
+    <i>glut_OpenGL_ffp/opengl_advanced/schatten.cpp</i>; tuttavia questo algoritmo è adatto per le superfici solide su
+    cui poggiano gli elementi la cui ombra va proiettata, ma nel caso in cui si abbiano oggetti che galleggiano sull'acqua
+    sorgono due problemi:
+<ul>
+    <li>quando si deve proiettare l'ombra di un oggetto come una barca, solo la parte
+        che si trova fuori dall'acqua va proiettata sulla superficie, mentre la parte immersa non va presa in considerazione;
+    </li>
+    <li>l'ombra viene renderizzata solo sulla superficie del mondo, in questo caso il mare, ma nella realtà anche alcune
+    parti dell'imbarcazione dovrebbero essere in ombra.</li>
+</ul>
+Queste due eventualità non sono gestite dall'algoritmo di <i>schatten.cpp</i>. Le ombre quindi sono visualizzate solo
+in modalità "rendering avanzato".
+</p>
+<p>
+    Le ombre sono state implementate con la tecnica dello <i>Shadow Mapping</i> utilizzando
+    <a href="https://github.com/Flix01/Tiny-OpenGL-Shadow-Mapping-Examples/blob/master/shadow_mapping.c">un codice
+        disponibile su GitHub</a>, il cui funzionamento può essere riassunto come segue.
+    <ol>
+    <li>
+        In un buffer dedicato (z-buffer) viene renderizzata la scena dal punto di vista della fonte di luce e per ogni punto nella
+        viewport viene memorizzata la sua profondità;</li>
+    <li>
+        Viene effettuato il rendering della scena dal punto di vista della camera e ogni punto è soggetto al deph test:
+        le coordinate del punto <i>(x, y)</i> vengono mappate dallo spazio-camera allo spazio-luce e confrontate con il
+        valore di profondità salvato nello z-buffer: se il valore di profondità di <i>(x, y)</i> è maggiore del valore
+        dello z-buffer, il punto è in ombra, altrimenti è illuminato.
+    </li>
+    </ol>
+</p>
 <a id="richieste-obbligatorie">
     <h2>Richieste grafiche obbligatorie</h2>
 </a>
@@ -246,7 +282,7 @@
 </p>
 <a id="ciclo-di-vita">
     <h2>Ciclo di vita dell'applicazione</h2>
-    <canvas id="lifecycle" width="700" height="500">
+    <canvas id="lifecycle" width="1200" height="500" style="border: 1px dotted red">
     </canvas>
 </a>
 <a id="come-si-gioca">
@@ -254,12 +290,23 @@
 </a>
 <p>
     Lo scopo del gioco è raccogliere tutte le boe nel minor tempo possibile.<br/>
-    Appena avviata l'applicazione l'utente viene mostrata la seguente schermata:
+    Appena avviata l'applicazione l'utente viene mostrata la seguente schermata dalla quale può scegliere il suo nome.
+    Il nome verrà registrato nella leaderboard se una partità dell'utente finirà con un punteggio che rientra fra i
+    migliori 20.
 </p>
-<a href="images/schermata_iniziale.png">
+<a href="images/insert_username.png">
     <figure>
-        <img src="images/schermata_iniziale.png">
+        <img src="images/insert_username.png">
         <figcaption>Schermata iniziale. Click per ingrandire.</figcaption>
+    </figure>
+</a>
+<p>
+    Appena premuto Invio si passa alla schermata successiva.
+</p>
+<a href="images/game_start.png">
+    <figure>
+        <img src="images/game_start.png">
+        <figcaption>Schermata del menù principale. Click per ingrandire.</figcaption>
     </figure>
 </a>
 <p>
