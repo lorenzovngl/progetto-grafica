@@ -27,8 +27,8 @@ LIBS = -lGL -lGLU -lglut -lSDL2 -lSDL2_image -lSDL2_ttf -lGLEW -lglfw -lm
 endif
 endif
 
-OBJ = out/helper_functions.o out/ShadowMapper.o out/main.o out/BoundingBox.o out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/Fog.o out/Frontier.o out/Game.o out/glm.o out/GLText.o out/HUD.o out/Leaderboard.o out/Mesh.o out/Options.o out/ShaderParams.o out/Ship.o out/ShipMesh.o out/Texture.o out/TextureManager.o out/Utils.o 
-LINKOBJ = out/helper_functions.o out/ShadowMapper.o out/main.o out/BoundingBox.o out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/Fog.o out/Frontier.o out/Game.o out/glm.o out/GLText.o out/HUD.o out/Leaderboard.o out/Mesh.o out/Options.o out/ShaderParams.o out/Ship.o out/ShipMesh.o out/Texture.o out/TextureManager.o out/Utils.o 
+OBJ = out/helper_functions.o out/ShadowMapper.o out/main.o out/BoundingBox.o out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/Fog.o out/Frontier.o out/Game.o out/HUD.o out/Leaderboard.o out/Mesh.o out/Options.o out/ShaderParams.o out/Ship.o out/ShipMesh.o out/Texture.o out/TextureManager.o out/Utils.o out/glm.o out/GLText.o 
+LINKOBJ = out/helper_functions.o out/ShadowMapper.o out/main.o out/BoundingBox.o out/Buoy.o out/Camera.o out/Controller.o out/Enviroment.o out/Fog.o out/Frontier.o out/Game.o out/HUD.o out/Leaderboard.o out/Mesh.o out/Options.o out/ShaderParams.o out/Ship.o out/ShipMesh.o out/Texture.o out/TextureManager.o out/Utils.o out/glm.o out/GLText.o 
 
 RM = rm -f
 
@@ -73,12 +73,6 @@ out/Frontier.o: src/headers/Frontier.h src/Frontier.cpp
 out/Game.o: src/headers/Game.h src/Game.cpp
 	$(CPP) -c -Wno-deprecated $(FRMPATH) src/Game.cpp -o out/Game.o
 
-out/glm.o: src/headers/glm.h src/glm.cpp
-	$(CPP) -c -Wno-deprecated $(FRMPATH) src/glm.cpp -o out/glm.o
-
-out/GLText.o: src/headers/GLText.h src/GLText.cpp
-	$(CPP) -c -Wno-deprecated $(FRMPATH) src/GLText.cpp -o out/GLText.o
-
 out/HUD.o: src/headers/HUD.h src/HUD.cpp
 	$(CPP) -c -Wno-deprecated $(FRMPATH) src/HUD.cpp -o out/HUD.o
 
@@ -108,6 +102,12 @@ out/TextureManager.o: src/headers/TextureManager.h src/TextureManager.cpp
 
 out/Utils.o: src/headers/Utils.h src/Utils.cpp
 	$(CPP) -c -Wno-deprecated $(FRMPATH) src/Utils.cpp -o out/Utils.o
+
+out/glm.o: lib/glm.h lib/glm.cpp
+	$(CPP) -c -Wno-deprecated $(FRMPATH) lib/glm.cpp -o out/glm.o
+
+out/GLText.o: lib/GLText.h lib/GLText.cpp
+	$(CPP) -c -Wno-deprecated $(FRMPATH) lib/GLText.cpp -o out/GLText.o
 
 out/main.o: src/main.cpp
 	$(CPP) -c -Wno-deprecated $(FRMPATH) src/main.cpp -o out/main.o

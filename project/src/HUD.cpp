@@ -19,7 +19,7 @@
 #endif
 
 #include "headers/HUD.h"
-#include "headers/GLText.h"
+#include "../lib/GLText.h"
 #include "headers/Utils.h"
 #include "headers/Texture.h"
 

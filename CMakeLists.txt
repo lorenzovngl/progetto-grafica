@@ -16,8 +16,8 @@ add_executable(ProgettoGrafica
         project/src/headers/Fog.h
         project/src/headers/Frontier.h
         project/src/headers/Game.h
-        project/src/headers/glm.h
-        project/src/headers/GLText.h
+        project/lib/glm.h
+        project/lib/GLText.h
         project/src/headers/HUD.h
         project/src/headers/Leaderboard.h
         project/src/headers/Mesh.h
@@ -37,8 +37,8 @@ add_executable(ProgettoGrafica
         project/src/Fog.cpp
         project/src/Frontier.cpp
         project/src/Game.cpp
-        project/src/glm.cpp
-        project/src/GLText.cpp
+        project/lib/glm.cpp
+        project/lib/GLText.cpp
         project/src/HUD.cpp
         project/src/Leaderboard.cpp
         project/src/main.cpp

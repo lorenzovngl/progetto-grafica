@@ -4,7 +4,7 @@
 #include <vector>
 #include "point3.h"
 #include "Texture.h"
-#include "glm.h"
+#include "../../lib/glm.h"
 #include "BoundingBox.h"
 #include "Options.h"
 #include "ShaderParams.h"

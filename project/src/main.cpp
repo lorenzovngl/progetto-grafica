@@ -62,7 +62,7 @@ Game *game;
 ShadowMapper *shadowMapper;
 ShaderParams *shaderParams;
 Options *options;
-bool inputModeEnabled = false;
+bool inputModeEnabled;
 char usenameInputBuffer[50];
 char buoysCountInputBuffer[10];
 
@@ -334,9 +334,9 @@ int main(int argc, char *argv[]) {
 
     strcpy(usenameInputBuffer, "Lorenzo");
     sprintf(buoysCountInputBuffer, "%d", DEFAULT_BUOYS_COUNT);
+
     // Appena avviato il programma chiede l'inserimento dell'username
     inputModeEnabled = true;
-
     bool shiftButtonActive = true;           // Per gestire le maiuscole durante l'inserimento dell'username
 
     bool done = 0;
@@ -362,7 +362,7 @@ int main(int argc, char *argv[]) {
                         } else if (e.key.keysym.sym == SDLK_F5) {
                             options->toggleShaders();
                         } else if (e.key.keysym.sym == SDLK_b) {
-                            printf("Input mode\n");
+                            hud->bAskBuoys = true;
                             inputModeEnabled = true;
                         } else if (e.key.keysym.sym == SDLK_c) {
                             hud->toggleCommandsList();

@@ -17,7 +17,7 @@
 #endif
 
 #include "../lib/GCGraLib2/GCGraLib2.h"
-#include "headers/glm.h"
+#include "../lib/glm.h"
 #include "headers/Texture.h"
 #include "headers/Mesh.h"
 #include "headers/Utils.h"

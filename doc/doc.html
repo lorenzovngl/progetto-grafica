@@ -38,65 +38,72 @@
 <h2>Indice</h2>
 <ul>
     <a href="#intro">
-        <li>Introduzione</li>
+        <li>1. Introduzione</li>
     </a>
     <a href="#caratteristiche">
-        <li>Caratteristiche</li>
+        <li>2. Caratteristiche</li>
     </a>
     <ul>
-        <li>Telecamere</li>
-        <li>Opzioni</li>
+        <li>2.1 Telecamere</li>
+        <li>2.2 Opzioni di rendering</li>
     </ul>
     <a href="#librerie">
-        <li>Librerie utilizzate</li>
+        <li>3. Librerie utilizzate</li>
     </a>
     <a href="#svolgimento">
-        <li>Svolgimento del progetto</li>
+        <li>4. Svolgimento del progetto</li>
     </a>
     <ul>
-        <li>Modello della barca</li>
-        <li>Ambiente di gioco</li>
-        <li>Luci</li>
-        <li>Ombre e shaders</li>
-        <li>Trasparenze</li>
+        <li>4.1 Modello della barca</li>
+        <li>4.2 Ambiente di gioco</li>
+        <li>4.3 Gestione delle collisioni</li>
+        <li>4.4 Luci</li>
+        <li>4.5 Ombre e shaders</li>
+        <li>4.6 Trasparenze</li>
     </ul>
+    <a href="#implementazione">
+        <li>5. Implementazione</li>
+    </a>
     <a href="#richieste-obbligatorie">
-        <li>Richieste grafiche obbligatorie</li>
+        <li>6. Richieste grafiche obbligatorie</li>
     </a>
     <a href="#ciclo-di-vita">
-        <li>Ciclo di vita dell'applicazione</li>
+        <li>7. Ciclo di vita dell'applicazione</li>
     </a>
     <a href="#come-si-gioca">
-        <li>Come si gioca</li>
+        <li>8. Come si gioca</li>
     </a>
-    <a href="#problemi-conosciuti">
-        <li>Problemi conosciuti</li>
+    <a href="#problemi">
+        <li>9. Problemi conosciuti</li>
     </a>
 </ul>
 <a id="intro">
-    <h2>Introduzione</h2>
+    <h2>1. Introduzione</h2>
 </a>
 <p>
     Open Sailing è un piccolo gioco realizzato con le librerie SDL2 e OpenGL. L'utente si trova al comando di
-    un'imbarcazione nel mezzo al mare ed è circondato da numerose boe a cui sono fissate delle bandiere. Il suo obiettivo è
+    un'imbarcazione nel mezzo al mare ed è circondato da numerose boe a cui sono fissate delle bandiere. Il suo
+    obiettivo è
     raccogliere tutte le boe nel minor tempo possibile.
 </p>
 <a id="caratteristiche">
-    <h2>Caratteristiche</h2>
+    <h2>2. Caratteristiche</h2>
 </a>
 <p>
     Di seguito sono riportate le caratteristiche principali del gioco.
 </p>
-<h3>Telecamere</h3>
+<h3>2.1 Telecamere</h3>
 <p>
     Durante il gioco l'utente può scegliere tra le seguenti telecamere del gioco:
-    <ul>
+<ul>
     <li>
-        <b>Telecamera sul retro della barca</b>: è la telecamera predefinita e quella che offre la miglior visuale sull'area
+        <b>Telecamera sul retro della barca</b>: è la telecamera predefinita e quella che offre la miglior visuale
+        sull'area
         di mare che si trova davanti all'imbarcazione.
     </li>
     <li>
-        <b>Telecamera a bordo della barca</b>: è la telecamera più realistica perché è fissata sul ponte di comando; la vista
+        <b>Telecamera a bordo della barca</b>: è la telecamera più realistica perché è fissata sul ponte di comando; la
+        vista
         riproduce ciò che vedrebbe il pilota dell'imbarcazione.
     </li>
     <li>
@@ -104,22 +111,24 @@
         modello 3D dell'imbarcazione (ovvero all'origine degli assi nello spazio della barca).
     </li>
     <li>
-        <b>Telecamera libera puntata sul centro del mondo</b>: come la precedente ma questa telecamera, a differenza delle
+        <b>Telecamera libera puntata sul centro del mondo</b>: come la precedente ma questa telecamera, a differenza
+        delle
         altre, è sempre puntata al centro del mondo (ovvero all'origine degli assi nello spazio mondo).
     </li>
-    </ul>
+</ul>
 </p>
-<h3>Opzioni di rendering</h3>
+<h3>2.2 Opzioni di rendering</h3>
 <p>
     Il gioco dispone di alcune opzioni di rendering:
-    <ul>
+<ul>
     <li>
         <b>Attiva/disattiva wireframe</b>: permette di visualizzare i wireframe, ovvero gli spigoli che compongono i
         poligoni della scena. <br/> Dal punto di vista dell'implementazione, vengono intercambiate le funzioni
         <code>glBegin(GL_TRIANGLES)</code>/<code>glBegin(GL_QUADS)</code> con <code>glBegin(GL_LINE_LOOP)</code>.
     </li>
     <li>
-        <b>Attiva/disattiva ombre</b>: permette abilitare o disabilitare il rendering delle ombre utilizzando gli shader.
+        <b>Attiva/disattiva ombre</b>: permette abilitare o disabilitare il rendering delle ombre utilizzando gli
+        shader.
         <i>Funziona solo se è attivo il rendering avanzato.</i>
     </li>
     <li>
@@ -127,27 +136,31 @@
         il rendering avanzato.</i>
     </li>
     <li>
-        <b>Attiva/disattiva rendering avanzato (shader)</b>: abilita/disabilità gli shader, con i quali si ha una migliore
+        <b>Attiva/disattiva rendering avanzato (shader)</b>: abilita/disabilità gli shader, con i quali si ha una
+        migliore
         resa grafica.
     </li>
-    </ul>
+</ul>
 </p>
 <a id="librerie">
-    <h2>Librerie utilizzate</h2>
+    <h2>3. Librerie utilizzate</h2>
 </a>
 <p>
-    Questo gioco è stato programmato in linguaggio C/C++ utilizzando SDL2, OpenGL e le librerie di supporto GLU, GLUT, GLEW e GLFW.
+    Questo gioco è stato programmato in linguaggio C/C++ utilizzando SDL2, OpenGL e le librerie di supporto GLU, GLUT,
+    GLEW e GLFW.
 </p>
 <a id="svolgimento">
-    <h2>Svolgimento del progetto</h2>
+    <h2>4. Svolgimento del progetto</h2>
 </a>
 <p>
-    Il lavoro è iniziato partendo dal codice di <i>progettoCar3</i>. In un primo momento è stato effettuato un refactoring
+    Il lavoro è iniziato partendo dal codice di <i>progettoCar3</i>. In un primo momento è stato effettuato un
+    refactoring
     del codice per renderlo object-oriented, per poi procedere all'implementazione di nuove funzioni.
 </p>
-<h3>Modello della barca</h3>
+<h3>4.1 Modello della barca</h3>
 <p>
-    Il modello della barca comandata dall'utente è memorizzato in un file OBJ e viene caricato e renderizzato con le stesse
+    Il modello della barca comandata dall'utente è memorizzato in un file OBJ e viene caricato e renderizzato con le
+    stesse
     modalità del modello della macchina che vi era in precedenza. Tale modello è stato scaricato da
     <a href="http://www.cadnav.com/3d-models/model-37131.html">questa pagina</a>.
 </p>
@@ -159,7 +172,8 @@
 </a>
 <h4>Texturing</h4>
 <p>
-    Nel pacchetto del modello sono presenti le immagini da utilizzare come texture e il file OBJ contiene le coordinate per
+    Nel pacchetto del modello sono presenti le immagini da utilizzare come texture e il file OBJ contiene le coordinate
+    per
     applicarle al modello. Tuttavia, ritenendo troppo oneroso implementare una funzione per il parsing delle coordinate
     texture presenti nel file OBJ, ho optato per una soluzione più comoda: il file <i>textures.dat</i> in
     <i>project/assets/ship/</i> contiene una mappa, costruita manualmente da me, tra identificativo della faccia e
@@ -177,7 +191,7 @@
         <figcaption>Foto personale applicata sulle fiancate della barca. Click per ingrandire.</figcaption>
     </figure>
 </a>
-<h3>Ambiente di gioco</h3>
+<h3>4.2 Ambiente di gioco</h3>
 <p>
     La topologia dell'ambiente di gioco, ovvero il mare su cui naviga la barca e il cielo, è rimasta sostanzialmente
     invariata rispetto al progetto di partenza: il mare è un piano suddiviso in poligoni bidimensionali e il cielo è una
@@ -192,36 +206,47 @@
     ma ciò causava un drastico calo degli fps. Ho deciso quindi di adottare un compromesso: lasciare la zona di mare
     lontana dalla posizione della barca ad un livello di dettaglio minore rispetto alla zona nei dintorni della barca,
     ovvero poligoni più grandi e senza movimento delle onde.<br/>
-    Questa scelta è anche dettata dal fatto le zone lontane dalla barca vengono visualizzare solo in modalità "camera libera
+    Questa scelta è anche dettata dal fatto le zone lontane dalla barca vengono visualizzare solo in modalità "camera
+    libera
     sul mondo", ma questo avviene in casi molto rari.
 </p>
 <h5>Mare in prossimità</h5>
 <p>
     Con questo termine si intende la zona di mare che circonda il punto dove si trova la barca in un raggio specificato
-    nel codice sorgente. Questa parte della scena di gioco è formata da quadrati, ognuno dei quali composto di due triangoli,
+    nel codice sorgente. Questa parte della scena di gioco è formata da quadrati, ognuno dei quali composto di due
+    triangoli,
     dispositi su righe e colonne rispetto agli assi <i>X</i> e <i>Z</i>.<br/>
-    L'animazione dei triangoli è resa possibile da una funzione che combina il tempo di gioco (<code>SDL_GetTicks()</code>) e le
+    L'animazione dei triangoli è resa possibile da una funzione che combina il tempo di gioco
+    (<code>SDL_GetTicks()</code>) e le
     funzioni <code>cos(x)</code> e <code>sin(x)</code> per creare un "effetto onda" sull'asse <i>Y</i>.<br/>
     La suddivisione in triangoli ha l'unico scopo di rendere l'animazione più dettagliata.
 </p>
 <h5>Mare in lontananza</h5>
 <p>
-    Questa parte, che compone le zone che vanno dagli estremi del mare di prossimità al limite del mondo di gioco (definito
+    Questa parte, che compone le zone che vanno dagli estremi del mare di prossimità al limite del mondo di gioco
+    (definito
     dalla sfera che crea il cielo) è composta da quadrati non animati e non suddivisi in triangoli.
 </p>
-<h4>Ombre e shaders</h4>
+<h3>4.3 Gestione delle collisioni</h3>
+TODO
+<h3>4.4 Luci</h3>
+TODO
+<h3>4.5 Ombre e shaders</h3>
 <p>
     La gestione delle ombre in quest'applicazione è delegata agli shader e non è banale. <br/>
     In un primo momento il rendering delle ombre è stato implementato secondo l'algoritmo presente nel file
     <i>glut_OpenGL_ffp/opengl_advanced/schatten.cpp</i>; tuttavia questo algoritmo è adatto per le superfici solide su
-    cui poggiano gli elementi la cui ombra va proiettata, ma nel caso in cui si abbiano oggetti che galleggiano sull'acqua
+    cui poggiano gli elementi la cui ombra va proiettata, ma nel caso in cui si abbiano oggetti che galleggiano
+    sull'acqua
     sorgono due problemi:
 <ul>
     <li>quando si deve proiettare l'ombra di un oggetto come una barca, solo la parte
-        che si trova fuori dall'acqua va proiettata sulla superficie, mentre la parte immersa non va presa in considerazione;
+        che si trova fuori dall'acqua va proiettata sulla superficie, mentre la parte immersa non va presa in
+        considerazione;
     </li>
     <li>l'ombra viene renderizzata solo sulla superficie del mondo, in questo caso il mare, ma nella realtà anche alcune
-    parti dell'imbarcazione dovrebbero essere in ombra.</li>
+        parti dell'imbarcazione dovrebbero essere in ombra.
+    </li>
 </ul>
 Queste due eventualità non sono gestite dall'algoritmo di <i>schatten.cpp</i>. Le ombre quindi sono visualizzate solo
 in modalità "rendering avanzato".
@@ -230,24 +255,58 @@ in modalità "rendering avanzato".
     Le ombre sono state implementate con la tecnica dello <i>Shadow Mapping</i> utilizzando
     <a href="https://github.com/Flix01/Tiny-OpenGL-Shadow-Mapping-Examples/blob/master/shadow_mapping.c">un codice
         disponibile su GitHub</a>, il cui funzionamento può essere riassunto come segue.
-    <ol>
+<ol>
     <li>
-        In un buffer dedicato (z-buffer) viene renderizzata la scena dal punto di vista della fonte di luce e per ogni punto nella
-        viewport viene memorizzata la sua profondità;</li>
+        In un buffer dedicato (z-buffer) viene renderizzata la scena dal punto di vista della fonte di luce e per ogni
+        punto nella
+        viewport viene memorizzata la sua profondità;
+    </li>
     <li>
         Viene effettuato il rendering della scena dal punto di vista della camera e ogni punto è soggetto al deph test:
         le coordinate del punto <i>(x, y)</i> vengono mappate dallo spazio-camera allo spazio-luce e confrontate con il
         valore di profondità salvato nello z-buffer: se il valore di profondità di <i>(x, y)</i> è maggiore del valore
         dello z-buffer, il punto è in ombra, altrimenti è illuminato.
     </li>
-    </ol>
+</ol>
 </p>
+<h3>4.6 Trasparenze</h3>
+<p>Nella scena riprodotta non ci sono elementi trasparenti.</p>
+<a id="implementazione">
+    <h2>5. Implementazione</h2>
+</a>
+<p>L'applicazione è stata implementata seguendo una progettazione object-oriented. Nella cartella <i>project/src</i> sono
+presenti i seguenti file (tranne <i>main.cpp</i>, ogni singolo file implementa l'omonima classe).</p>
+<ul>
+    <li><b><i>main.cpp</i></b>: file principale dell'applicazione, inizializza gli oggetti principali del programma e
+        gestire il ciclo di rendering e gli input esterni.</li>
+    <li><b><i>BoundingBox.cpp</i></b>: classe che contiene le coordinate del bounding box, ovvero del cubo che racchiude
+        le geometrie della barca e delle boe. Serve per la rilevazione e gestione delle collisioni.</li>
+    <li><b><i>Buoy.cpp</i></b>: gestisce le informazioni relative alle boe (es. posizione).</li>
+    <li><b><i>Camera.cpp</i></b>: contiene le informazioni sulla telecamera della scena.</li>
+    <li><b><i>Controller.cpp</i></b>: si occupa di parte della gestione dell'input utente (non modificata rispetto a
+        <i>progettoCar3</i>.</li>
+    <li><b><i>Enviroment.cpp</i></b>: </li>
+    <li><b><i>Fog.cpp</i></b>: </li>
+    <li><b><i>Frontier.cpp</i></b>: </li>
+    <li><b><i>Game.cpp</i></b>: </li>
+    <li><b><i>HUD.cpp</i></b>: </li>
+    <li><b><i>Leaderboard.cpp</i></b>: </li>
+    <li><b><i>Mesh.cpp</i></b>: </li>
+    <li><b><i>Options.cpp</i></b>: </li>
+    <li><b><i>ShaderParams.cpp</i></b>: </li>
+    <li><b><i>Ship.cpp</i></b>: </li>
+    <li><b><i>ShipMesh.cpp</i></b>: </li>
+    <li><b><i>Texture.cpp</i></b>: </li>
+    <li><b><i>TextureManager.cpp</i></b>: </li>
+    <li><b><i>Utils.cpp</i></b>: </li>
+</ul>
 <a id="richieste-obbligatorie">
-    <h2>Richieste grafiche obbligatorie</h2>
+    <h2>6. Richieste grafiche obbligatorie</h2>
 </a>
 <p>
 <li>
-    <i>Geometria 3D e vista (gli oggetti devono essere visualizzati in proiezione prospettica)</i>: il gioco è ambientato
+    <i>Geometria 3D e vista (gli oggetti devono essere visualizzati in proiezione prospettica)</i>: il gioco è
+    ambientato
     in un mondo tridimensionale, mentre la mappa sullo schermo è stata realizzata in due dimensioni, come opportuno.
 </li>
 <li>
@@ -256,13 +315,17 @@ in modalità "rendering avanzato".
     rispetto a <i>progettoCar3</i>.
 </li>
 <li>
-    <i>Illuminazione e sfumatura (gli oggetti 3D devono essere illuminati da almeno una luce)</i>: è presente una fonte luminosa che imita
-    la luce solare. Il modello di illuminazione disponibile nella modalità di rendering avanzato è il <i>modello di Phong</i>.
+    <i>Illuminazione e sfumatura (gli oggetti 3D devono essere illuminati da almeno una luce)</i>: è presente una fonte
+    luminosa che imita
+    la luce solare. Il modello di illuminazione disponibile nella modalità di rendering avanzato è il <i>modello di
+    Phong</i>.
 </li>
 <li>
     <i>Texture mapping, sia dando le coordinate texture, che generandole in modo automatico (almeno due oggetti 3D
-        devono avere una texture applicata e almeno una deve essere una foto personale)</i>: Ad eccezione delle boe (esclusa la
-    bandierina) tutti gli elementi della scena hanno delle texture applicate. La barca, il mare e il cielo hanno coordinate
+        devono avere una texture applicata e almeno una deve essere una foto personale)</i>: Ad eccezione delle boe
+    (esclusa la
+    bandierina) tutti gli elementi della scena hanno delle texture applicate. La barca, il mare e il cielo hanno
+    coordinate
     texture generate in modo automatico; le bandierine delle boe hanno coordinate texture inserite manualmente.
 </li>
 <li>
@@ -270,23 +333,91 @@ in modalità "rendering avanzato".
     la mappa in basso a destra offre una panoramica di tutto l'ambiente di gioco.
 </li>
 <li>
-    <i>Pannello di controllo su schermo (si preveda un pannello di controllo in cui usando testo e grafica 2D si visualizzino
+    <i>Pannello di controllo su schermo (si preveda un pannello di controllo in cui usando testo e grafica 2D si
+        visualizzino
         le funzioni utente, lo scoreboard, ecc.)</i>: TODO
 </li>
 <li>
-    <i>Advanced rendering (opzionale) (da menu' si preveda l'attivazione/disattivazione di almeno una tecnica di resa avanzata
+    <i>Advanced rendering (opzionale) (da menu' si preveda l'attivazione/disattivazione di almeno una tecnica di resa
+        avanzata
         realizzabile in opengl come per esempio: ombre, trasparenze, riflessioni, bump-mapping, ecc.)</i>: Il rendering
     avanzato è attivo di default ma l'utente può abilitarlo o disabilitarlo in qualsiasi momento. Il rendering avanzato
     attiva le ombre e le riflessioni (queste ultime usando il <i>modello di Phong</i>).
 </li>
 </p>
 <a id="ciclo-di-vita">
-    <h2>Ciclo di vita dell'applicazione</h2>
-    <canvas id="lifecycle" width="1200" height="500" style="border: 1px dotted red">
-    </canvas>
+    <h2>7. Ciclo di vita dell'applicazione</h2>
 </a>
+<div style="text-align: center">
+    <canvas id="lifecycle" width="1000" height="700">
+    </canvas>
+    <div style="display:inline-block">
+        <a href="images/insert_username.png">
+            <figure>
+                <img src="images/insert_username.png">
+                <figcaption>Schermata A - Apertura dell'applicazione.</figcaption>
+            </figure>
+        </a>
+    </div>
+    <div style="display:inline-block">
+        <a href="images/num_boe.png">
+            <figure>
+                <img src="images/num_boe.png">
+                <figcaption>Schermata B - Scelta del numero di boe.</figcaption>
+            </figure>
+        </a>
+    </div>
+    <div style="display:inline-block">
+        <a href="images/game_start.png">
+            <figure>
+                <img src="images/game_start.png">
+                <figcaption>Schermata C -Inizio della gara.</figcaption>
+            </figure>
+        </a>
+    </div>
+    <div style="display: inline-block">
+        <a href="images/in_game.png">
+            <figure>
+                <img src="images/in_game.png">
+                <figcaption>Schermata D - Svolgimento della gara.</figcaption>
+            </figure>
+        </a>
+    </div>
+    <div style="display: inline-block">
+        <a href="images/gioco_in_pausa.png">
+            <figure>
+                <img src="images/gioco_in_pausa.png">
+                <figcaption>Schermata E - Gioco in pausa.</figcaption>
+            </figure>
+        </a>
+    </div>
+    <div style="display: inline-block">
+        <a href="images/comandi.png">
+            <figure>
+                <img src="images/comandi.png">
+                <figcaption>Schermata F - Comandi di gioco.</figcaption>
+            </figure>
+        </a>
+    </div>
+    <div style="display: inline-block">
+        <a href="images/leaderboard.png">
+            <figure>
+                <img src="images/leaderboard.png">
+                <figcaption>Schermata G - Tempi migliori registrati.</figcaption>
+            </figure>
+        </a>
+    </div>
+    <div style="display: inline-block">
+        <a href="images/gioco_finito.png">
+            <figure>
+                <img src="images/gioco_finito.png">
+                <figcaption>Schermata H - Fine della gara.</figcaption>
+            </figure>
+        </a>
+    </div>
+</div>
 <a id="come-si-gioca">
-    <h2>Come si gioca</h2>
+    <h2>8. Come si gioca</h2>
 </a>
 <p>
     Lo scopo del gioco è raccogliere tutte le boe nel minor tempo possibile.<br/>
@@ -313,9 +444,11 @@ in modalità "rendering avanzato".
     Nella finestra vengono mostrate le informazioni relative allo scopo del gioco, ai comandi, l'indicazione di premere
     <i>B</i> se si vuole cambiare il numero di boe (l'utente può inserire un numero arbiatrario tra 1 e 100 compresi)
     e l'azione da fare per iniziare il gioco e contestualmente attivare il cronometro: muovere la barca.<br/>
-    Sul HUD (Heads Up Display), in basso a destra, viene mostrata una mappa del mondo di gioco in cui la freccia rossa rappresenta la barca,
+    Sul HUD (Heads Up Display), in basso a destra, viene mostrata una mappa del mondo di gioco in cui la freccia rossa
+    rappresenta la barca,
     la sua posizione e il suo orientamento. I punti verdi sono le boe che rimangono da catturare.
-    In alto a sinistra si trovano i pulsanti da premere per i relativi comandi (pausa e lista dei comandi), mentre sempre
+    In alto a sinistra si trovano i pulsanti da premere per i relativi comandi (pausa e lista dei comandi), mentre
+    sempre
     in alto ma sulla destra sono mostrati gli FPS.<br/>
     In basso a sinistra è presente il contatore delle boe catturate.<br/>
     Durante il gioco la schermata appare in questo modo:
@@ -328,8 +461,10 @@ in modalità "rendering avanzato".
 </a>
 <p>
     Durante il gioco il giocatore può mettere in pausa e riprendere in un istante successivo.
-    <i>Il gioco non possiede un sistema di salvataggio e quindi quando si chiude l'applicazione tutti i salvataggi andranno persi.</i>
-    Una volta che l'utente avrà raccolto tutte le boe il gioco termina mostrando il tempo complessivo; da questa schermata
+    <i>Il gioco non possiede un sistema di salvataggio e quindi quando si chiude l'applicazione tutti i salvataggi
+        andranno persi.</i>
+    Una volta che l'utente avrà raccolto tutte le boe il gioco termina mostrando il tempo complessivo; da questa
+    schermata
     si può premere <i>N</i> avviando una nuova sessione di gioco.
 </p>
 <a href="images/gioco_finito.png">
@@ -337,6 +472,9 @@ in modalità "rendering avanzato".
         <img src="images/gioco_finito.png">
         <figcaption>Schermata di riepilogo a conclusione del gioco. Click per ingrandire.</figcaption>
     </figure>
+</a>
+<a id="problemi">
+    <h2>9. Problemi conosciuti</h2>
 </a>
 <script src="doc.js"></script>
 </body>

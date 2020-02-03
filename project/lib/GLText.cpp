@@ -1,5 +1,5 @@
-#include "headers/GLText.h"
-#include "headers/Texture.h"
+#include "GLText.h"
+#include "../src/headers/Texture.h"
 
 void
 preRenderText(int font_id, TTF_Font *font, char *text, int foreground_r, int foreground_g, int foreground_b, int *w,
