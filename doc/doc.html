@@ -18,7 +18,7 @@
             display: block;
             margin: auto;
             max-width: 300px;
-            width: 100%;
+            max-height: 200px;
         }
 
         figcaption {
@@ -64,17 +64,20 @@
     <a href="#implementazione">
         <li>5. Implementazione</li>
     </a>
+    <a href="#testing">
+        <li>6. Testing</li>
+    </a>
     <a href="#richieste-obbligatorie">
-        <li>6. Richieste grafiche obbligatorie</li>
+        <li>7. Richieste grafiche obbligatorie</li>
     </a>
     <a href="#ciclo-di-vita">
-        <li>7. Ciclo di vita dell'applicazione</li>
+        <li>8. Ciclo di vita dell'applicazione</li>
     </a>
     <a href="#come-si-gioca">
-        <li>8. Come si gioca</li>
+        <li>9. Come si gioca</li>
     </a>
     <a href="#problemi">
-        <li>9. Problemi conosciuti</li>
+        <li>10. Problemi conosciuti</li>
     </a>
 </ul>
 <a id="intro">
@@ -127,7 +130,7 @@
         <code>glBegin(GL_TRIANGLES)</code>/<code>glBegin(GL_QUADS)</code> con <code>glBegin(GL_LINE_LOOP)</code>.
     </li>
     <li>
-        <b>Attiva/disattiva ombre</b>: permette abilitare o disabilitare il rendering delle ombre utilizzando gli
+        <b>Attiva/disattiva ombre</b>: permette di abilitare o disabilitare il rendering delle ombre utilizzando gli
         shader.
         <i>Funziona solo se è attivo il rendering avanzato.</i>
     </li>
@@ -199,16 +202,17 @@
 </p>
 <h4>Mare</h4>
 <p>
-    I poligoni che compongono il mare sono concettualmenti divisi in due gruppi: il mare in prossimità e il mare in
+    I poligoni che compongono il mare sono concettualmente divisi in due gruppi: il mare in prossimità e il mare in
     lontananza. Il motivo di questa suddivisione è semplice: la creazione del movimento delle onde nel mare comporta
     l'inserimento di più poligoni e di conseguenza il rendering diventa più pesante. <br/>
-    È stata valutata la performance dell'applicazione nel caso che tutto il mare avesse lo stesso livello di dettaglio,
+    È stata valutata la performance dell'applicazione nel caso in cui tutto il mare avesse lo stesso livello di
+    dettaglio,
     ma ciò causava un drastico calo degli fps. Ho deciso quindi di adottare un compromesso: lasciare la zona di mare
     lontana dalla posizione della barca ad un livello di dettaglio minore rispetto alla zona nei dintorni della barca,
     ovvero poligoni più grandi e senza movimento delle onde.<br/>
-    Questa scelta è anche dettata dal fatto le zone lontane dalla barca vengono visualizzare solo in modalità "camera
-    libera
-    sul mondo", ma questo avviene in casi molto rari.
+    Questa scelta è anche dettata dal fatto che le zone lontane dalla barca vengono visualizzare solo in modalità
+    "camera
+    libera sul mondo", ma questo avviene in casi molto rari.
 </p>
 <h5>Mare in prossimità</h5>
 <p>
@@ -223,14 +227,22 @@
 </p>
 <h5>Mare in lontananza</h5>
 <p>
-    Questa parte, che compone le zone che vanno dagli estremi del mare di prossimità al limite del mondo di gioco
+    Questa parte, che compone le zone che vanno dagli estremi del mare di prossimità ai limiti del mondo di gioco
     (definito
     dalla sfera che crea il cielo) è composta da quadrati non animati e non suddivisi in triangoli.
 </p>
 <h3>4.3 Gestione delle collisioni</h3>
-TODO
+<p>Poiché lo scopo del gioco è raccogliere le boe, diventa cruciale che il programma sappia identificare quando una boa
+    deve
+    essere marcata come "raccolta". Sono state effettuate molte semplificazioni a questo riguardo: quando la nave tocca
+    una boa
+    quest'ultima scompare e viene marcata come "raccolta". Per stabilire quando la barca e una boa vengono a contatto è
+    stato usato il concetto di bounding box: quando il bounding box della barca interseca il
+    bounding
+    box di una boa, quest'ultima viene marcata come "raccolta".</p>
 <h3>4.4 Luci</h3>
-TODO
+<p>L'intera scena è illuminata da una singola luce direzionale che simula l'illuminazione dei raggi solari.
+    I parametri della luce sono memorizzati nella classe <i>ShadowMapper</i>.</p>
 <h3>4.5 Ombre e shaders</h3>
 <p>
     La gestione delle ombre in quest'applicazione è delegata agli shader e non è banale. <br/>
@@ -274,82 +286,132 @@ in modalità "rendering avanzato".
 <a id="implementazione">
     <h2>5. Implementazione</h2>
 </a>
-<p>L'applicazione è stata implementata seguendo una progettazione object-oriented. Nella cartella <i>project/src</i> sono
-presenti i seguenti file (tranne <i>main.cpp</i>, ogni singolo file implementa l'omonima classe).</p>
+<p>L'applicazione è stata implementata seguendo una progettazione object-oriented. Nella cartella <i>project/src</i>
+    sono
+    presenti i seguenti file (tranne <i>main.cpp</i>, ogni singolo file implementa l'omonima classe).</p>
 <ul>
     <li><b><i>main.cpp</i></b>: file principale dell'applicazione, inizializza gli oggetti principali del programma e
-        gestire il ciclo di rendering e gli input esterni.</li>
+        gestire il ciclo di rendering e gli input esterni.
+    </li>
     <li><b><i>BoundingBox.cpp</i></b>: classe che contiene le coordinate del bounding box, ovvero del cubo che racchiude
-        le geometrie della barca e delle boe. Serve per la rilevazione e gestione delle collisioni.</li>
+        le geometrie della barca e delle boe. Serve per la rilevazione e gestione delle collisioni.
+    </li>
     <li><b><i>Buoy.cpp</i></b>: gestisce le informazioni relative alle boe (es. posizione).</li>
     <li><b><i>Camera.cpp</i></b>: contiene le informazioni sulla telecamera della scena.</li>
     <li><b><i>Controller.cpp</i></b>: si occupa di parte della gestione dell'input utente (non modificata rispetto a
-        <i>progettoCar3</i>.</li>
-    <li><b><i>Enviroment.cpp</i></b>: </li>
-    <li><b><i>Fog.cpp</i></b>: </li>
-    <li><b><i>Frontier.cpp</i></b>: </li>
-    <li><b><i>Game.cpp</i></b>: </li>
-    <li><b><i>HUD.cpp</i></b>: </li>
-    <li><b><i>Leaderboard.cpp</i></b>: </li>
-    <li><b><i>Mesh.cpp</i></b>: </li>
-    <li><b><i>Options.cpp</i></b>: </li>
-    <li><b><i>ShaderParams.cpp</i></b>: </li>
-    <li><b><i>Ship.cpp</i></b>: </li>
-    <li><b><i>ShipMesh.cpp</i></b>: </li>
-    <li><b><i>Texture.cpp</i></b>: </li>
-    <li><b><i>TextureManager.cpp</i></b>: </li>
-    <li><b><i>Utils.cpp</i></b>: </li>
+        <i>progettoCar3</i>).
+    </li>
+    <li><b><i>Enviroment.cpp</i></b>: gestisce il rendering dell'ambiente di gioco, ovvero del mare, del cielo e anche
+        delle boe.
+    </li>
+    <li><b><i>Fog.cpp</i></b>: piccola classe responsabile di memorizzare le informazioni sulla nebbia.</li>
+    <li><b><i>Frontier.cpp</i></b>: si occupa del rendering delle frontiere, cioè il cerchio di boe che delimita lo
+        spazio di movimento della barca.
+    </li>
+    <li><b><i>Game.cpp</i></b>: gestisce il flusso della singola gara e ne contiene le informazioni (tempo di gioco,
+        messa in pausa, ecc..) e contiene metodi per fermare il tempo quando tutte le boe sono state raccolte e per la
+        rilevazione di collisioni.
+    </li>
+    <li><b><i>HUD.cpp</i></b>: si occupa del rendering di tutte le informazioni del head up display (mappa, cronometro,
+        fps, conteggio boe raccolte) e della visualizzazione dei menù di gioco.
+    </li>
+    <li><b><i>Leaderboard.cpp</i></b>: gestisce la tabella dei punteggi migliori e si occupa di memorizzarla in un file.
+    </li>
+    <li><b><i>Mesh.cpp</i></b>: responsabile della lettura di un file OBJ e del rendering della sua topologia, ma non
+        gestisce materiali e texture. Raccoglie funzioni già implementate in <i>progettoCar3</i>.
+    </li>
+    <li><b><i>Options.cpp</i></b>: gestisce le variabili booleane che identificano le opzioni di rendering attivabili
+        e disattivabili dall'utente.
+    </li>
+    <li><b><i>ShaderParams.cpp</i></b>: mette a disposizione variabili e metodi per la semplificazione del passaggio
+        dei parametri agli shader.
+    </li>
+    <li><b><i>Ship.cpp</i></b>: gestisce tutte le informazioni relative alla barca come posizione, orientamento,
+        inclinazione, velocità, ecc... Non gestisce la mesh.
+    </li>
+    <li><b><i>ShipMesh.cpp</i></b>: classe dedicata al rendering della mesh della barca. Questa è una sottoclasse di
+        <i>Mesh</i> che aggiunge la possibilità di renderizzare parti del modello che possono mutare le loro
+        caratteristiche.
+        In questo caso le eliche girano se la barca si muove e i timoni seguono il movimento dello scafo.
+    </li>
+    <li><b><i>Texture.cpp</i></b>: classe minimale che identifica una texture.</li>
+    <li><b><i>TextureManager.cpp</i></b>: creata per avere un punto di controllo per tutte le texture.</li>
+    <li><b><i>Utils.cpp</i></b>: funzioni di varia utilità.</li>
 </ul>
-<a id="richieste-obbligatorie">
-    <h2>6. Richieste grafiche obbligatorie</h2>
+<a id="testing">
+    <h2>6. Testing</h2>
 </a>
 <p>
-<li>
-    <i>Geometria 3D e vista (gli oggetti devono essere visualizzati in proiezione prospettica)</i>: il gioco è
-    ambientato
-    in un mondo tridimensionale, mentre la mappa sullo schermo è stata realizzata in due dimensioni, come opportuno.
-</li>
-<li>
-    <i>Input utente (si gestisca l'interazione 3D usando sia la tastiera che il mouse e opzionalmente un joypad)</i>:
-    Il gioco gestisce l'input utente da tastiera per muovere la barca, mentre l'input per il joypad non è stato cambiato
-    rispetto a <i>progettoCar3</i>.
-</li>
-<li>
-    <i>Illuminazione e sfumatura (gli oggetti 3D devono essere illuminati da almeno una luce)</i>: è presente una fonte
-    luminosa che imita
-    la luce solare. Il modello di illuminazione disponibile nella modalità di rendering avanzato è il <i>modello di
-    Phong</i>.
-</li>
-<li>
-    <i>Texture mapping, sia dando le coordinate texture, che generandole in modo automatico (almeno due oggetti 3D
-        devono avere una texture applicata e almeno una deve essere una foto personale)</i>: Ad eccezione delle boe
-    (esclusa la
-    bandierina) tutti gli elementi della scena hanno delle texture applicate. La barca, il mare e il cielo hanno
-    coordinate
-    texture generate in modo automatico; le bandierine delle boe hanno coordinate texture inserite manualmente.
-</li>
-<li>
-    <i>Navigazione nella scena (il giocatore deve avere un indicatore visuale (mappa) di dov'e' e dove puo' andare)</i>:
-    la mappa in basso a destra offre una panoramica di tutto l'ambiente di gioco.
-</li>
-<li>
-    <i>Pannello di controllo su schermo (si preveda un pannello di controllo in cui usando testo e grafica 2D si
-        visualizzino
-        le funzioni utente, lo scoreboard, ecc.)</i>: TODO
-</li>
-<li>
-    <i>Advanced rendering (opzionale) (da menu' si preveda l'attivazione/disattivazione di almeno una tecnica di resa
-        avanzata
-        realizzabile in opengl come per esempio: ombre, trasparenze, riflessioni, bump-mapping, ecc.)</i>: Il rendering
-    avanzato è attivo di default ma l'utente può abilitarlo o disabilitarlo in qualsiasi momento. Il rendering avanzato
-    attiva le ombre e le riflessioni (queste ultime usando il <i>modello di Phong</i>).
-</li>
+    Il test dell'applicazione è stato effettuato su ambiente GNU/Linux con le seguenti caratteristiche.<br/>
+    <b>Sistema operativo:</b> Ubuntu 18.04.4 LTS 64-bit<br/>
+    <b>Processore:</b> Intel® Core™ i7-5500U CPU @ 2.40GHz × 4<br/>
+    <b>Architettura:</b> x86_64<br/>
+    <b>Scheda grafica:</b> Intel® HD Graphics 5500 (Broadwell GT2)<br/>
+    <b>Versione OpenGL</b>: OpenGL 3.0 Mesa 19.2.8, GLSL 1.30<br/>
+</p>
+<a id="richieste-obbligatorie">
+    <h2>7. Richieste grafiche obbligatorie</h2>
+</a>
+<p>
+<ul>
+    <li>
+        <i>Geometria 3D e vista (gli oggetti devono essere visualizzati in proiezione prospettica)</i>: il gioco è
+        ambientato
+        in un mondo tridimensionale, mentre la mappa sullo schermo è stata realizzata in due dimensioni, come opportuno.
+    </li>
+    <li>
+        <i>Input utente (si gestisca l'interazione 3D usando sia la tastiera che il mouse e opzionalmente un joypad)</i>:
+        Il gioco gestisce l'input utente da tastiera per muovere la barca, mentre l'input per il joypad non è stato
+        cambiato
+        rispetto a <i>progettoCar3</i>.
+    </li>
+    <li>
+        <i>Illuminazione e sfumatura (gli oggetti 3D devono essere illuminati da almeno una luce)</i>: è presente una
+        fonte
+        luminosa che imita
+        la luce solare. Il modello di illuminazione disponibile nella modalità di rendering avanzato è il <i>modello di
+        Phong</i>.
+    </li>
+    <li>
+        <i>Texture mapping, sia dando le coordinate texture, che generandole in modo automatico (almeno due oggetti 3D
+            devono avere una texture applicata e almeno una deve essere una foto personale)</i>: Ad eccezione delle boe
+        (esclusa la
+        bandierina) tutti gli elementi della scena hanno delle texture applicate. La barca, il mare e il cielo hanno
+        coordinate texture generate in modo automatico; le bandierine delle boe e le mie foto sulle fiancate della barca
+        hanno coordinate texture inserite manualmente.
+    </li>
+    <li>
+        <i>Navigazione nella scena (il giocatore deve avere un indicatore visuale (mappa) di dov'e' e dove puo'
+            andare)</i>:
+        la mappa in basso a destra offre una panoramica di tutto l'ambiente di gioco.
+    </li>
+    <li>
+        <i>Pannello di controllo su schermo (si preveda un pannello di controllo in cui usando testo e grafica 2D si
+            visualizzino
+            le funzioni utente, lo scoreboard, ecc.)</i>: in qualunque momento del gioco l'applicazione informa l'utente
+        di
+        tutte le funzioni di cui può usufruire e gli fornisce tutti i dati utili al proseguimento della gara.
+    </li>
+    <li>
+        <i>Advanced rendering (opzionale) (da menu' si preveda l'attivazione/disattivazione di almeno una tecnica di
+            resa
+            avanzata
+            realizzabile in opengl come per esempio: ombre, trasparenze, riflessioni, bump-mapping, ecc.)</i>: Il
+        rendering
+        avanzato è attivo di default ma l'utente può abilitarlo o disabilitarlo in qualsiasi momento. Il rendering
+        avanzato
+        attiva le ombre e le riflessioni (queste ultime usando il <i>modello di Phong</i>).
+    </li>
+</ul>
 </p>
 <a id="ciclo-di-vita">
-    <h2>7. Ciclo di vita dell'applicazione</h2>
+    <h2>8. Ciclo di vita dell'applicazione</h2>
 </a>
+<p>Nel diagramma che compare di seguito è schematizzato il ciclo di vita dall'applicazione: ogni lettera identifica una
+    singola schermata (G' e G'' sono due istanze della stessa schermata). La schermata A è quella che compare
+    all'apertura.</p>
 <div style="text-align: center">
-    <canvas id="lifecycle" width="1000" height="700">
+    <canvas id="lifecycle" width="1100" height="550">
     </canvas>
     <div style="display:inline-block">
         <a href="images/insert_username.png">
@@ -417,11 +479,11 @@ presenti i seguenti file (tranne <i>main.cpp</i>, ogni singolo file implementa l
     </div>
 </div>
 <a id="come-si-gioca">
-    <h2>8. Come si gioca</h2>
+    <h2>9. Come si gioca</h2>
 </a>
 <p>
     Lo scopo del gioco è raccogliere tutte le boe nel minor tempo possibile.<br/>
-    Appena avviata l'applicazione l'utente viene mostrata la seguente schermata dalla quale può scegliere il suo nome.
+    Appena avviata l'applicazione all'utente viene mostrata la seguente schermata dalla quale può scegliere il suo nome.
     Il nome verrà registrato nella leaderboard se una partità dell'utente finirà con un punteggio che rientra fra i
     migliori 20.
 </p>
@@ -460,7 +522,7 @@ presenti i seguenti file (tranne <i>main.cpp</i>, ogni singolo file implementa l
     </figure>
 </a>
 <p>
-    Durante il gioco il giocatore può mettere in pausa e riprendere in un istante successivo.
+    Durante il gioco il giocatore può mettere in pausa e riprendere in un istante successivo, purché non chiuda il programma.
     <i>Il gioco non possiede un sistema di salvataggio e quindi quando si chiude l'applicazione tutti i salvataggi
         andranno persi.</i>
     Una volta che l'utente avrà raccolto tutte le boe il gioco termina mostrando il tempo complessivo; da questa
@@ -474,8 +536,24 @@ presenti i seguenti file (tranne <i>main.cpp</i>, ogni singolo file implementa l
     </figure>
 </a>
 <a id="problemi">
-    <h2>9. Problemi conosciuti</h2>
+    <h2>10. Problemi conosciuti</h2>
 </a>
+<p>Nel programma sono presenti alcuni bug che non è stato possibile risolvere.
+<ul>
+    <li>In modalità rendering avanzato lo shader calcola le coordinate texture in base alla modalità <i>SPHERE MAP</i>,
+        tuttavia la texture del cielo non è mappata correttamente come invece avviene con il
+        rendering normale.
+    </li>
+    <li>L'ombra creata con lo shadow mapping scompare per alcune zone della mappa: ciò è causato da un controllo dello
+        shader introdotto per evitare un altro bug. Tale bug è realativo al rendering di un'enorme zona d'ombra
+        presente
+        a un lato della scena probabilmente causata da un out-of-bound rispetto alla shadow map.
+    </li>
+    <li>Nella vista con telecamera a bordo della barca, la mappa e il contatore delle boe raccolte vengono in parte
+        nascosti dalla barca stessa.
+    </li>
+</ul>
+</p>
 <script src="doc.js"></script>
 </body>
 </html>

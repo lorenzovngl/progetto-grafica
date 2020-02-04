@@ -101,13 +101,11 @@ void rendering(SDL_Window *window) {
 
     // setto la posizione luce
     float ambient[4] = {0.2, 0.2, 0.2, 1};
-    glLightfv(GL_LIGHT1, GL_AMBIENT, ambient);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
     float diffuse[4] = {0.8, 0.8, 0.8, 1};
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
     float specular[4] = {0, 0, 0, 0};
-    glLightfv(GL_LIGHT1, GL_SPECULAR, specular);
-    float position[4] = {30, 50, 0, 1};
-    glLightfv(GL_LIGHT1, GL_POSITION, position);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
 
     static float tmpcol[4] = {1, 1, 1, 1};
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, tmpcol);

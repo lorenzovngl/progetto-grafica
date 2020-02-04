@@ -29,11 +29,11 @@ public:
     float vMatrix[16];          // view matrix
     float cameraSpeed = 0.5f;   // When moving it
 
-// light data
+    // light data
     float lightYaw = M_PI*0.425f,lightPitch = M_PI*0.235f;   // must be copied to resetLight() too
     float lightDirection[4] = {0,1,0,0};                    // Derived value (do not edit) [lightDirection[3]==0]
 
-// pMatrix data:
+    // pMatrix data:
     float pMatrix[16],pMatrixInverse[16];   // projection matrix (pMatrixInverse is used only when USE_UNSTABLE_SHADOW_MAPPING_TECHNIQUE is defined)
     const float pMatrixFovyDeg = 45.f;      // smaller => better shadow resolution
     const float pMatrixNearPlane = 0.5f;    // bigger  => better shadow resolution

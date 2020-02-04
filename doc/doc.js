@@ -4,16 +4,16 @@ ctx.font = "14px Arial";
 const headlen = 10; // length of head in pixels
 const state_radius = 20;
 const states = [
-    {name: "start", x: 0, y: 200},
-    {name: "A", x: 200, y: 200},
-    {name: "C", x: 200, y: 400},
-    {name: "B", x: 400, y: 200},
-    {name: "D", x: 600, y: 200},
-    {name: "E", x: 600, y: 400},
-    {name: "F", x: 600, y: 600},
-    {name: "G", x: 800, y: 400},
-    {name: "H", x: 800, y: 200},
-    {name: "end", x: 1000, y: 200},
+    {name: "start", x: 0, y: 100},
+    {name: "A", x: 200, y: 100},
+    {name: "C", x: 200, y: 300},
+    {name: "B", x: 400, y: 100},
+    {name: "D", x: 600, y: 100},
+    {name: "E", x: 600, y: 300},
+    {name: "F", x: 600, y: 500},
+    {name: "G'", x: 800, y: 300},
+    {name: "G''", x: 1000, y: 300},
+    {name: "H", x: 800, y: 100}
 ];
 
 const transitions = [
@@ -26,12 +26,13 @@ const transitions = [
     ["E", "B", 0.5, false],
     ["E", "D", 0.5, false],
     ["E", "F", 0, false],
-    ["E", "G", 0, false],
+    ["E", "G'", 0, false],
     ["F", "E", 0.5, false],
-    ["G", "E", 0.5, false],
+    ["G'", "E", 0.5, false],
+    ["G''", "H", 0, false],
     ["D", "H", 0, false],
     ["H", "B", 0.5, true],
-    ["H", "end", 0, false]
+    ["H", "G''", 0.5, true]
 ];
 
 for (let i = 0; i < states.length; i++) {
