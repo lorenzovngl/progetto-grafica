@@ -99,7 +99,6 @@ void rendering(SDL_Window *window) {
     // riempe tutto lo screen buffer di pixel color sfondo
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // setto la posizione luce
     float ambient[4] = {0.2, 0.2, 0.2, 1};
     glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
     float diffuse[4] = {0.8, 0.8, 0.8, 1};
@@ -112,8 +111,6 @@ void rendering(SDL_Window *window) {
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 0);
 
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-    // settiamo matrice di modellazione
 
     camera->set(*ship, eyeDist, viewBeta, viewAlpha);
 
@@ -243,15 +240,6 @@ void rendering(SDL_Window *window) {
     SDL_GL_SwapWindow(window);
 }
 
-void redraw() {
-    // ci automandiamo un messaggio che (s.o. permettendo)
-    // ci fara' ridisegnare la finestra
-    SDL_Event e;
-    e.type = SDL_WINDOWEVENT;
-    e.window.event = SDL_WINDOWEVENT_EXPOSED;
-    SDL_PushEvent(&e);
-}
-
 int main(int argc, char *argv[]) {
     SDL_Window *window;
     SDL_GLContext mainContext;
@@ -337,7 +325,7 @@ int main(int argc, char *argv[]) {
     inputModeEnabled = true;
     bool shiftButtonActive = true;           // Per gestire le maiuscole durante l'inserimento dell'username
 
-    bool done = 0;
+    bool done = false;
     while (!done) {
 
         SDL_Event e;
@@ -372,6 +360,8 @@ int main(int argc, char *argv[]) {
                             game->go();
                         } else if (e.key.keysym.sym == SDLK_n) {
                             game->reset();
+                        } else if (e.key.keysym.sym == SDLK_q){
+                            done = true;
                         }
                     } else {
                         char *pEnd;
@@ -428,7 +418,7 @@ int main(int argc, char *argv[]) {
                     ship->controller.EatKey(e.key.keysym.sym, keymap, false);
                     break;
                 case SDL_QUIT:
-                    done = 1;
+                    done = true;
                     break;
                 case SDL_WINDOWEVENT:
                     // dobbiamo ridisegnare la finestra
@@ -442,7 +432,6 @@ int main(int argc, char *argv[]) {
                                     viewportWidth = e.window.data1;
                                     viewportHeight = e.window.data2;
                                     rendering(window);
-                                    //redraw(); // richiedi ridisegno
                                     break;
                                 }
                             }
@@ -455,12 +444,9 @@ int main(int argc, char *argv[]) {
                         (camera->getType() == CAMERA_MOUSE || camera->getType() == CAMERA_MOUSE_SHIP)) {
                         viewAlpha += e.motion.xrel;
                         viewBeta += e.motion.yrel;
-                        //if (viewBeta<-90) viewBeta=-90;
-                        //if (viewBeta < +5) viewBeta = +5; //per non andare sotto la macchina
                         if (viewBeta > +90) viewBeta = +90;
                         shadowMapper->resetCamera(eyeDist, viewBeta * 0.005, -viewAlpha * 0.005);
                         rendering(window);
-                        //redraw(); // richiedi un ridisego
                     }
                     break;
 
@@ -551,7 +537,6 @@ int main(int argc, char *argv[]) {
 
             if (doneSomething)
                 rendering(window);
-                //redraw();
             else {
                 // tempo libero!!!
             }

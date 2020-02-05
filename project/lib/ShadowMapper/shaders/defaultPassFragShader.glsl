@@ -62,7 +62,7 @@ void main() {
     float Kd = max(dot(Normal, Light), 0.5);
     float Ks = pow(max(dot(Half, Normal), 1.0), gl_FrontMaterial.shininess);
     float Ka = 0.5;
-    float intensity = 0.2;
+    float intensity = 1.0;
 
     vec4 diffuse  = Kd * gl_FrontLightProduct[1].diffuse*intensity;
     vec4 specular = Ks * gl_FrontLightProduct[1].specular*intensity;

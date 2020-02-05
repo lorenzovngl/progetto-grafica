@@ -13,7 +13,8 @@ const states = [
     {name: "F", x: 600, y: 500},
     {name: "G'", x: 800, y: 300},
     {name: "G''", x: 1000, y: 300},
-    {name: "H", x: 800, y: 100}
+    {name: "H", x: 800, y: 100},
+    {name: "end", x: 1000, y: 100}
 ];
 
 const transitions = [
@@ -32,7 +33,8 @@ const transitions = [
     ["G''", "H", 0, false],
     ["D", "H", 0, false],
     ["H", "B", 0.5, true],
-    ["H", "G''", 0.5, true]
+    ["H", "G''", 0.5, true],
+    ["H", "end", 0, false]
 ];
 
 for (let i = 0; i < states.length; i++) {

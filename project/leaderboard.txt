@@ -1,6 +1,8 @@
+Lorenzo	10	23943
 Lorenzo	10	24581
 Lorenzo	5	13510
 Piero	10	31853
 Lorenzo	10	32035
+Lorenzo	10	38077
 Lorenzo	10	40550
 Lorenzo	1	4149

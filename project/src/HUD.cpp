@@ -31,11 +31,11 @@ HUD::HUD(Game *p_game) {
         return;
     }
     //inizializzo anche la libreria ttf
-    mFont18 = TTF_OpenFont("assets/fonts/FreeSans.ttf", 18);
-    mFont25 = TTF_OpenFont("assets/fonts/FreeSans.ttf", 25);
-    mFont40 = TTF_OpenFont("assets/fonts/FreeSans.ttf", 40);
-    mFont100 = TTF_OpenFont("assets/fonts/FreeSans.ttf", 100);
-    if (mFont18 == NULL || mFont25 == NULL || mFont40 == NULL) {
+    mText18 = new GLText(TEXTURE_TEXT, TTF_OpenFont("assets/fonts/FreeSans.ttf", 18));
+    mText25 = new GLText(TEXTURE_TEXT, TTF_OpenFont("assets/fonts/FreeSans.ttf", 25));
+    mText40 = new GLText(TEXTURE_TEXT, TTF_OpenFont("assets/fonts/FreeSans.ttf", 40));
+    mText100 = new GLText(TEXTURE_TEXT, TTF_OpenFont("assets/fonts/FreeSans.ttf", 100));
+    if (mText18 == NULL || mText25 == NULL || mText40 == NULL || mText100 == NULL) {
         fprintf(stderr, "Couldn't load font\n");
     }
     isCommandsListVisibile = false;
@@ -79,34 +79,32 @@ void HUD::display(int v_width, int v_height, float ship_cx, float ship_cy, float
     glLoadIdentity();
     Utils::setCoordToPixel(v_width, v_height);
 
-    GLText *text = new GLText(TEXTURE_TEXT, mFont18);
     sprintf(string, "P - pause    C - Commands list    L - Leaderboard");
-    text->setText(string, 255,255,255);
-    text->setPosition(20,v_height-10);
-    text->setAlignment(ALIGN_LEFT);
-    text->render();
+    mText18->setText(string, 255,255,255);
+    mText18->setPosition(20,v_height-10);
+    mText18->setAlignment(ALIGN_LEFT);
+    mText18->render();
 
     sprintf(string, "FPS: %i", (int) fps);
-    text->setText(string, 255,255,255);
-    text->setPosition(v_width-100,v_height-10);
-    text->setAlignment(ALIGN_LEFT);
-    text->render();
+    mText18->setText(string, 255,255,255);
+    mText18->setPosition(v_width-100,v_height-10);
+    mText18->setAlignment(ALIGN_LEFT);
+    mText18->render();
 
-    text = new GLText(TEXTURE_TEXT, mFont25);
     int millis = game->getGameTime();
     int sec = millis/1000;
     int min = sec/60;
     sprintf(string, "%s    %02d:%02d:%03d", game->getLeaderboard()->getUsename(), min, sec-min*60, millis-sec*1000-min*60);
-    text->setText(string, 255,255,255);
-    text->setPosition(v_width/2,v_height/8*7);
-    text->setAlignment(ALIGN_CENTER);
-    text->render();
+    mText25->setText(string, 255,255,255);
+    mText25->setPosition(v_width/2,v_height/8*7);
+    mText25->setAlignment(ALIGN_CENTER);
+    mText25->render();
 
     sprintf(string, "Catched: %d/%d", game->getScore(), game->getScoreLimit());
-    text->setText(string, 255,255,255);
-    text->setPosition(20,50);
-    text->setAlignment(ALIGN_LEFT);
-    text->render();
+    mText25->setText(string, 255,255,255);
+    mText25->setPosition(20,50);
+    mText25->setAlignment(ALIGN_LEFT);
+    mText25->render();
 
     // Map
     glDisable(GL_LIGHTING);
@@ -142,38 +140,34 @@ void HUD::askUsername(int v_width, int v_height, char *input) {
     glLoadIdentity();
     Utils::setCoordToPixel(v_width, v_height);
 
-    GLText *text = new GLText(TEXTURE_TEXT, mFont100);
-    text->setText((char*) "Open Sailing", 255, 255, 255);
-    text->setPosition(v_width/2,v_height/1.1);
-    text->setAlignment(ALIGN_CENTER);
-    text->render();
+    mText100->setText((char*) "Open Sailing", 255, 255, 255);
+    mText100->setPosition(v_width/2,v_height/1.1);
+    mText100->setAlignment(ALIGN_CENTER);
+    mText100->render();
 
-    text = new GLText(TEXTURE_TEXT, mFont25);
-    text->setText((char*) "A Ship Game in OpenGL", 255, 255, 255);
-    text->setPosition(v_width/2,v_height/1.1 - 130);
-    text->setAlignment(ALIGN_CENTER);
-    text->render();
+    mText25->setText((char*) "A Ship Game in OpenGL", 255, 255, 255);
+    mText25->setPosition(v_width/2,v_height/1.1 - 130);
+    mText25->setAlignment(ALIGN_CENTER);
+    mText25->render();
 
     sprintf(buffer[0], "Author: Lorenzo Vainigli");
     sprintf(buffer[1], "Corso di Grafica, Laurea Magistrale in Informatica");
     sprintf(buffer[2], "Universita' di Bologna, A.A. 2017/18");
-    text = new GLText(TEXTURE_TEXT, mFont18);
     for (int i = 0; i < 3; i++){
-        text->setText(buffer[i], 255, 255, 255);
-        text->setPosition(v_width/2,v_height/1.1 - 200 - 25 * i);
-        text->setAlignment(ALIGN_CENTER);
-        text->render();
+        mText18->setText(buffer[i], 255, 255, 255);
+        mText18->setPosition(v_width/2,v_height/1.1 - 200 - 25 * i);
+        mText18->setAlignment(ALIGN_CENTER);
+        mText18->render();
     }
 
     sprintf(buffer[0], "Please insert your name,");
     sprintf(buffer[1], "then press Enter.");
     sprintf(buffer[2], "%s_", input);
-    text = new GLText(TEXTURE_TEXT, mFont40);
     for (int i = 0; i < 3; i++){
-        text->setText(buffer[i], 255, 255, 255);
-        text->setPosition(v_width/2,v_height/2.5 - 50 * i);
-        text->setAlignment(ALIGN_CENTER);
-        text->render();
+        mText40->setText(buffer[i], 255, 255, 255);
+        mText40->setPosition(v_width/2,v_height/2.5 - 50 * i);
+        mText40->setAlignment(ALIGN_CENTER);
+        mText40->render();
     }
 
     glPopMatrix();
@@ -188,12 +182,11 @@ void HUD::displayStartGameMessage(int v_width, int v_height){
 
     sprintf(buffer[0], "Welcome to the game! Your goal is to catch all the buoys");
     sprintf(buffer[1], "placed around the ship in the shortest possible time.");
-    GLText *text = new GLText(TEXTURE_TEXT, mFont25);
     for (int i = 0; i < 2; i++){
-        text->setText(buffer[i], 255, 255, 255);
-        text->setPosition(v_width/2,v_height/1.5 - 30 * i);
-        text->setAlignment(ALIGN_CENTER);
-        text->render();
+        mText25->setText(buffer[i], 255, 255, 255);
+        mText25->setPosition(v_width/2,v_height/1.5 - 30 * i);
+        mText25->setAlignment(ALIGN_CENTER);
+        mText25->render();
     }
 
     sprintf(buffer[0], "Controls:");
@@ -202,23 +195,21 @@ void HUD::displayStartGameMessage(int v_width, int v_height){
     sprintf(buffer[3], "ARROW LEFT - Turn left");
     sprintf(buffer[4], "ARROW RIGHT - Turn right");
     for (int i = 0; i < 5; i++){
-        text->setText(buffer[i], 255, 255, 255);
-        text->setPosition(v_width/4,v_height/1.5 - 30 * (i+3));
-        text->setAlignment(ALIGN_LEFT);
-        text->render();
+        mText25->setText(buffer[i], 255, 255, 255);
+        mText25->setPosition(v_width/4,v_height/1.5 - 30 * (i+3));
+        mText25->setAlignment(ALIGN_LEFT);
+        mText25->render();
     }
+    
+    mText18->setText((char*) "Press B to change the number of buoys to catch.", 255, 255, 255);
+    mText18->setPosition(v_width/2,v_height/1.5 - 270);
+    mText18->setAlignment(ALIGN_CENTER);
+    mText18->render();
 
-    text = new GLText(TEXTURE_TEXT, mFont18);
-    text->setText((char*) "Press B to change the number of buoys to catch.", 255, 255, 255);
-    text->setPosition(v_width/2,v_height/1.5 - 270);
-    text->setAlignment(ALIGN_CENTER);
-    text->render();
-
-    text = new GLText(TEXTURE_TEXT, mFont40);
-    text->setText((char*) "Time starts when you move the ship.", 255,255,255);
-    text->setPosition(v_width/2,v_height/4);
-    text->setAlignment(ALIGN_CENTER);
-    text->render();
+    mText40->setText((char*) "Time starts when you move the ship.", 255,255,255);
+    mText40->setPosition(v_width/2,v_height/4);
+    mText40->setAlignment(ALIGN_CENTER);
+    mText40->render();
 
     glPopMatrix();
 }
@@ -234,17 +225,15 @@ void HUD::displayEndGameMessage(int v_width, int v_height){
     int sec = millis/1000;
     int min = sec/60;
     sprintf(buffer, "Game finished, your time is: %02d:%02d:%03d.", min, sec - min * 60, millis - sec * 1000 - min * 60);
-    GLText *text = new GLText(TEXTURE_TEXT, mFont40);
-    text->setText(buffer, 255, 255, 255);
-    text->setPosition(v_width/2,v_height/1.5);
-    text->setAlignment(ALIGN_CENTER);
-    text->render();
-
-    text = new GLText(TEXTURE_TEXT, mFont25);
-    text->setText((char*) "Press N to start a new game.", 255, 255, 255);
-    text->setPosition(v_width/2,v_height/1.5 - 50);
-    text->setAlignment(ALIGN_CENTER);
-    text->render();
+    mText40->setText(buffer, 255, 255, 255);
+    mText40->setPosition(v_width/2,v_height/1.5);
+    mText40->setAlignment(ALIGN_CENTER);
+    mText40->render();
+    
+    mText25->setText((char*) "Press N to start a new game, Q to quit.", 255, 255, 255);
+    mText25->setPosition(v_width/2,v_height/1.5 - 50);
+    mText25->setAlignment(ALIGN_CENTER);
+    mText25->render();
 
     glPopMatrix();
 }
@@ -254,17 +243,15 @@ void HUD::displayPauseMessage(int v_width, int v_height){
     glLoadIdentity();
     Utils::setCoordToPixel(v_width, v_height);
 
-    GLText *text = new GLText(TEXTURE_TEXT, mFont40);
-    text->setText((char*) "Game paused", 255, 255, 255);
-    text->setPosition(v_width/2,v_height/1.5);
-    text->setAlignment(ALIGN_CENTER);
-    text->render();
-
-    text = new GLText(TEXTURE_TEXT, mFont25);
-    text->setText((char*) "Press P to resume, N to start a new game.", 255, 255, 255);
-    text->setPosition(v_width/2,v_height/1.5 - 50);
-    text->setAlignment(ALIGN_CENTER);
-    text->render();
+    mText40->setText((char*) "Game paused", 255, 255, 255);
+    mText40->setPosition(v_width/2,v_height/1.5);
+    mText40->setAlignment(ALIGN_CENTER);
+    mText40->render();
+    
+    mText25->setText((char*) "Press P to resume, N to start a new game.", 255, 255, 255);
+    mText25->setPosition(v_width/2,v_height/1.5 - 50);
+    mText25->setAlignment(ALIGN_CENTER);
+    mText25->render();
 
     glPopMatrix();
 }
@@ -285,12 +272,11 @@ void HUD::displayCommands(int v_width, int v_height){
     sprintf(buffer[6], "F3 - Toggle shadows");
     sprintf(buffer[7], "F4 - Toggle fog");
     sprintf(buffer[8], "F5 - Toggle advanced rendering (shaders)");
-    GLText *text = new GLText(TEXTURE_TEXT, mFont25);
     for (int i = 0; i < 9; i++){
-        text->setText(buffer[i], 255, 255, 255);
-        text->setPosition(v_width/4,v_height/1.5 - 30 * i);
-        text->setAlignment(ALIGN_LEFT);
-        text->render();
+        mText25->setText(buffer[i], 255, 255, 255);
+        mText25->setPosition(v_width/4,v_height/1.5 - 30 * i);
+        mText25->setAlignment(ALIGN_LEFT);
+        mText25->render();
     }
 
     glPopMatrix();
@@ -298,7 +284,6 @@ void HUD::displayCommands(int v_width, int v_height){
 
 void HUD::displayLeaderboardColumn(int col, Leaderboard::LBItem** items, int v_width, int v_height){
     char buffer[200];
-    GLText *text = new GLText(TEXTURE_TEXT, mFont18);
     int i = 0;
     int padding;
     while (i < LEADERBOARD_LENGHT){
@@ -337,14 +322,14 @@ void HUD::displayLeaderboardColumn(int col, Leaderboard::LBItem** items, int v_w
         } else {
             sprintf(buffer, "--");
         }
-        text->setText(buffer, 255, 255, 255);
+        mText18->setText(buffer, 255, 255, 255);
         if (i < floor(LEADERBOARD_LENGHT/2)){
-            text->setPosition(v_width/2 - 450 + padding,v_height/1.5 - 30 * i);
+            mText18->setPosition(v_width/2 - 450 + padding,v_height/1.5 - 30 * i);
         } else {
-            text->setPosition(v_width/2 + 50 + padding,v_height/1.5 - 30 * (i - floor(LEADERBOARD_LENGHT/2)));
+            mText18->setPosition(v_width/2 + 50 + padding,v_height/1.5 - 30 * (i - floor(LEADERBOARD_LENGHT/2)));
         }
-        text->setAlignment(ALIGN_LEFT);
-        text->render();
+        mText18->setAlignment(ALIGN_LEFT);
+        mText18->render();
         i++;
     }
 }
@@ -357,46 +342,45 @@ void HUD::displayLeaderboard(Leaderboard *leaderboard, int v_width, int v_height
     Utils::setCoordToPixel(v_width, v_height);
 
     items = leaderboard->read();
-    GLText *text = new GLText(TEXTURE_TEXT, mFont18);
     // Posizione
-    text->setText((char*) "Pos", 255, 255, 255);
-    text->setPosition(v_width/2 - 450, v_height/1.5 + 40);
-    text->setAlignment(ALIGN_LEFT);
-    text->render();
-    text->setPosition(v_width/2 + 50, v_height/1.5 + 40);
-    text->render();
+    mText18->setText((char*) "Pos", 255, 255, 255);
+    mText18->setPosition(v_width/2 - 450, v_height/1.5 + 40);
+    mText18->setAlignment(ALIGN_LEFT);
+    mText18->render();
+    mText18->setPosition(v_width/2 + 50, v_height/1.5 + 40);
+    mText18->render();
     displayLeaderboardColumn(0, items, v_width, v_height);
     // Nome
-    text->setText((char*) "Name", 255, 255, 255);
-    text->setPosition(v_width/2 - 410, v_height/1.5 + 40);
-    text->setAlignment(ALIGN_LEFT);
-    text->render();
-    text->setPosition(v_width/2 + 90, v_height/1.5 + 40);
-    text->render();
+    mText18->setText((char*) "Name", 255, 255, 255);
+    mText18->setPosition(v_width/2 - 410, v_height/1.5 + 40);
+    mText18->setAlignment(ALIGN_LEFT);
+    mText18->render();
+    mText18->setPosition(v_width/2 + 90, v_height/1.5 + 40);
+    mText18->render();
     displayLeaderboardColumn(1, items, v_width, v_height);
     // Numero di boe
-    text->setText((char*) "Buoys", 255, 255, 255);
-    text->setPosition(v_width/2 - 300, v_height/1.5 + 40);
-    text->setAlignment(ALIGN_LEFT);
-    text->render();
-    text->setPosition(v_width/2 + 200, v_height/1.5 + 40);
-    text->render();
+    mText18->setText((char*) "Buoys", 255, 255, 255);
+    mText18->setPosition(v_width/2 - 300, v_height/1.5 + 40);
+    mText18->setAlignment(ALIGN_LEFT);
+    mText18->render();
+    mText18->setPosition(v_width/2 + 200, v_height/1.5 + 40);
+    mText18->render();
     displayLeaderboardColumn(2, items, v_width, v_height);
     // Tempo
-    text->setText((char*) "Time", 255, 255, 255);
-    text->setPosition(v_width/2 - 230, v_height/1.5 + 40);
-    text->setAlignment(ALIGN_LEFT);
-    text->render();
-    text->setPosition(v_width/2 + 270, v_height/1.5 + 40);
-    text->render();
+    mText18->setText((char*) "Time", 255, 255, 255);
+    mText18->setPosition(v_width/2 - 230, v_height/1.5 + 40);
+    mText18->setAlignment(ALIGN_LEFT);
+    mText18->render();
+    mText18->setPosition(v_width/2 + 270, v_height/1.5 + 40);
+    mText18->render();
     displayLeaderboardColumn(3, items, v_width, v_height);
     // Tempo / boe
-    text->setText((char*) "Time/buoys", 255, 255, 255);
-    text->setPosition(v_width/2 - 110, v_height/1.5 + 40);
-    text->setAlignment(ALIGN_LEFT);
-    text->render();
-    text->setPosition(v_width/2 + 390, v_height/1.5 + 40);
-    text->render();
+    mText18->setText((char*) "Time/buoys", 255, 255, 255);
+    mText18->setPosition(v_width/2 - 110, v_height/1.5 + 40);
+    mText18->setAlignment(ALIGN_LEFT);
+    mText18->render();
+    mText18->setPosition(v_width/2 + 390, v_height/1.5 + 40);
+    mText18->render();
     displayLeaderboardColumn(4, items, v_width, v_height);
 
     glPopMatrix();
@@ -430,12 +414,11 @@ void HUD::askNumberOfBuoys(int v_width, int v_height, char *input) {
     sprintf(buffer[0], "Please insert the number of bouys you want");
     sprintf(buffer[1], "to play with (from 1 to %d), then press Enter.", BUOYS_COUNT_MAX);
     sprintf(buffer[2], "%s_", input);
-    GLText *text = new GLText(TEXTURE_TEXT, mFont40);
     for (int i = 0; i < 3; i++){
-        text->setText(buffer[i], 255, 255, 255);
-        text->setPosition(v_width/2,v_height/1.5 - 50 * i);
-        text->setAlignment(ALIGN_CENTER);
-        text->render();
+        mText40->setText(buffer[i], 255, 255, 255);
+        mText40->setPosition(v_width/2,v_height/1.5 - 50 * i);
+        mText40->setAlignment(ALIGN_CENTER);
+        mText40->render();
     }
 
     glPopMatrix();

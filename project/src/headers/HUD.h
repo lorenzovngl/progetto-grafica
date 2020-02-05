@@ -4,15 +4,16 @@
 #include <SDL2/SDL_ttf.h>
 #include "Game.h"
 #include "Leaderboard.h"
+#include "../../lib/GLText.h"
 
 #define TEXTURE_TEXT 20
 
 class HUD {
 private:
-    TTF_Font *mFont18;
-    TTF_Font *mFont25;
-    TTF_Font *mFont40;
-    TTF_Font *mFont100;
+    GLText *mText18;
+    GLText *mText25;
+    GLText *mText40;
+    GLText *mText100;
     Game *game;
 
     void displayLeaderboardColumn(int col, Leaderboard::LBItem **items, int v_width, int v_height);
